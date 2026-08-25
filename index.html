@@ -234,7 +234,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 'use strict';
 /* ================= CONSTANTES ================= */
 const ADMIN_PASS='Kevin83600';
-const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v5';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v6';
 const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
 const CATS=['Tous','Moteur','Transmission','Électronique','Électrique'];
 const FUELS=['Tous','essence','diesel','hybride','hybride rechargeable','électrique','GPL','hydrogène'];
@@ -291,6 +291,10 @@ const SEED_MODELS={
 
 /* ================= MOTORISATIONS ================= */
 const SEED_ENGINES={
+'Renault|R5 E-Tech':[['EV40 120','électrique'],['EV52 150','électrique']],
+'Renault|R4 E-Tech':[['EV40 120','électrique'],['EV52 150','électrique']],
+'Renault|Symbioz':[['E-Tech 145','hybride']],
+'Renault|Scénic E-Tech':[['EV60 170','électrique'],['EV87 220','électrique']],
 'Peugeot|3008':[['1.2 PureTech 130','essence'],['1.6 THP 165','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['1.6 BlueHDi 120','diesel'],['2.0 BlueHDi 150','diesel'],['2.0 BlueHDi 180','diesel'],['Hybrid 225 e-EAT8','hybride rechargeable'],['Hybrid4 300','hybride rechargeable'],['e-3008 210','électrique'],['e-3008 320 Dual Motor','électrique']],
 'Peugeot|208':[['1.2 VTi 75','essence'],['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 100','diesel'],['e-208 136','électrique'],['e-208 156','électrique']],
 'Peugeot|2008':[['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.2 PureTech 155','essence'],['1.5 BlueHDi 110','diesel'],['e-2008 136','électrique'],['e-2008 156','électrique']],
@@ -501,10 +505,24 @@ const SEED_SHEETS=[
 {id:'m25',b:'Renault',m:'Zoe',e:'R110',cat:'Électrique',titre:'Défaut de charge / connecteur de recharge',sym:'Charge qui s\u2019interrompt, voyant prise, lenteur de charge.',dtc:['P0C78','Codes constructeur'],fix:'Contrôle trappe/connecteur, câble, borne et calculateur de charge.',src:'Cas fréquents VE — à confirmer'},
 {id:'m26',b:'Peugeot',m:'3008',e:'',cat:'Électronique',titre:'Tablette tactile / i-Cockpit : redémarrages, écran noir',sym:'Écran qui fige ou redémarre, perte fonctions multimédia.',dtc:['U-codes réseau multimédia'],fix:'Mise à jour firmware, reset, remplacement unité si nécessaire.',src:'Cas connus PSA — à confirmer'},
 {id:'m27',b:'Volkswagen',m:'Golf',e:'',cat:'Électronique',titre:'Système MIB / appel d\u2019urgence SOS défaillant',sym:'Erreur eCall, écran noir, reboots.',dtc:['U0155','U10300'],fix:'Mise à jour logicielle unité centrale ; campagnes connues sur Golf 8.',src:'Cas connus VW — à confirmer'},
-{id:'m28',b:'Dacia',m:'Duster',e:'1.5 dCi 110',cat:'Moteur',titre:'1.5 dCi (K9K) : injecteurs & pompe HP',sym:'Perte de puissance, démarrage difficile, limaille.',dtc:['P0087','P0200'],fix:'Contrôle circuit HP, injecteurs, filtre GO.',src:'Cas connus K9K'}];
+{id:'m28',b:'Dacia',m:'Duster',e:'1.5 dCi 110',cat:'Moteur',titre:'1.5 dCi (K9K) : injecteurs & pompe HP',sym:'Perte de puissance, démarrage difficile, limaille.',dtc:['P0087','P0200'],fix:'Contrôle circuit HP, injecteurs, filtre GO.',src:'Cas connus K9K'},
+/* ---- NOUVEAU : fiches dédiées R5 / R4 / Symbioz / Scénic E-Tech ---- */
+{id:'m29',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link (Google intégré) : écran noir, reboots, perte navigation',sym:'Écran multimédia figé ou qui redémarre en boucle, Google Maps/Assistant indisponibles après mise à jour FOTA.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour OpenR Link, réinitialisation usine, remplacement head unit si persistance.',src:'Cas signalés R5/R4 E-Tech — à confirmer via sources officielles'},
+{id:'m30',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Charge AC/DC : coupures ou puissance limitée',sym:'Charge qui s\u2019interrompt sur borne publique, puissance plafonnée, voyant prise.',dtc:['P0C78','Codes HV constructeur'],fix:'Mise à jour BMS/chargeur, contrôle connecteur CCS et câble, test sur autre borne.',src:'Cas signalés AmpR Small — base technique'},
+{id:'m31',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V : décharge rapide en veille',sym:'Véhicule « mort » après quelques jours sans rouler, alertes multiples, démarrage système impossible.',dtc:['B-codes constructeur','U0100'],fix:'Contrôle batterie 12V + gestion de veille (mise à jour logicielle), vérifier DC-DC.',src:'Cas signalés VE Renault — base technique'},
+{id:'m32',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'V2G/V2L : charge bidirectionnelle non reconnue',sym:'Fonction V2G/V2L refusée ou coupure avec adaptateur/borne compatible.',dtc:['Codes constructeur prise de charge'],fix:'Mise à jour logiciel charge bidirectionnelle, contrôle adaptateur et contrat V2G, test autre borne.',src:'Cas signalés R5 E-Tech — base technique'},
+{id:'m33',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link : lenteurs, écran tactile muet',sym:'Tactile qui ne répond plus, lenteurs extrêmes, perte Bluetooth.',dtc:['U1233 (selon constructeur)'],fix:'Redémarrage système, mise à jour FOTA, remplacement unité si nécessaire.',src:'Cas signalés R4 E-Tech — à confirmer'},
+{id:'m34',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électrique',titre:'Charge rapide CCS : échauffement prise / limitation',sym:'Puissance de charge réduite, prise chaude, arrêts de charge en DC.',dtc:['P0C78','Codes HV constructeur'],fix:'Contrôle thermographie prise, nettoyage connecteur, mise à jour BMS, éviter charges 100 % successives.',src:'Cas signalés AmpR Small — base technique'},
+{id:'m35',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V auxiliaire : décharge en stationnement',sym:'Impossible de réveiller le véhicule, écran noir, klaxon faible.',dtc:['B-codes constructeur'],fix:'Remplacement 12V si capacité faible + mise à jour gestion veille.',src:'Cas signalés VE Renault — base technique'},
+{id:'m36',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Transmission',titre:'Boîte multimode E-Tech : à-coups à basse vitesse (crabots)',sym:'À-coups secs en redémarrage ou en urbain, claquement à l\u2019engagement, surtout moteur froid.',dtc:['P0700','P1811 (selon constructeur)'],fix:'Mise à jour calibration boîte, réapprentissage, contrôle crabots/synchroniseurs si persistance.',src:'Cas connus boîte E-Tech — base technique'},
+{id:'m37',b:'Renault',m:'Symbioz',e:'',cat:'Électronique',titre:'OpenR Link : reboots et perte caméra 360°',sym:'Écran qui redémarre, caméra 360 indisponible, alertes ADAS intempestifs.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour système, calibration caméras, contrôle faisceau head unit.',src:'Cas signalés Symbioz — à confirmer'},
+{id:'m38',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Électrique',titre:'Batterie 12V hybride : décharge / alerte circuit',sym:'Message « batterie auxiliaire », arrêts/starts difficiles, veille perturbée.',dtc:['P0562','B-codes constructeur'],fix:'Contrôle 12V + DC-DC, mise à jour gestion énergétique.',src:'Cas connus E-Tech — base technique'},
+{id:'m39',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Pompe à chaleur : perte d\u2019autonomie hivernale anormale',sym:'Consommation très élevée par temps froid, chauffage faible, alerte thermique habitacle.',dtc:['Codes HV constructeur (thermique)'],fix:'Diagnostic circuit pompe à chaleur, niveau fluide, mise à jour gestion thermique.',src:'Cas signalés Scénic E-Tech — base technique'},
+{id:'m40',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Charge DC 150 kW : puissance plafonnée après mise à jour',sym:'Courbe de charge dégradée, 50-70 kW au lieu de 130-150 kW sur borne rapide.',dtc:['Codes HV constructeur'],fix:'Mise à jour BMS, contrôle température batterie, préconditionnement avant charge.',src:'Cas signalés Scénic E-Tech — à confirmer'},
+{id:'m41',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électronique',titre:'Écran panoramique openR : scintillements / écran noir',sym:'Dalle qui scintille ou devient noire, perte instrumentation et multimédia.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour, contrôle connectique écran, remplacement dalle si défaut matériel.',src:'Cas signalés Scénic E-Tech — à confirmer'},
+{id:'m42',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V : décharge et mise en veille erratique',sym:'Véhicule non réveillable, alertes multiples, démarrage impossible.',dtc:['B-codes constructeur','U0100'],fix:'Contrôle/remplacement 12V, vérification DC-DC et gestion de veille.',src:'Cas signalés VE Renault — base technique'}];
 
 /* ================= MODÈLES DE FICHES (Moteur de génération — MODE FORCÉ ≥12 000) ================= */
-/* [titre, symptômes, [dtc], préconisation, source, catégorie] */
 const T_D=[
 ['Vanne EGR encrassée / grippée','Perte de puissance, ralenti instable, voyant moteur, surconsommation, démarrage à froid difficile.',['P0401','P0402','P0406','P1403'],'Contrôle du débit EGR, nettoyage ou remplacement de la vanne, vérifier refroidisseur EGR et qualité gasoil.','Panne fréquente diesel — base technique','Moteur'],
 ['FAP colmaté / régénérations incomplètes','Voyant FAP, mode dégradé, odeur de suie, consommation en hausse, régénérations rapprochées.',['P2002','P242F','P2463','P2459'],'Régénération forcée, contrôle pression différentielle et sondes de température, remplacement si céramique endommagée.','Panne fréquente diesel — base technique','Moteur'],
@@ -567,7 +585,8 @@ const FAM=[
 {re:/T-GDi/i,brands:['Hyundai','Kia'],cat:'Moteur',t:'Contrôle coussinets KSDS (familles Gamma/Theta)',s:'Bruit moteur, risque serrage ; surveillance par capteur cliquetis.',d:['P1326'],f:'Contrôle KSDS, remplacement moteur si requis selon campagne applicable.',src:'NHTSA — campagnes Hyundai/Kia'},
 {re:/EcoBoost/i,brands:['Ford'],cat:'Moteur',t:'EcoBoost : refroidissement / durites à surveiller',s:'Surchauffe, fuite LDR, voyant température.',d:['P0217','P0118','P21A7'],f:'Contrôle circuit refroidissement, durites et vase d\u2019expansion.',src:'Cas connus Ford — base technique'},
 {re:/Multijet|JTDM/i,brands:['Fiat','Alfa Romeo','Jeep'],cat:'Moteur',t:'Multijet/JTDM : EGR et injecteurs',s:'Perte de puissance, ralenti irrégulier, voyant moteur.',d:['P0401','P0201','P0204'],f:'Nettoyage/remplacement EGR, contrôle injecteurs.',src:'Pannes fréquentes Multijet — base technique'},
-{re:/e-|Electric|EV|ë-|R110|R135|Ioniq 5|EV6|EV9|MG4|Model|ID\.|e-tron|Taycan|Ariya|Leaf|Zoe|Spring|Bolt|Mach-E|Pro Performance|Pro 170|Pure 1|GTX/i,brands:[],cat:'Électrique',t:'Surveillance batterie HT : contrôle périodique santé/campagnes',s:'Vérifier état de santé batterie, historique de charge rapide, alertes éventuelles.',d:['Codes HV constructeur'],f:'Rapport SOH batterie, contrôle campagnes constructeur applicables au VIN.',src:'Préconisation VE — base technique'}];
+{re:/E-Tech/i,brands:['Renault','Dacia'],cat:'Transmission',t:'Boîte automatique multimode E-Tech : à-coups à basse vitesse',s:'À-coups secs en redémarrage ou à faible allure, claquement (crabotage), surtout en urbain et à froid.',d:['P0700','P1811 (selon constructeur)'],f:'Mise à jour de calibration de la boîte, réapprentissage, contrôle des crabots si persistance.',src:'Cas connus E-Tech — base technique'},
+{re:/e-|Electric|EV|ë-|R110|R135|Ioniq 5|EV6|EV9|MG4|Model|ID\.|e-tron|Taycan|Ariya|Leaf|Zoe|Spring|Bolt|Mach-E|Pro Performance|Pro 170|Pure 1|GTX|EV40|EV52|EV60|EV87/i,brands:[],cat:'Électrique',t:'Surveillance batterie HT : contrôle périodique santé/campagnes',s:'Vérifier état de santé batterie, historique de charge rapide, alertes éventuelles.',d:['Codes HV constructeur'],f:'Rapport SOH batterie, contrôle campagnes constructeur applicables au VIN.',src:'Préconisation VE — base technique'}];
 const FAM_MODEL=[
 {re:/^ID\.4$|^ID\.5$/,brands:['Volkswagen'],cat:'Électrique',t:'Modules batterie HT : campagnes 2023–2024 (risque thermique)',s:'Alertes batterie, limitation de charge possible sur lots concernés.',d:['Codes HV constructeur (BMS)'],f:'Diagnostic modules, mise à jour, remplacement modules ; charge ≤ 80 % en attente.',src:'NHTSA 23V-225 / campagnes UE'},
 {re:/^Zoe$/,brands:['Renault'],cat:'Électrique',t:'Charge : connecteur/trappe et calculateur de charge',s:'Charge interrompue, voyant prise, lenteur de charge.',d:['P0C78','Codes constructeur'],f:'Contrôle trappe/connecteur, câble, borne et calculateur.',src:'Cas fréquents Zoe — base technique'}];
@@ -585,21 +604,17 @@ const h=s=>{let x=7;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;retu
 function buildAllSheets(models,engines){
  const out=[],seen=new Set();
  const push=(b,m,e,cat,titre,sym,dtc,fix,src,off)=>{const id='g'+h([b,m,e||'',titre].join('|'));if(seen.has(id))return;seen.add(id);out.push({id,b,m,e:e||'',cat,titre,sym,dtc,fix,src,off:off?1:0});};
- /* 1) Fiches manuelles */
  SEED_SHEETS.forEach(s=>push(s.b,s.m,s.e||'',s.cat,s.titre,s.sym,s.dtc,s.fix,s.src,s.off));
- /* 2) Fiches famille par motorisation */
  engines.forEach(x=>{
   const fam=FAM.filter(r=>(!r.brands.length||r.brands.includes(x.b))&&r.re.test(x.e));
   fam.forEach(r=>push(x.b,x.m,x.e,r.cat,r.t,r.s,r.d,r.f,r.src));
   const fm=FAM_MODEL.filter(r=>r.brands.includes(x.b)&&r.re.test(x.m));
   fm.forEach(r=>push(x.b,x.m,x.e,r.cat,r.t,r.s,r.d,r.f,r.src));
  });
- /* 3) Fiches génériques par motorisation (selon carburant) */
  engines.forEach(x=>{
   const T=x.fuel==='diesel'?T_D:x.fuel==='essence'?T_E:(x.fuel==='électrique')?T_EV:(x.fuel==='GPL')?T_GPL:(x.fuel==='hydrogène')?T_EV:T_HY;
   T.forEach(([t,s,d,f,src,cat])=>push(x.b,x.m,x.e,cat,t,s,d,f,src));
  });
- /* 4) Fiches génériques par modèle (électronique/électrique véhicule) */
  models.forEach(x=>T_M.forEach(([t,s,d,f,src,cat])=>push(x.b,x.m,'',cat,t,s,d,f,src)));
  return out;
 }
