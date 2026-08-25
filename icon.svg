@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+ <rect width="512" height="512" rx="96" fill="#0b1220"/>
+ <circle cx="256" cy="236" r="120" fill="none" stroke="#3aa0ff" stroke-width="34"/>
+ <circle cx="256" cy="236" r="34" fill="#22d3a5"/>
+ <g stroke="#3aa0ff" stroke-width="26"><line x1="256" y1="270" x2="256" y2="356"/><line x1="136" y1="236" x2="222" y2="236"/><line x1="290" y1="236" x2="376" y2="236"/></g>
+ <text x="256" y="452" font-family="Arial" font-size="72" font-weight="bold" fill="#eaf2ff" text-anchor="middle">MRT</text>
+</svg>
