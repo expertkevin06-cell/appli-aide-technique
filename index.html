@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mes réponses technique by Kevin</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="icon.svg">
+<style>
+:root{--bg:#0b1220;--card:#131e33;--card2:#1a2742;--acc:#3aa0ff;--acc2:#22d3a5;--txt:#eaf2ff;--mut:#93a4c3;--warn:#ffb020;--danger:#ff5d5d;--rad:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+#bg{position:fixed;inset:0;z-index:0;opacity:.5;pointer-events:none;background-size:cover;background-position:center 60%}
+#bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.5),rgba(11,18,32,.88))}
+#bg svg{width:100%;height:100%}
+#app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:12px 14px 90px}
+header{display:flex;align-items:center;gap:10px;padding:8px 2px;flex-wrap:wrap}
+.logo{font-size:26px}
+h1{font-size:17px;line-height:1.1}
+h1 small{display:block;color:var(--mut);font-size:11px;font-weight:400}
+.spacer{flex:1}
+.badge{font-size:11px;padding:4px 10px;border-radius:99px;background:var(--card2);border:1px solid #2c3e63;color:var(--mut)}
+.badge.on{color:var(--acc2);border-color:var(--acc2)}
+.badge.off{color:var(--warn);border-color:var(--warn)}
+button{font:inherit;color:var(--txt);background:var(--card2);border:1px solid #2c3e63;border-radius:10px;padding:9px 13px;cursor:pointer}
+button:active{transform:scale(.97)}
+button.primary{background:linear-gradient(135deg,#1d6fd1,#3aa0ff);border:none;font-weight:600}
+button.ghost{background:transparent}
+input,select,textarea{font:inherit;color:var(--txt);background:#0e1830;border:1px solid #2c3e63;border-radius:10px;padding:9px;width:100%}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0;-webkit-overflow-scrolling:touch}
+.chip{white-space:nowrap;padding:7px 14px;border-radius:99px;background:var(--card);border:1px solid #2c3e63;color:var(--mut);cursor:pointer;font-size:13px}
+.chip.active{background:linear-gradient(135deg,#1d6fd1,#3aa0ff);color:#fff;border-color:transparent;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin:8px 0}
+.brandBtn{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px;border-radius:var(--rad);background:var(--card);border:1px solid #26375c}
+.brandBtn b{font-size:14px}
+.brandBtn span{font-size:11px;color:var(--mut)}
+.drawer{background:rgba(19,30,51,.92);border:1px solid #26375c;border-radius:var(--rad);margin:10px 0;padding:12px;animation:open .25s ease}
+@keyframes open{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.drawer h2{font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.drawer h2 .back{padding:4px 10px;border-radius:8px;font-size:13px}
+.rowItem{display:flex;justify-content:space-between;gap:8px;padding:11px;border-radius:10px;background:var(--card2);border:1px solid #2c3e63;margin:7px 0;cursor:pointer}
+.rowItem b{font-size:14px}
+.rowItem span{font-size:12px;color:var(--mut)}
+.sheet{background:var(--card);border:1px solid #26375c;border-left:4px solid var(--acc);border-radius:10px;margin:8px 0;padding:10px 12px;cursor:pointer;display:grid;gap:3px}
+.sheet>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.sheet .l1{display:flex;gap:8px;align-items:center}
+.sheet .l1 b{overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
+.cat{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;flex-shrink:0}
+.c-Moteur{background:#7c3aed33;color:#c4b5fd}.c-Transmission{background:#0891b233;color:#67e8f9}
+.c-Électronique{background:#d9770633;color:#fcd34d}.c-Électrique{background:#05966933;color:#6ee7b7}
+.src{margin-left:auto;font-size:10px;color:var(--mut);flex-shrink:0}
+.src.off{color:var(--acc2);font-weight:700}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(4,8,18,.8);display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheetModal{width:100%;max-width:900px;max-height:92vh;overflow:auto;background:var(--bg);border-radius:18px 18px 0 0;border-top:1px solid #2c3e63;padding:18px}
+.sheetModal h3{font-size:17px;margin:6px 0 12px}
+.detail{background:var(--card);border-radius:10px;padding:12px;margin:8px 0;font-size:14px;line-height:1.5}
+.detail small{color:var(--mut);display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.adminTabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.adminSec{display:none}.adminSec.show{display:block}
+.stat{display:inline-block;background:var(--card2);border-radius:10px;padding:8px 12px;margin:4px;font-size:12px}
+.stat b{display:block;font-size:18px;color:var(--acc)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0e1830;border:1px solid var(--acc);border-radius:99px;padding:10px 20px;font-size:13px;z-index:99;display:none;max-width:90vw}
+footer{margin-top:30px;text-align:center;color:var(--mut);font-size:11px;line-height:1.7}
+.muted{color:var(--mut);font-size:12px}
+hr{border:none;border-top:1px solid #26375c;margin:12px 0}
+#printSheet{display:none}
+@media print{body>*{display:none!important}#printSheet{display:block!important;color:#000;font-size:13px}#printSheet h1{font-size:18px}#printSheet .box{border:1px solid #000;padding:10px;margin:8px 0;border-radius:6px}}
+</style>
+</head>
+<body>
+
+<div id="bg" aria-hidden="true">
+<svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax slice">
+ <defs>
+  <linearGradient id="bodyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#13233f"/></linearGradient>
+  <linearGradient id="winG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3ff"/><stop offset="1" stop-color="#4a7db5"/></linearGradient>
+ </defs>
+ <path fill="url(#bodyG)" d="M60,430 L148,430 A72,72 0 0 1 292,430 L818,430 A72,72 0 0 1 962,430 L1120,430 C1152,430 1168,410 1162,384 C1152,342 1098,312 1008,298 C938,218 828,172 660,167 C518,164 398,198 318,278 C208,288 118,328 78,378 C58,400 54,430 60,430 Z"/>
+ <path fill="url(#winG)" opacity=".85" d="M360,283 C432,218 532,193 652,192 L657,283 Z"/>
+ <path fill="url(#winG)" opacity=".85" d="M677,192 C782,197 862,233 922,288 L682,288 Z"/>
+ <rect x="1090" y="330" width="60" height="10" rx="5" fill="#9fd3ff"/>
+ <rect x="70" y="352" width="46" height="9" rx="4" fill="#ff6b6b" opacity=".9"/>
+ <g fill="#0a0f1c"><circle cx="220" cy="430" r="62"/><circle cx="890" cy="430" r="62"/></g>
+ <g fill="#22355c"><circle cx="220" cy="430" r="34"/><circle cx="890" cy="430" r="34"/></g>
+ <g stroke="#0a0f1c" stroke-width="6"><g><line x1="220" y1="400" x2="220" y2="460"/><line x1="190" y1="430" x2="250" y2="430"/><line x1="199" y1="409" x2="241" y2="451"/><line x1="241" y1="409" x2="199" y2="451"/></g>
+ <g><line x1="890" y1="400" x2="890" y2="460"/><line x1="860" y1="430" x2="920" y2="430"/><line x1="869" y1="409" x2="911" y2="451"/><line x1="911" y1="409" x2="869" y2="451"/></g></g>
+ <ellipse cx="600" cy="492" rx="520" ry="16" fill="#000" opacity=".35"/>
+</svg>
+</div>
+
+<div id="app">
+ <header>
+  <div class="logo">🔧</div>
+  <h1>Mes réponses technique <small>by Kevin — diagnostics, rappels &amp; pannes connues</small></h1>
+  <div class="spacer"></div>
+  <span id="netBadge" class="badge">…</span>
+  <button id="btnInstall" style="display:none">⬇️ Installer</button>
+  <button id="btnShare" class="ghost" title="Partager">📤 Partager</button>
+  <button id="btnAdmin" class="ghost" title="Admin">🔐</button>
+ </header>
+
+ <div class="chips" id="groupChips"></div>
+ <input id="brandSearch" placeholder="🔎 Rechercher une marque…" style="margin-bottom:8px">
+ <div class="grid" id="brandGrid"></div>
+
+ <div class="drawer" id="modelsDrawer" style="display:none">
+  <h2><button class="back" onclick="closeDrawer('modelsDrawer')">←</button><span id="modelsTitle"></span></h2>
+  <input id="modelSearch" placeholder="🔎 Filtrer les modèles…">
+  <div id="modelList"></div>
+ </div>
+
+ <div class="drawer" id="enginesDrawer" style="display:none">
+  <h2><button class="back" onclick="closeDrawer('enginesDrawer')">←</button><span id="enginesTitle"></span></h2>
+  <div class="chips" id="fuelChips"></div>
+  <div id="engineList"></div>
+ </div>
+
+ <div class="drawer" id="sheetsDrawer" style="display:none">
+  <h2><button class="back" onclick="closeDrawer('sheetsDrawer')">←</button><span id="sheetsTitle"></span></h2>
+  <div class="chips" id="catChips"></div>
+  <div class="actions" style="margin:0 0 10px">
+   <button onclick="syncNHTSA()">🛰 Synchroniser NHTSA (officiel)</button>
+   <button onclick="syncRappelConso()">🛰 Rappel Conso (officiel)</button>
+   <span class="muted">Import des campagnes officielles du véhicule sélectionné (connexion requise)</span>
+  </div>
+  <div id="sheetList"></div>
+ </div>
+
+ <footer>
+  Développé &amp; hébergé via <b>GitHub</b> • Sources officielles : NHTSA (US) · Rappel Conso (FR) · EU Safety Gate<br>
+  ⚠️ Base informative : confirmez toujours une campagne auprès du constructeur / réseau.<br>
+  © Kevin — Mes réponses technique
+ </footer>
+</div>
+
+<!-- MODALE FICHE -->
+<div class="modal" id="sheetModal"><div class="sheetModal">
+ <div style="display:flex;gap:8px;align-items:center"><button class="ghost" onclick="closeModal('sheetModal')">✕</button><span id="smCat" class="cat"></span><span id="smVeh" class="muted"></span></div>
+ <h3 id="smTitle"></h3>
+ <div class="detail"><small>Symptômes</small><div id="smSym"></div></div>
+ <div class="detail"><small>Codes défaut (DTC)</small><div id="smDtc"></div></div>
+ <div class="detail"><small>Préconisation</small><div id="smFix"></div></div>
+ <div class="detail"><small>Source</small><div id="smSrc"></div></div>
+ <div class="actions">
+  <button class="primary" onclick="printSheet()">📄 Télécharger en PDF</button>
+  <button id="smDel" style="display:none" onclick="deleteCurrentSheet()">🗑 Supprimer (admin)</button>
+ </div>
+</div></div>
+
+<!-- MODALE ADMIN -->
+<div class="modal" id="adminModal"><div class="sheetModal">
+ <div style="display:flex;gap:8px;align-items:center"><button class="ghost" onclick="closeModal('adminModal')">✕</button><b>Mode administrateur</b></div>
+ <div id="adminGate" style="margin-top:12px">
+  <p class="muted" style="margin-bottom:8px">Mot de passe requis :</p>
+  <input type="password" id="adminPass" placeholder="••••••••">
+  <div class="actions"><button class="primary" onclick="tryAdmin()">Déverrouiller</button></div>
+ </div>
+ <div id="adminPanel" style="display:none;margin-top:12px">
+  <div class="adminTabs">
+   <button class="chip active" onclick="adminTab(this,'tabStats')">📊 Base</button>
+   <button class="chip" onclick="adminTab(this,'tabAdd')">➕ Ajouter</button>
+   <button class="chip" onclick="adminTab(this,'tabImport')">📥 Import/Export</button>
+   <button class="chip" onclick="adminTab(this,'tabApp')">🎨 Apparence</button>
+  </div>
+
+  <div class="adminSec show" id="tabStats">
+   <div id="statsBox"></div><hr>
+   <p class="muted">La base est générée au premier lancement (≥ 12 000 fiches corrélées marque/modèle/motorisation). Les campagnes officielles s'ajoutent via les boutons 🛰 NHTSA / Rappel Conso et l'import JSON (Safety Gate…). Tout est stocké localement (IndexedDB) et disponible hors ligne.</p>
+   <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base locale</button></div>
+  </div>
+
+  <div class="adminSec" id="tabAdd">
+   <h3>➕ Marque</h3>
+   <div style="display:flex;gap:8px;margin:8px 0">
+    <input id="nbName" placeholder="Nom de la marque" style="flex:2">
+    <select id="nbOrigin" style="flex:1"><option value="FR">FR</option><option value="EU">EU</option><option value="AS">AS</option><option value="US">US</option></select>
+    <button class="primary" onclick="addBrand()">OK</button>
+   </div>
+   <h3>➕ Modèle</h3>
+   <div style="display:flex;gap:8px;margin:8px 0">
+    <select id="nmBrand" style="flex:1"></select><input id="nmName" placeholder="Nom du modèle" style="flex:1"><button class="primary" onclick="addModel()">OK</button>
+   </div>
+   <h3>➕ Motorisation</h3>
+   <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
+    <select id="neBrand" onchange="fillModelSelect('neBrand','neModel')" style="min-width:130px"></select>
+    <select id="neModel" style="min-width:130px"></select>
+    <input id="neLabel" placeholder="Ex : 1.5 BlueHDi 130" style="min-width:170px;flex:1">
+    <select id="neFuel"><option>essence</option><option>diesel</option><option>hybride</option><option>hybride rechargeable</option><option>électrique</option><option>GPL</option><option>hydrogène</option></select>
+    <button class="primary" onclick="addEngine()">OK</button>
+   </div>
+   <h3>➕ Fiche technique</h3>
+   <div style="display:grid;gap:8px;margin:8px 0">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+     <select id="nfBrand" onchange="fillModelSelect('nfBrand','nfModel')" style="min-width:130px"></select>
+     <select id="nfModel" onchange="fillEngineSelect()" style="min-width:130px"></select>
+     <select id="nfEngine" style="min-width:170px"><option value="">(toutes motorisations)</option></select>
+     <select id="nfCat"><option>Moteur</option><option>Transmission</option><option>Électronique</option><option>Électrique</option></select>
+    </div>
+    <input id="nfTitle" placeholder="Titre de la panne / campagne">
+    <textarea id="nfSym" rows="2" placeholder="Symptômes"></textarea>
+    <input id="nfDtc" placeholder="Codes DTC séparés par des virgules (ex : P0016, P0300)">
+    <textarea id="nfFix" rows="2" placeholder="Préconisation / action"></textarea>
+    <input id="nfSrc" placeholder="Source (ex : NHTSA 24V-xxx, Rappel Conso, Safety Gate…)">
+    <button class="primary" onclick="addSheet()">Enregistrer la fiche</button>
+   </div>
+  </div>
+
+  <div class="adminSec" id="tabImport">
+   <h3>📥 Import massif JSON</h3>
+   <p class="muted">Format accepté : <code>{"sheets":[{b,m,e,cat,titre,sym,dtc:[],fix,src}]}</code> ou <code>{"brands":[],"models":[],"engines":[],"sheets":[]}</code>. Convient aussi pour convertir le CSV Safety Gate.</p>
+   <input type="file" id="importFile" accept=".json,application/json" style="margin:8px 0">
+   <button class="primary" onclick="doImport()">Importer</button>
+   <hr>
+   <h3>📤 Export / sauvegarde</h3>
+   <div class="actions"><button onclick="exportAll()">⬇️ Exporter toute la base (JSON)</button></div>
+  </div>
+
+  <div class="adminSec" id="tabApp">
+   <h3>🖼 Fond d'écran véhicule (opacité 50 %)</h3>
+   <p class="muted">Choisissez une photo de véhicule moderne — elle couvre tout l'écran à 50 % d'opacité.</p>
+   <input type="file" id="bgFile" accept="image/*" style="margin:8px 0">
+   <div class="actions"><button onclick="resetBg()">↩️ Revenir au véhicule par défaut</button></div>
+  </div>
+ </div>
+</div></div>
+
+<div id="toast"></div>
+<div id="printSheet"></div>
+
+<script>
+'use strict';
+/* ================= CONSTANTES ================= */
+const ADMIN_PASS='Kevin83600';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v5';
+const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
+const CATS=['Tous','Moteur','Transmission','Électronique','Électrique'];
+const FUELS=['Tous','essence','diesel','hybride','hybride rechargeable','électrique','GPL','hydrogène'];
+
+/* ================= MARQUES ================= */
+const SEED_BRANDS=[
+['Renault','FR'],['Peugeot','FR'],['Citroën','FR'],['DS Automobiles','FR'],['Alpine','FR'],['Bugatti','FR'],['Aixam','FR'],['Ligier','FR'],['Microcar','FR'],['Bolloré','FR'],
+['Volkswagen','EU'],['Audi','EU'],['BMW','EU'],['Mercedes-Benz','EU'],['Opel','EU'],['Porsche','EU'],['SEAT','EU'],['CUPRA','EU'],['Škoda','EU'],['Fiat','EU'],['Alfa Romeo','EU'],['Lancia','EU'],['Maserati','EU'],['Ferrari','EU'],['Lamborghini','EU'],['Dacia','EU'],['Volvo','EU'],['Polestar','EU'],['Saab','EU'],['Jaguar','EU'],['Land Rover','EU'],['MINI','EU'],['Bentley','EU'],['Rolls-Royce','EU'],['Aston Martin','EU'],['McLaren','EU'],['Lotus','EU'],['Smart','EU'],['Ineos','EU'],
+['Toyota','AS'],['Lexus','AS'],['Honda','AS'],['Nissan','AS'],['Mazda','AS'],['Subaru','AS'],['Suzuki','AS'],['Mitsubishi','AS'],['Hyundai','AS'],['Kia','AS'],['Genesis','AS'],['SsangYong','AS'],['Infiniti','AS'],['Daihatsu','AS'],['Isuzu','AS'],['BYD','AS'],['MG','AS'],['NIO','AS'],['XPeng','AS'],['Geely','AS'],['Tata','AS'],['Mahindra','AS'],['VinFast','AS'],['Acura','AS'],
+['Ford','US'],['Chevrolet','US'],['GMC','US'],['Cadillac','US'],['Buick','US'],['Chrysler','US'],['Dodge','US'],['Jeep','US'],['Ram','US'],['Tesla','US'],['Lincoln','US'],['Rivian','US'],['Lucid','US'],['Fisker','US'],['Pontiac','US'],['Hummer','US']];
+
+/* ================= MODÈLES ================= */
+const SEED_MODELS={
+'Renault':['Twingo','Twizy','Clio','Captur','Kadjar','Austral','Arkana','Symbioz','Mégane','Mégane E-Tech','Scénic','Grand Scénic','Scénic E-Tech','Espace','Talisman','Zoe','Kangoo','Express','Trafic','Master','Koléos','Wind','Fluence','Laguna','Latitude','R5 E-Tech','R4 E-Tech'],
+'Peugeot':['106','107','108','206','207','208','e-208','301','306','307','308','309','406','407','408','508','607','807','1007','2008','e-2008','3008','5008','Bipper','Partner','Rifter','Expert','Traveller','Boxer','iOn','RCZ'],
+'Citroën':['AX','Saxo','Xsara','Xantia','C1','C2','C3','ë-C3','C3 Aircross','C3 Picasso','C4','ë-C4','C4 Cactus','C4 Picasso','C4 X','C5','C5 Aircross','C5 X','C6','C8','C-Crosser','C-Zero','Nemo','Berlingo','Jumpy','Jumper','Evasion'],
+'DS Automobiles':['DS3','DS3 Crossback','DS4','DS5','DS7 Crossback','DS7','DS9'],
+'Alpine':['A110','A290'],'Bugatti':['Chiron','Veyron'],'Aixam':['City','Coupé'],'Ligier':['JS50','JS60'],'Bolloré':['Bluecar'],
+'Volkswagen':['Polo','Golf','Up!','e-Up!','T-Cross','T-Roc','Taigo','Tiguan','Touareg','Passat','Arteon','Sharan','Touran','Caddy','Transporter','Crafter','ID.3','ID.4','ID.5','ID.7','ID. Buzz','Amarok'],
+'Audi':['A1','A3','A4','A5','A6','A7','A8','Q2','Q3','Q4 e-tron','Q5','Q7','Q8','e-tron','TT','R8'],
+'BMW':['Série 1','Série 2','Série 3','Série 4','Série 5','Série 7','X1','X2','X3','X4','X5','X6','X7','Z4','i3','i4','i5','i7','iX','iX1'],
+'Mercedes-Benz':['Classe A','Classe B','Classe C','Classe E','Classe S','CLA','CLS','GLA','GLB','GLC','GLE','GLS','SLK','SL','Classe G','EQA','EQB','EQC','EQS','Sprinter','Vito','Citan'],
+'Opel':['Corsa','Corsa-e','Astra','Insignia','Mokka','Mokka-e','Crossland','Grandland','Grandland X','Zafira','Combo','Meriva','Adam','Karl','Vivaro','Movano'],
+'Porsche':['911','Cayenne','Macan','Panamera','Taycan','718 Boxster','718 Cayman'],
+'SEAT':['Ibiza','Leon','Arona','Ateca','Alhambra','Toledo','Mii'],'CUPRA':['Born','Formentor','Ateca','Leon','Tavascan'],
+'Škoda':['Fabia','Octavia','Superb','Scala','Kamiq','Karoq','Kodiaq','Enyaq','Citigo','Rapid'],
+'Fiat':['500','500e','500X','500L','Panda','Punto','Tipo','Doblo','Qubo','Bravo','Freemont','Multipla'],
+'Alfa Romeo':['MiTo','Giulietta','Giulia','Stelvio','Tonale','147','156','GT'],
+'Lancia':['Ypsilon','Delta','Musa','Thema'],'Maserati':['Ghibli','Quattroporte','Levante','MC20','Grecale'],
+'Ferrari':['458','488','F8','Roma','SF90','Purosangue'],'Lamborghini':['Huracán','Urus','Aventador'],
+'Dacia':['Sandero','Logan','Duster','Jogger','Spring','Dokker','Lodgy'],
+'Volvo':['V40','V60','V90','S60','S90','XC40','XC60','XC90','C40','EX30','EX90'],'Polestar':['2','3','4'],'Saab':['9-3','9-5'],
+'Jaguar':['XF','XE','XJ','F-Type','E-Pace','F-Pace','I-Pace'],
+'Land Rover':['Defender','Discovery','Discovery Sport','Range Rover','Range Rover Evoque','Range Rover Sport','Range Rover Velar','Freelander'],
+'MINI':['Cooper','Countryman','Clubman','Cooper SE'],'Bentley':['Continental GT','Bentayga','Flying Spur'],'Rolls-Royce':['Ghost','Phantom','Cullinan'],'Aston Martin':['Vantage','DB11','DBX'],'McLaren':['720S','Artura'],'Lotus':['Elise','Emira','Eletre'],'Smart':['Fortwo','Forfour','#1','#3'],'Ineos':['Grenadier'],
+'Toyota':['Aygo','Yaris','Yaris Cross','Corolla','Camry','Prius','C-HR','RAV4','Highlander','Land Cruiser','Hilux','Proace','Urban Cruiser','bZ4X'],
+'Lexus':['CT','IS','UX','NX','RX','LBX','ES','RZ'],
+'Honda':['Jazz','Civic','Accord','CR-V','HR-V','ZR-V','Honda e'],
+'Nissan':['Micra','Note','Juke','Qashqai','X-Trail','Leaf','Ariya','Navara','Townstar','Pulsar'],
+'Mazda':['2','3','6','CX-3','CX-30','CX-5','CX-60','MX-5','MX-30'],
+'Subaru':['Impreza','XV','Forester','Outback','Solterra','BRZ'],
+'Suzuki':['Swift','Ignis','Baleno','S-Cross','Vitara','Jimny','Across','Swace'],
+'Mitsubishi':['Space Star','ASX','Eclipse Cross','Outlander','L200','Pajero','i-MiEV'],
+'Hyundai':['i10','i20','i30','Bayon','Kona','Kona Electric','Tucson','Santa Fe','Ioniq','Ioniq 5','Ioniq 6','ix35','ix20'],
+'Kia':['Picanto','Rio','Ceed','Stonic','Niro','Niro EV','Sportage','Sorento','EV6','EV9','Soul','Stinger'],
+'Genesis':['G60','G70','G80','GV60','GV70','GV80'],'SsangYong':['Tivoli','Korando','Rexton','Torres','Musso'],'Infiniti':['Q30','Q50','QX30','QX50'],'Daihatsu':['Cuore','Terios','Sirion'],'Isuzu':['D-Max'],
+'BYD':['Atto 3','Dolphin','Seal','Tang','Han','Seal U'],'MG':['MG3','MG4','ZS','ZS EV','HS','Marvel R'],'NIO':['ET5','ET7','EL6','EL8'],'XPeng':['P7','G6','G9'],'Geely':['Atlas'],'Tata':['Nexon'],'Mahindra':['XUV700'],'VinFast':['VF6','VF8'],'Acura':['MDX','RDX','Integra'],
+'Ford':['Fiesta','Focus','Mondeo','Ka','Kuga','Puma','EcoSport','Explorer','Mustang','Mustang Mach-E','Bronco','Galaxy','S-Max','C-Max','Transit','Transit Custom','Tourneo','Ranger','F-150','F-150 Lightning','Maverick'],
+'Chevrolet':['Spark','Aveo','Cruze','Malibu','Camaro','Corvette','Trax','Captiva','Equinox','Tahoe','Suburban','Silverado','Bolt EV','Blazer','Volt'],
+'GMC':['Sierra','Yukon','Terrain','Acadia','Hummer EV'],'Cadillac':['CT4','CT5','XT4','XT5','Escalade','Lyriq'],'Buick':['Encore','Envision','Enclave'],
+'Chrysler':['300','Pacifica'],'Dodge':['Charger','Challenger','Durango','Journey','Caliber'],
+'Jeep':['Renegade','Compass','Cherokee','Grand Cherokee','Wrangler','Gladiator','Avenger'],'Ram':['1500','2500','ProMaster'],
+'Tesla':['Model S','Model 3','Model X','Model Y','Cybertruck'],'Lincoln':['Corsair','Nautilus','Aviator'],'Rivian':['R1T','R1S'],'Lucid':['Air'],'Fisker':['Ocean'],'Pontiac':['Firebird'],'Hummer':['H2','H3']};
+
+/* ================= MOTORISATIONS ================= */
+const SEED_ENGINES={
+'Peugeot|3008':[['1.2 PureTech 130','essence'],['1.6 THP 165','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['1.6 BlueHDi 120','diesel'],['2.0 BlueHDi 150','diesel'],['2.0 BlueHDi 180','diesel'],['Hybrid 225 e-EAT8','hybride rechargeable'],['Hybrid4 300','hybride rechargeable'],['e-3008 210','électrique'],['e-3008 320 Dual Motor','électrique']],
+'Peugeot|208':[['1.2 VTi 75','essence'],['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 100','diesel'],['e-208 136','électrique'],['e-208 156','électrique']],
+'Peugeot|2008':[['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.2 PureTech 155','essence'],['1.5 BlueHDi 110','diesel'],['e-2008 136','électrique'],['e-2008 156','électrique']],
+'Peugeot|308':[['1.2 PureTech 110','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel'],['Hybrid 180','hybride rechargeable'],['Hybrid 225','hybride rechargeable'],['e-308 156','électrique']],
+'Peugeot|508':[['1.6 PureTech 180','essence'],['1.6 PureTech 225','essence'],['1.5 BlueHDi 130','diesel'],['2.0 BlueHDi 160','diesel'],['Hybrid 225','hybride rechargeable'],['PSE 360','hybride rechargeable']],
+'Peugeot|5008':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['2.0 BlueHDi 180','diesel'],['e-5008 210','électrique']],
+'Peugeot|207':[['1.4 VTi 95','essence'],['1.6 VTi 120','essence'],['1.6 HDi 90','diesel'],['1.6 HDi 110','diesel']],
+'Peugeot|307':[['1.6 110','essence'],['2.0 140','essence'],['1.6 HDi 90','diesel'],['2.0 HDi 110','diesel'],['2.0 HDi 136','diesel']],
+'Peugeot|407':[['2.0 140','essence'],['2.2 160','essence'],['1.6 HDi 110','diesel'],['2.0 HDi 136','diesel'],['2.7 HDi 204','diesel']],
+'Peugeot|Partner':[['1.2 PureTech 110','essence'],['1.5 BlueHDi 100','diesel'],['1.5 BlueHDi 130','diesel'],['e-Partner 136','électrique']],
+'Peugeot|Rifter':[['1.2 PureTech 110','essence'],['1.5 BlueHDi 100','diesel'],['1.5 BlueHDi 130','diesel'],['e-Rifter 136','électrique']],
+'Citroën|C3':[['1.2 VTi 83','essence'],['1.2 PureTech 110','essence'],['1.5 BlueHDi 100','diesel'],['ë-C3 113','électrique']],
+'Citroën|C4':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel'],['ë-C4 136','électrique']],
+'Citroën|C3 Aircross':[['1.2 PureTech 110','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 110','diesel']],
+'Citroën|C5 Aircross':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['Hybrid 225','hybride rechargeable']],
+'Citroën|Berlingo':[['1.2 PureTech 110','essence'],['1.5 BlueHDi 100','diesel'],['1.5 BlueHDi 130','diesel'],['ë-Berlingo 136','électrique']],
+'Citroën|Jumpy':[['1.5 BlueHDi 120','diesel'],['2.0 BlueHDi 145','diesel'],['ë-Jumpy 136','électrique']],
+'DS Automobiles|DS3 Crossback':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel'],['E-Tense 136','électrique']],
+'DS Automobiles|DS4':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['E-Tense 225','hybride rechargeable']],
+'DS Automobiles|DS7 Crossback':[['1.2 PureTech 130','essence'],['1.6 PureTech 225','essence'],['1.5 BlueHDi 130','diesel'],['E-Tense 225','hybride rechargeable'],['E-Tense 300','hybride rechargeable'],['E-Tense 360','hybride rechargeable']],
+'Opel|Corsa':[['1.2 75','essence'],['1.2 Turbo 100','essence'],['1.2 Turbo 130','essence'],['1.5 Diesel 100','diesel'],['Corsa-e 136','électrique']],
+'Opel|Astra':[['1.2 Turbo 110','essence'],['1.2 Turbo 130','essence'],['1.5 Diesel 130','diesel'],['Hybrid 180','hybride rechargeable'],['Hybrid 225','hybride rechargeable']],
+'Opel|Grandland':[['1.2 Turbo 130','essence'],['1.5 Diesel 130','diesel'],['Hybrid 225','hybride rechargeable'],['Hybrid4 300','hybride rechargeable']],
+'Opel|Mokka':[['1.2 Turbo 100','essence'],['1.2 Turbo 130','essence'],['1.5 Diesel 110','diesel'],['Mokka-e 136','électrique']],
+'Renault|Clio':[['1.0 SCe 65','essence'],['1.0 TCe 90','essence'],['1.2 TCe 120','essence'],['1.3 TCe 140','essence'],['1.5 dCi 85','diesel'],['1.5 Blue dCi 100','diesel'],['E-Tech 145','hybride']],
+'Renault|Mégane':[['1.3 TCe 115','essence'],['1.3 TCe 140','essence'],['1.3 TCe 160','essence'],['1.5 dCi 110','diesel'],['1.5 Blue dCi 115','diesel'],['1.6 dCi 130','diesel'],['E-Tech 160','hybride rechargeable']],
+'Renault|Mégane E-Tech':[['EV40 130','électrique'],['EV60 220','électrique']],
+'Renault|Captur':[['0.9 TCe 90','essence'],['1.0 TCe 90','essence'],['1.3 TCe 130','essence'],['1.3 TCe 155','essence'],['1.5 dCi 90','diesel'],['1.5 Blue dCi 115','diesel'],['E-Tech 145','hybride'],['E-Tech 160','hybride rechargeable']],
+'Renault|Austral':[['1.2 TCe 130 mild hybrid','essence'],['1.3 TCe 160 mild hybrid','essence'],['E-Tech 200','hybride']],
+'Renault|Arkana':[['1.3 TCe 140','essence'],['1.3 TCe 160','essence'],['E-Tech 145','hybride']],
+'Renault|Zoe':[['R110','électrique'],['R135','électrique']],
+'Renault|Scénic':[['1.3 TCe 140','essence'],['1.3 TCe 160','essence'],['1.5 dCi 110','diesel'],['1.7 Blue dCi 120','diesel'],['Hybrid Assist','hybride']],
+'Renault|Kadjar':[['1.2 TCe 130','essence'],['1.3 TCe 140','essence'],['1.3 TCe 160','essence'],['1.5 dCi 110','diesel'],['1.6 dCi 130','diesel']],
+'Renault|Talisman':[['1.3 TCe 160','essence'],['1.6 dCi 130','diesel'],['1.6 dCi 160','diesel'],['2.0 Blue dCi 160','diesel']],
+'Renault|Espace':[['1.3 TCe 160','essence'],['1.8 TCe 225','essence'],['1.6 dCi 160','diesel'],['2.0 Blue dCi 160','diesel'],['2.0 Blue dCi 200','diesel']],
+'Renault|Kangoo':[['1.2 TCe 115','essence'],['1.3 TCe 130','essence'],['1.5 dCi 80','diesel'],['1.5 dCi 95','diesel'],['1.5 Blue dCi 95','diesel'],['E-Tech électrique','électrique']],
+'Renault|Master':[['2.3 dCi 110','diesel'],['2.3 dCi 130','diesel'],['2.3 dCi 145','diesel'],['2.3 dCi 165','diesel'],['E-Tech électrique','électrique']],
+'Renault|Trafic':[['2.0 dCi 110','diesel'],['2.0 dCi 130','diesel'],['2.0 dCi 150','diesel'],['2.0 dCi 170','diesel'],['E-Tech électrique','électrique']],
+'Renault|Twingo':[['1.0 SCe 65','essence'],['0.9 TCe 90','essence'],['E-Tech électrique','électrique']],
+'Dacia|Duster':[['0.9 TCe 90','essence'],['1.0 TCe 90','essence'],['1.0 TCe 100 GPL','GPL'],['1.3 TCe 130','essence'],['1.3 TCe 150','essence'],['1.5 dCi 110','diesel'],['1.5 Blue dCi 115','diesel'],['Hybrid 140','hybride']],
+'Dacia|Sandero':[['1.0 SCe 65','essence'],['1.0 TCe 90','essence'],['1.0 TCe 100 GPL','GPL']],
+'Dacia|Logan':[['1.0 SCe 65','essence'],['1.0 TCe 90','essence'],['1.0 TCe 100 GPL','GPL']],
+'Dacia|Jogger':[['1.0 TCe 110','essence'],['1.0 TCe 100 GPL','GPL'],['Hybrid 140','hybride']],
+'Dacia|Spring':[['Electric 45','électrique'],['Electric 65','électrique']],
+'Volkswagen|Golf':[['1.0 TSI 90','essence'],['1.0 TSI 110','essence'],['1.4 TSI 150','essence'],['1.5 TSI 130','essence'],['1.5 TSI 150','essence'],['2.0 GTI 245','essence'],['1.6 TDI 115','diesel'],['2.0 TDI 115','diesel'],['2.0 TDI 150','diesel'],['eTSI 110 mild hybrid','essence']],
+'Volkswagen|ID.4':[['Pure 148','électrique'],['Pro 170','électrique'],['Pro Performance 204','électrique'],['Pro 4Motion 265','électrique'],['GTX 299','électrique'],['GTX 340','électrique']],
+'Volkswagen|ID.3':[['Pure 150','électrique'],['Pro 204','électrique'],['Pro S 204','électrique'],['GTX 326','électrique']],
+'Volkswagen|ID.5':[['Pro 204','électrique'],['Pro 4Motion 265','électrique'],['GTX 299','électrique']],
+'Volkswagen|Tiguan':[['1.4 TSI 150','essence'],['1.5 TSI 130','essence'],['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TDI 122','diesel'],['2.0 TDI 150','diesel'],['2.0 TDI 200','diesel'],['eHybrid 245','hybride rechargeable']],
+'Volkswagen|Polo':[['1.0 MPI 80','essence'],['1.0 TSI 95','essence'],['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 GTI 207','essence'],['1.6 TDI 95','diesel']],
+'Volkswagen|T-Roc':[['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TDI 115','diesel'],['2.0 TDI 150','diesel']],
+'Volkswagen|Passat':[['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TDI 122','diesel'],['2.0 TDI 150','diesel'],['GTE 218','hybride rechargeable']],
+'Volkswagen|Caddy':[['1.2 TSI 84','essence'],['1.4 TSI 125','essence'],['1.6 TDI 102','diesel'],['2.0 TDI 122','diesel']],
+'Volkswagen|Transporter':[['2.0 TDI 84','diesel'],['2.0 TDI 102','diesel'],['2.0 TDI 150','diesel'],['2.0 TDI 204','diesel']],
+'Audi|A3':[['30 TFSI 110','essence'],['35 TFSI 150','essence'],['40 TFSI e','hybride rechargeable'],['30 TDI 116','diesel'],['35 TDI 150','diesel']],
+'Audi|A4':[['35 TFSI 150','essence'],['40 TFSI 204','essence'],['45 TFSI 265','essence'],['35 TDI 163','diesel'],['40 TDI 204','diesel']],
+'Audi|Q2':[['30 TFSI 110','essence'],['35 TFSI 150','essence'],['35 TDI 150','diesel']],
+'Audi|Q3':[['35 TFSI 150','essence'],['45 TFSI e','hybride rechargeable'],['35 TDI 150','diesel'],['40 TDI 200','diesel']],
+'Audi|Q5':[['40 TFSI 204','essence'],['50 TFSI e','hybride rechargeable'],['40 TDI 204','diesel']],
+'Audi|Q4 e-tron':[['35 e-tron 170','électrique'],['40 e-tron 204','électrique'],['45 e-tron quattro 265','électrique'],['55 e-tron quattro 299','électrique']],
+'Audi|e-tron':[['50 quattro 313','électrique'],['55 quattro 408','électrique'],['S 503','électrique']],
+'BMW|Série 1':[['116i','essence'],['118i','essence'],['120i','essence'],['M135i','essence'],['116d','diesel'],['118d','diesel'],['120d','diesel']],
+'BMW|Série 3':[['320i','essence'],['330i','essence'],['M340i','essence'],['318d','diesel'],['320d','diesel'],['330d','diesel'],['330e','hybride rechargeable']],
+'BMW|Série 5':[['520i','essence'],['530i','essence'],['520d','diesel'],['530d','diesel'],['545e','hybride rechargeable']],
+'BMW|X1':[['sDrive18i','essence'],['xDrive23i','essence'],['sDrive16d','diesel'],['xDrive25e','hybride rechargeable']],
+'BMW|X3':[['xDrive20i','essence'],['xDrive30i','essence'],['xDrive20d','diesel'],['xDrive30d','diesel'],['xDrive30e','hybride rechargeable']],
+'BMW|i3':[['120 Ah','électrique'],['s 120 Ah','électrique']],
+'BMW|iX':[['xDrive40','électrique'],['xDrive50','électrique'],['M60','électrique']],
+'Mercedes-Benz|Classe A':[['A 180','essence'],['A 200','essence'],['A 250','essence'],['A 160 d','diesel'],['A 180 d','diesel'],['A 200 d','diesel'],['A 250 e','hybride rechargeable']],
+'Mercedes-Benz|Classe C':[['C 200','essence'],['C 300','essence'],['C 220 d','diesel'],['C 300 d','diesel'],['C 300 e','hybride rechargeable']],
+'Mercedes-Benz|GLA':[['GLA 180','essence'],['GLA 200','essence'],['GLA 200 d','diesel'],['GLA 250 e','hybride rechargeable']],
+'Mercedes-Benz|GLC':[['GLC 200','essence'],['GLC 220 d','diesel'],['GLC 300 d','diesel'],['GLC 300 e','hybride rechargeable']],
+'Mercedes-Benz|Sprinter':[['311 CDI','diesel'],['314 CDI','diesel'],['317 CDI','diesel'],['eSprinter','électrique']],
+'Mercedes-Benz|EQC':[['400 4MATIC','électrique']],
+'Mercedes-Benz|Citan':[['108 CDI','diesel'],['110 CDI','diesel'],['113','essence']],
+'Fiat|500':[['1.2 69','essence'],['0.9 TwinAir 85','essence'],['1.0 Hybrid 70','hybride'],['500e 118','électrique']],
+'Fiat|Tipo':[['1.4 95','essence'],['1.0 T3 100','essence'],['1.6 Multijet 130','diesel']],
+'Fiat|Panda':[['1.2 69','essence'],['0.9 TwinAir 85','essence'],['1.0 Hybrid 70','hybride']],
+'Fiat|500X':[['1.0 T3 120','essence'],['1.3 T4 150','essence'],['1.6 Multijet 130','diesel']],
+'Fiat|Doblo':[['1.4 95','essence'],['1.6 Multijet 105','diesel'],['1.6 Multijet 120','diesel']],
+'Alfa Romeo|Giulietta':[['1.4 TB 120','essence'],['1.4 MultiAir 170','essence'],['1.6 JTDM 120','diesel'],['2.0 JTDM 150','diesel'],['2.0 JTDM 175','diesel']],
+'Alfa Romeo|Giulia':[['2.0 Turbo 200','essence'],['2.0 Turbo 280','essence'],['Quadrifoglio 510','essence'],['2.2 Diesel 160','diesel'],['2.2 Diesel 190','diesel']],
+'Alfa Romeo|Stelvio':[['2.0 Turbo 200','essence'],['2.0 Turbo 280','essence'],['2.2 Diesel 160','diesel'],['2.2 Diesel 190','diesel'],['2.2 Diesel 210','diesel']],
+'Alfa Romeo|Tonale':[['1.5 Hybrid 130','hybride'],['1.5 Hybrid 160','hybride'],['Plug-in Hybrid Q4 275','hybride rechargeable'],['1.6 Diesel 130','diesel']],
+'SEAT|Ibiza':[['1.0 MPI 80','essence'],['1.0 TSI 95','essence'],['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['1.6 TDI 95','diesel']],
+'SEAT|Leon':[['1.0 TSI 110','essence'],['1.5 TSI 130','essence'],['1.5 TSI 150','essence'],['2.0 TDI 115','diesel'],['2.0 TDI 150','diesel'],['eHybrid 204','hybride rechargeable']],
+'SEAT|Ateca':[['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 TDI 115','diesel'],['2.0 TDI 150','diesel']],
+'CUPRA|Formentor':[['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TSI 310','essence'],['1.4 eHybrid 204','hybride rechargeable'],['1.4 eHybrid 245','hybride rechargeable']],
+'CUPRA|Born':[['e-Boost 204','électrique'],['e-Boost 231','électrique'],['VZ 326','électrique']],
+'Škoda|Fabia':[['1.0 MPI 80','essence'],['1.0 TSI 95','essence'],['1.0 TSI 110','essence'],['1.5 TSI 150','essence']],
+'Škoda|Octavia':[['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TDI 115','diesel'],['2.0 TDI 150','diesel'],['iV 204','hybride rechargeable']],
+'Škoda|Superb':[['1.5 TSI 150','essence'],['2.0 TSI 190','essence'],['2.0 TSI 280','essence'],['2.0 TDI 150','diesel'],['2.0 TDI 200','diesel'],['iV 218','hybride rechargeable']],
+'Škoda|Enyaq':[['iV 60 180','électrique'],['iV 80 204','électrique'],['iV 80x 265','électrique'],['iV vRS 299','électrique']],
+'Dacia|Dokker':[['1.2 TCe 115','essence'],['1.5 dCi 90','diesel']],
+'Toyota|Yaris':[['1.0 VVT-i 72','essence'],['1.5 VVT-i 111','essence'],['1.5 Hybrid 116','hybride'],['Hybrid 130','hybride'],['1.4 D-4D 90','diesel']],
+'Toyota|Corolla':[['1.2 Turbo 116','essence'],['1.8 Hybrid 122','hybride'],['1.8 Hybrid 140','hybride'],['2.0 Hybrid 196','hybride']],
+'Toyota|Prius':[['Hybrid 122','hybride'],['Hybrid 196','hybride'],['Prime rechargeable','hybride rechargeable']],
+'Toyota|RAV4':[['2.0 Essence 175','essence'],['2.5 Hybrid 218','hybride'],['2.5 Hybrid AWD-i 222','hybride'],['2.5 PHEV 306','hybride rechargeable'],['2.2 D-4D 150','diesel']],
+'Toyota|C-HR':[['1.2 Turbo 116','essence'],['1.8 Hybrid 122','hybride'],['2.0 Hybrid 184','hybride']],
+'Toyota|Aygo':[['1.0 VVT-i 69','essence'],['1.0 VVT-i 72','essence']],
+'Toyota|Hilux':[['2.4 D-4D 150','diesel'],['2.8 D-4D 204','diesel']],
+'Toyota|Proace':[['1.5 D-4D 120','diesel'],['2.0 D-4D 145','diesel'],['Electric 136','électrique']],
+'Toyota|bZ4X':[['FWD 204','électrique'],['AWD 218','électrique']],
+'Lexus|NX':[['350h 243','hybride'],['450h+ 309','hybride rechargeable']],
+'Lexus|UX':[['250h 184','hybride'],['300e 309','hybride rechargeable']],
+'Honda|Civic':[['1.0 VTEC Turbo 129','essence'],['1.5 VTEC Turbo 182','essence'],['1.6 i-DTEC 120','diesel'],['2.0 e:HEV 184','hybride']],
+'Honda|Jazz':[['1.5 i-MMD 109','hybride']],
+'Honda|CR-V':[['1.5 VTEC Turbo 173','essence'],['2.0 i-MMD 184','hybride'],['1.6 i-DTEC 120','diesel']],
+'Honda|HR-V':[['1.5 i-VTEC 130','essence'],['1.5 e:HEV 131','hybride']],
+'Nissan|Qashqai':[['1.2 DIG-T 115','essence'],['1.3 DIG-T 140','essence'],['1.3 DIG-T 158','essence'],['1.5 dCi 110','diesel'],['1.6 dCi 130','diesel'],['e-POWER 190','hybride']],
+'Nissan|Juke':[['1.0 DIG-T 114','essence'],['1.2 DIG-T 115','essence'],['1.5 dCi 110','diesel'],['Hybrid 143','hybride']],
+'Nissan|Leaf':[['40 kWh 150','électrique'],['e+ 62 kWh 217','électrique']],
+'Nissan|X-Trail':[['1.3 DIG-T 160','essence'],['1.6 dCi 130','diesel'],['e-POWER 204','hybride']],
+'Nissan|Micra':[['1.0 71','essence'],['0.9 IG-T 90','essence'],['1.0 IG-T 92','essence'],['1.5 dCi 90','diesel']],
+'Nissan|Ariya':[['63 kWh 218','électrique'],['87 kWh 242','électrique'],['e-4ORCE 87 kWh 306','électrique']],
+'Mazda|2':[['1.5 Skyactiv-G 75','essence'],['1.5 Skyactiv-G 90','essence'],['1.5 Hybrid 116','hybride'],['1.5 Skyactiv-D 105','diesel']],
+'Mazda|3':[['2.0 Skyactiv-G 122','essence'],['2.0 e-Skyactiv-G 150','essence'],['2.0 e-Skyactiv-X 186','essence'],['1.8 Skyactiv-D 116','diesel']],
+'Mazda|6':[['2.0 Skyactiv-G 165','essence'],['2.5 Skyactiv-G 194','essence'],['2.2 Skyactiv-D 150','diesel'],['2.2 Skyactiv-D 184','diesel']],
+'Mazda|CX-5':[['2.0 Skyactiv-G 165','essence'],['2.5 Skyactiv-G 194','essence'],['2.2 Skyactiv-D 150','diesel'],['2.2 Skyactiv-D 184','diesel']],
+'Mazda|MX-30':[['e-Skyactiv 145','électrique']],
+'Subaru|XV':[['1.6 114','essence'],['2.0 e-Boxer 150','hybride']],
+'Subaru|Forester':[['2.0 e-Boxer 150','hybride'],['2.5 185','essence']],
+'Suzuki|Swift':[['1.2 Dualjet 90','essence'],['1.0 Boosterjet 111','essence'],['1.2 Hybrid 83','hybride']],
+'Suzuki|Vitara':[['1.0 Boosterjet 111','essence'],['1.4 Boosterjet 129','essence'],['1.4 Hybrid 129','hybride'],['1.6 DDiS 120','diesel']],
+'Suzuki|S-Cross':[['1.4 Boosterjet 129','essence'],['1.4 Hybrid 129','hybride'],['Strong Hybrid 115','hybride']],
+'Mitsubishi|ASX':[['1.6 MIVEC 117','essence'],['1.6 DI-D 114','diesel']],
+'Mitsubishi|Outlander':[['2.4 PHEV','hybride rechargeable'],['2.2 DI-D 150','diesel']],
+'Mitsubishi|Eclipse Cross':[['1.5 MIVEC Turbo 163','essence'],['PHEV','hybride rechargeable']],
+'Hyundai|i10':[['1.0 67','essence'],['1.2 84','essence'],['1.0 T-GDi 100','essence']],
+'Hyundai|i20':[['1.2 84','essence'],['1.0 T-GDi 100','essence'],['1.0 T-GDi 120','essence'],['1.1 CRDi 75','diesel']],
+'Hyundai|i30':[['1.0 T-GDi 120','essence'],['1.5 T-GDi 160','essence'],['1.6 CRDi 115','diesel'],['1.6 CRDi 136','diesel']],
+'Hyundai|Kona':[['1.0 T-GDi 120','essence'],['1.6 T-GDi 198','essence'],['1.6 CRDi 115','diesel'],['Hybrid 141','hybride'],['Electric 136','électrique'],['Electric 204','électrique']],
+'Hyundai|Tucson':[['1.6 T-GDi 150','essence'],['1.6 T-GDi 180','essence'],['1.6 CRDi 115','diesel'],['Hybrid 230','hybride'],['Plug-in Hybrid 265','hybride rechargeable']],
+'Hyundai|Ioniq':[['Hybrid 141','hybride'],['Plug-in Hybrid 141','hybride rechargeable'],['Electric 136','électrique']],
+'Hyundai|Ioniq 5':[['58 kWh 170','électrique'],['77 kWh 229','électrique'],['77 kWh 325 AWD','électrique'],['N 650','électrique']],
+'Kia|Picanto':[['1.0 67','essence'],['1.2 84','essence'],['1.0 T-GDi 100','essence']],
+'Kia|Ceed':[['1.0 T-GDi 120','essence'],['1.5 T-GDi 160','essence'],['1.6 CRDi 115','diesel'],['1.6 CRDi 136','diesel']],
+'Kia|Sportage':[['1.6 T-GDi 150','essence'],['1.6 CRDi 115','diesel'],['Hybrid 230','hybride'],['Plug-in Hybrid 265','hybride rechargeable']],
+'Kia|Sorento':[['1.6 T-GDi Hybrid 230','hybride'],['Plug-in Hybrid 265','hybride rechargeable'],['2.2 CRDi 202','diesel']],
+'Kia|Niro':[['Hybrid 141','hybride'],['EV 204','électrique'],['Plug-in Hybrid 183','hybride rechargeable']],
+'Kia|EV6':[['58 kWh 170','électrique'],['77 kWh 229','électrique'],['77 kWh 325 AWD','électrique'],['GT 585','électrique']],
+'Kia|EV9':[['76 kWh 218','électrique'],['99 kWh 204','électrique'],['GT-Line 385','électrique']],
+'MG|MG4':[['Standard 170','électrique'],['Long Range 204','électrique'],['XPower 435','électrique']],
+'MG|ZS EV':[['Luxury 177','électrique']],
+'BYD|Atto 3':[['60 kWh 204','électrique']],
+'BYD|Seal':[['82 kWh 230','électrique'],['82 kWh AWD 530','électrique']],
+'Ford|Fiesta':[['1.0 EcoBoost 100','essence'],['1.0 EcoBoost 125','essence'],['1.0 EcoBoost 140','essence'],['1.0 EcoBoost 155 mHEV','essence'],['1.5 TDCi 85','diesel']],
+'Ford|Focus':[['1.0 EcoBoost 100','essence'],['1.0 EcoBoost 125','essence'],['1.0 EcoBoost 155 mHEV','essence'],['1.5 EcoBoost 150','essence'],['1.5 EcoBlue 95','diesel'],['1.5 EcoBlue 120','diesel'],['2.0 EcoBlue 150','diesel']],
+'Ford|Kuga':[['1.5 EcoBoost 150','essence'],['2.5 Duratec Hybrid 190','hybride'],['2.5 Plug-in Hybrid 225','hybride rechargeable'],['1.5 EcoBlue 120','diesel'],['2.0 EcoBlue 150','diesel']],
+'Ford|Puma':[['1.0 EcoBoost 125','essence'],['1.0 EcoBoost 155 mHEV','essence'],['1.5 EcoBlue 120','diesel'],['Gen-E électrique','électrique']],
+'Ford|Transit Custom':[['2.0 EcoBlue 105','diesel'],['2.0 EcoBlue 130','diesel'],['2.0 EcoBlue 170','diesel'],['E-Transit Custom','électrique']],
+'Ford|Mustang Mach-E':[['Standard Range 269','électrique'],['Extended Range 294','électrique'],['AWD Extended Range 351','électrique'],['GT 487','électrique']],
+'Ford|Ranger':[['2.0 EcoBlue 170','diesel'],['2.0 EcoBlue Bi-Turbo 213','diesel'],['3.0 V6 250','diesel']],
+'Jeep|Compass':[['1.3 T4 130','essence'],['1.3 T4 150','essence'],['1.6 Multijet 130','diesel'],['4xe 190','hybride rechargeable'],['4xe 240','hybride rechargeable']],
+'Jeep|Renegade':[['1.0 GSE 120','essence'],['1.3 T4 150','essence'],['1.6 Multijet 130','diesel'],['4xe 190','hybride rechargeable'],['4xe 240','hybride rechargeable']],
+'Jeep|Wrangler':[['2.0 Turbo 272','essence'],['4xe 380','hybride rechargeable']],
+'Tesla|Model 3':[['Propulsion','électrique'],['Grande Autonomie','électrique'],['Performance','électrique']],
+'Tesla|Model Y':[['Propulsion','électrique'],['Grande Autonomie','électrique'],['Performance','électrique']],
+'Tesla|Model S':[['Dual Motor','électrique'],['Plaid','électrique']],
+'Chevrolet|Bolt EV':[['65 kWh 200','électrique']],
+'Chevrolet|Silverado':[['5.3 V8 355','essence'],['6.2 V8 420','essence'],['3.0 Duramax','diesel']],
+'Ram|1500':[['3.6 V6 305','essence'],['5.7 V8 395','essence'],['3.0 EcoDiesel 260','diesel']],
+'GMC|Sierra':[['5.3 V8 355','essence'],['6.2 V8 420','essence'],['3.0 Duramax','diesel']],
+'Alpine|A110':[['1.8 TCe 252','essence'],['1.8 TCe 300','essence']],
+'Porsche|Taycan':[['4 408','électrique'],['4S 530','électrique'],['GTS 598','électrique'],['Turbo 680','électrique'],['Turbo S 761','électrique']],
+'Porsche|Macan':[['2.0 TFSI 265','essence'],['Macan 4 408','électrique'],['Macan Turbo 639','électrique']],
+'Volvo|XC60':[['B4 Essence 197','essence'],['B5 Essence 250','essence'],['B4 Diesel 197','diesel'],['T6 Recharge 350','hybride rechargeable'],['T8 Recharge 455','hybride rechargeable']],
+'Volvo|XC40':[['T2 129','essence'],['B3 163','essence'],['B4 197','essence'],['Recharge Pure Electric 231','électrique']],
+'Volvo|XC90':[['B5 250','essence'],['B6 300','essence'],['T8 Recharge 455','hybride rechargeable']],
+'Polestar|2':[['Standard Range 272','électrique'],['Long Range 299','électrique'],['Long Range Dual Motor 421','électrique']],
+'Smart|Fortwo':[['EQ 82','électrique']],
+'Smart|#1':[['Pro+ 272','électrique'],['Brabus 428','électrique']],
+'Volkswagen|e-Up!':[['83','électrique']],
+'MINI|Cooper SE':[['184','électrique']],
+'Jaguar|I-Pace':[['EV400 400','électrique']],
+'Fisker|Ocean':[['Sport 275','électrique'],['Ultra 540','électrique']],
+'Fiat|500e':[['118','électrique']],
+'Renault|Twizy':[['45','électrique'],['80','électrique']],
+'Peugeot|iOn':[['64','électrique']],
+'Citroën|C-Zero':[['64','électrique']]};
+
+/* ================= FICHES MANUELLES (pannes / campagnes réelles connues) ================= */
+const SEED_SHEETS=[
+{id:'m1',b:'Renault',m:'Mégane',e:'1.2 TCe 120',cat:'Moteur',titre:'1.2 TCe (H5Ft) : consommation d\u2019huile excessive et ratés',sym:'Consommation d\u2019huile élevée, bougies encrassées, ratés d\u2019allumage, voyant injection.',dtc:['P0171','P0300','P0301','P0302','P0303','P0304'],fix:'Contrôle consommation d\u2019huile (méthode constructeur), bougies + bobines, possible intervention motorisation (campagnes réseau).',src:'Campagnes réseau / cas connus — à confirmer via Rappel Conso'},
+{id:'m2',b:'Renault',m:'Clio',e:'1.5 Blue dCi 100',cat:'Moteur',titre:'1.5 dCi (K9K) : limaille dans le circuit haute pression',sym:'Démarrage difficile, perte de puissance, voyant injection après usure pompe HP.',dtc:['P0087','P0191','P0200'],fix:'Rinçage circuit GO, remplacement pompe HP + injecteurs si contamination, contrôle filtre à gasoil.',src:'Cas connus K9K — à confirmer via sources officielles'},
+{id:'m3',b:'Renault',m:'Captur',e:'1.5 dCi 90',cat:'Moteur',titre:'1.5 dCi : joint(s) d\u2019injecteur HS',sym:'Odeur de gazole, claquement, calamine autour des injecteurs.',dtc:['P0201','P0202'],fix:'Remplacement joints d\u2019injecteurs et nettoyage puits.',src:'Panne fréquente K9K'},
+{id:'m4',b:'Renault',m:'Clio',e:'',cat:'Transmission',titre:'Boîte EDC : à-coups, patinage, perte de propulsion',sym:'À-coups à basse vitesse, patinage, message boîte de vitesses.',dtc:['P0796','P2714','P0841'],fix:'Mise à jour logiciel, réapprentissage, possible remplacement mécatronique/embrayages.',src:'Cas connus EDC (DC4) — à confirmer'},
+{id:'m5',b:'Peugeot',m:'3008',e:'1.2 PureTech 130',cat:'Moteur',titre:'1.2 PureTech : courroie de distribution immergée dégradée',sym:'Voyant moteur, ralenti instable, perte de puissance, casse moteur possible (débris dans la pompe à huile).',dtc:['P0016','P0300','P0301','P0513'],fix:'Remplacement courroie + crépine + huile spécifiée ; contrôles renforcés avant 6 ans / 100 000 km (campagnes Stellantis).',src:'Campagnes constructeur / Rappel Conso'},
+{id:'m6',b:'Peugeot',m:'3008',e:'1.5 BlueHDi 130',cat:'Moteur',titre:'1.5 BlueHDi (DV5) : chaîne d\u2019arbre à cames / rupture',sym:'Bruit métallique, voyant moteur, casse moteur sur versions chaîne 7 mm.',dtc:['P0016','P0008'],fix:'Contrôle/chaîne renforcée — campagnes constructeur connues, à faire contrôler en réseau.',src:'Campagnes Stellantis / Rappel Conso'},
+{id:'m7',b:'Volkswagen',m:'ID.4',e:'Pro Performance 204',cat:'Électrique',titre:'Modules batterie HT : risque d\u2019échauffement (campagnes 2023–2024)',sym:'Alertes batterie, limitation de charge ; risque thermique après charge rapide sur lots concernés.',dtc:['Codes HV constructeur (module BMS)'],fix:'Diagnostic modules, mise à jour logiciel, remplacement modules concernés — charge ≤ 80 % en attente (préco campagne).',src:'NHTSA 23V-225 / campagnes équivalentes UE'},
+{id:'m8',b:'Volkswagen',m:'Golf',e:'1.6 TDI 115',cat:'Moteur',titre:'EA189 : rappel logiciel émissions (diesel)',sym:'Campagne historique de mise à conformité du calculateur moteur.',dtc:['—'],fix:'Mise à jour logiciel effectuée en réseau ; vérifier historique du véhicule.',src:'NHTSA / campagnes émissions 2015-2017'},
+{id:'m9',b:'Volkswagen',m:'Golf',e:'1.0 TSI 110',cat:'Transmission',titre:'DSG7 DQ200 : mécatronique / embrayages',sym:'À-coups, bruits, patinage, perte de propulsion en circulation.',dtc:['P17BF','P0841','P0715'],fix:'Mise à jour logiciel boîte, remplacement mécatronique ou kit embrayages selon diagnostic.',src:'Cas connus DQ200 — à confirmer'},
+{id:'m10',b:'BMW',m:'Série 3',e:'320d',cat:'Moteur',titre:'N47/N57 : chaîne de distribution (côté boîte)',sym:'Bruit de chaîne au ralenti/à froid, risque de rupture.',dtc:['P0016','P0008'],fix:'Contrôle bruit chaîne, remplacement kit chaîne si nécessaire.',src:'Cas connus N47 — à confirmer'},
+{id:'m11',b:'Toyota',m:'Prius',e:'Hybrid 122',cat:'Électrique',titre:'Pompe de refroidissement de l\u2019onduleur (rappel)',sym:'Surchauffe onduleur, voyant hybride, mode dégradé.',dtc:['P0A78','P3024'],fix:'Remplacement pompe de refroidissement inverter (campagne Toyota).',src:'NHTSA / campagnes Toyota hybrides'},
+{id:'m12',b:'Honda',m:'Civic',e:'',cat:'Électronique',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement gonfleur airbag passager/conducteur selon campagne — gratuit en réseau.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
+{id:'m13',b:'Toyota',m:'Yaris',e:'',cat:'Électronique',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement du gonfleur selon campagne.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
+{id:'m14',b:'Nissan',m:'Qashqai',e:'1.2 DIG-T 115',cat:'Moteur',titre:'1.2 DIG-T (H5Ft) : consommation d\u2019huile & chaîne',sym:'Consommation d\u2019huile, ratés, bruit de chaîne.',dtc:['P0171','P0300','P0016'],fix:'Suivi consommation huile, chaîne/tendeurs, interventions réseau possibles.',src:'Cas connus H5Ft — à confirmer'},
+{id:'m15',b:'Hyundai',m:'Tucson',e:'1.6 T-GDi 150',cat:'Moteur',titre:'Moteurs Theta/Gamma : coussinets de bielle (rappels US/KSDS)',sym:'Bruit moteur, serrage moteur possible ; détection par capteur de cliquetis.',dtc:['P1326'],fix:'Contrôle KSDS, remplacement moteur si requis (campagnes Hyundai/Kia).',src:'NHTSA — campagnes Theta II / KSDS'},
+{id:'m16',b:'Kia',m:'Sportage',e:'',cat:'Moteur',titre:'Moteurs Theta II : risque de serrage / incendie (rappels)',sym:'Bruits moteur, voyant huile, risque d\u2019incendie moteur.',dtc:['P1326'],fix:'Mise à jour KSDS + contrôle/remplacement moteur selon campagne.',src:'NHTSA'},
+{id:'m17',b:'Ford',m:'Focus',e:'1.0 EcoBoost 125',cat:'Moteur',titre:'1.0 EcoBoost : durites de refroidissement / surchauffe',sym:'Surchauffe, fuite LDR, risque d\u2019endommagement moteur.',dtc:['P0217','P0118'],fix:'Contrôle circuit refroidissement, durites, vase d\u2019expansion ; interventions réseau connues.',src:'Cas connus 1.0 EcoBoost — à confirmer'},
+{id:'m18',b:'Ford',m:'Kuga',e:'2.5 Plug-in Hybrid 225',cat:'Électrique',titre:'Kuga PHEV : risque d\u2019incendie batterie (rappels 2020–2021)',sym:'Campagnes sur packs batterie ; mode EV restreint en attente.',dtc:['Codes HV constructeur'],fix:'Contrôle/remplacement modules batterie, mise à jour BMS.',src:'NHTSA / campagnes Ford PHEV'},
+{id:'m19',b:'Tesla',m:'Model 3',e:'',cat:'Électronique',titre:'Caméra de recul : câble/affichage (rappels logiciels & faisceau)',sym:'Image de recul absente ou figée.',dtc:['—'],fix:'Mise à jour OTA ou remplacement faisceau selon campagne.',src:'NHTSA 24V-051 et campagnes associées'},
+{id:'m20',b:'Tesla',m:'Model Y',e:'',cat:'Électronique',titre:'Autopilot : campagne de rappel logiciel',sym:'Comportement du régulateur adaptatif non conforme.',dtc:['—'],fix:'Mise à jour logicielle OTA (campagne NHTSA 23V-848).',src:'NHTSA'},
+{id:'m21',b:'Chevrolet',m:'Bolt EV',e:'65 kWh 200',cat:'Électrique',titre:'Batterie HT : risque d\u2019incendie (rappel massif GM/LG)',sym:'Cellules défectueuses sur lots donnés.',dtc:['Codes HV constructeur'],fix:'Diagnostic/remplacement modules ou pack complet ; limitation de charge en attente.',src:'NHTSA 20V-552 / 21V-315'},
+{id:'m22',b:'Hyundai',m:'Kona Electric',e:'Electric 204',cat:'Électrique',titre:'Kona Electric : batterie HT défectueuse (rappel mondial)',sym:'Risque d\u2019incendie en charge.',dtc:['Codes HV constructeur'],fix:'Remplacement du pack batterie selon campagne.',src:'NHTSA / campagnes Hyundai'},
+{id:'m23',b:'Fiat',m:'Tipo',e:'1.6 Multijet 130',cat:'Moteur',titre:'1.6 Multijet : vanne EGR et injecteurs',sym:'Perte de puissance, ralenti irrégulier, voyant moteur.',dtc:['P0401','P0201','P0204'],fix:'Nettoyage/remplacement EGR, contrôle injecteurs.',src:'Pannes fréquentes Multijet'},
+{id:'m24',b:'Citroën',m:'C4',e:'1.2 PureTech 130',cat:'Moteur',titre:'1.2 PureTech : courroie de distribution immergée (campagnes)',sym:'Voyant moteur, ralenti instable, risque casse moteur.',dtc:['P0016','P0300'],fix:'Remplacement courroie + crépine, huile spécifiée, surveillance renforcée.',src:'Campagnes Stellantis / Rappel Conso'},
+{id:'m25',b:'Renault',m:'Zoe',e:'R110',cat:'Électrique',titre:'Défaut de charge / connecteur de recharge',sym:'Charge qui s\u2019interrompt, voyant prise, lenteur de charge.',dtc:['P0C78','Codes constructeur'],fix:'Contrôle trappe/connecteur, câble, borne et calculateur de charge.',src:'Cas fréquents VE — à confirmer'},
+{id:'m26',b:'Peugeot',m:'3008',e:'',cat:'Électronique',titre:'Tablette tactile / i-Cockpit : redémarrages, écran noir',sym:'Écran qui fige ou redémarre, perte fonctions multimédia.',dtc:['U-codes réseau multimédia'],fix:'Mise à jour firmware, reset, remplacement unité si nécessaire.',src:'Cas connus PSA — à confirmer'},
+{id:'m27',b:'Volkswagen',m:'Golf',e:'',cat:'Électronique',titre:'Système MIB / appel d\u2019urgence SOS défaillant',sym:'Erreur eCall, écran noir, reboots.',dtc:['U0155','U10300'],fix:'Mise à jour logicielle unité centrale ; campagnes connues sur Golf 8.',src:'Cas connus VW — à confirmer'},
+{id:'m28',b:'Dacia',m:'Duster',e:'1.5 dCi 110',cat:'Moteur',titre:'1.5 dCi (K9K) : injecteurs & pompe HP',sym:'Perte de puissance, démarrage difficile, limaille.',dtc:['P0087','P0200'],fix:'Contrôle circuit HP, injecteurs, filtre GO.',src:'Cas connus K9K'}];
+
+/* ================= MODÈLES DE FICHES (Moteur de génération — MODE FORCÉ ≥12 000) ================= */
+/* [titre, symptômes, [dtc], préconisation, source, catégorie] */
+const T_D=[
+['Vanne EGR encrassée / grippée','Perte de puissance, ralenti instable, voyant moteur, surconsommation, démarrage à froid difficile.',['P0401','P0402','P0406','P1403'],'Contrôle du débit EGR, nettoyage ou remplacement de la vanne, vérifier refroidisseur EGR et qualité gasoil.','Panne fréquente diesel — base technique','Moteur'],
+['FAP colmaté / régénérations incomplètes','Voyant FAP, mode dégradé, odeur de suie, consommation en hausse, régénérations rapprochées.',['P2002','P242F','P2463','P2459'],'Régénération forcée, contrôle pression différentielle et sondes de température, remplacement si céramique endommagée.','Panne fréquente diesel — base technique','Moteur'],
+['Injecteurs diesel : fuite retour / grippage','Claquements, fumée noire, démarrage difficile, surconsommation, ralenti irrégulier.',['P0201','P0202','P0203','P0204','P1247'],'Test de retour d\u2019injecteurs, remplacement des injecteurs défectueux, contrôle qualité gasoil et filtre.','Panne fréquente diesel — base technique','Moteur'],
+['Pompe haute pression / régulation rail','Démarrage difficile, calage, pression rail insuffisante, mode dégradé.',['P0087','P0088','P0191','P0192'],'Contrôle pression rail, état pompe HP et régulateur, contrôler limaille dans le circuit.','Panne fréquente diesel — base technique','Moteur'],
+['Turbo : géométrie variable grippée / jeu','Manque de puissance, sifflement, fumée, pression de suralimentation insuffisante.',['P0299','P00AF','P2563','P0234'],'Contrôle durites/étanchéité, commande de wastegate/GV, remplacement turbo si jeu mécanique.','Panne fréquente diesel — base technique','Moteur'],
+['Bougies de préchauffage / boîtier','Démarrage à froid difficile, voyant préchauffage, ralenti froid irrégulier.',['P0380','P0670','P0671','P0672','P0673','P0674'],'Test unitaire des bougies, remplacement des défectueuses, contrôler le boîtier de préchauffage.','Panne fréquente diesel — base technique','Moteur'],
+['Capteur pression/température rail','Lecture de pression erratique, à-coups, démarrage aléatoire, voyant injection.',['P0190','P0192','P0193','P0194'],'Contrôle connectique et faisceau, remplacement capteur rail, contrôle pression réelle.','Panne fréquente diesel — base technique','Moteur'],
+['Volant moteur bi-masse usé','Claquements à l\u2019arrêt moteur, vibrations pédale d\u2019embrayage, bruit métallique au ralenti.',['—'],'Contrôle visuel/auditif, remplacement volant moteur + embrayage si usure confirmée.','Panne fréquente diesel — base technique','Transmission']];
+const T_E=[
+['Bobines d\u2019allumage / ratés','Ratés d\u2019allumage, voyant moteur clignotant, perte de puissance, consommation accrue.',['P0300','P0301','P0302','P0303','P0304'],'Remplacement bobines/bougies, contrôle compressions et faisceau d\u2019allumage.','Panne fréquente essence — base technique','Moteur'],
+['Bougies d\u2019allumage usées','Démarrage difficile, ralenti irrégulier, trous à l\u2019accélération.',['P0300','P0301','P0303'],'Remplacement des bougies au couple constructeur, contrôle des puits.','Panne fréquente essence — base technique','Moteur'],
+['Injecteurs essence encrassés','Ralenti irrégulier, trous à l\u2019accélération, surconsommation, mélange pauvre/riche.',['P0171','P0172','P0200','P0201'],'Nettoyage injecteurs (machine/bac), contrôle débits et faisceau.','Panne fréquente essence — base technique','Moteur'],
+['Électrovanne de purge canister','Odeur carburant, ralenti instable après plein, voyant moteur, code EVAP.',['P0441','P0455','P0496'],'Contrôle/remplacement électrovanne purge et canister, test d\u2019étanchéité réservoir.','Panne fréquente essence — base technique','Moteur'],
+['Débitmètre d\u2019air (MAF) encrassé/HS','Perte de puissance, fumée noire, ralenti instable, consommation.',['P0100','P0101','P0102','P0103'],'Nettoyage au nettoyant contact dédié, remplacement si valeurs hors plage.','Panne fréquente essence — base technique','Moteur'],
+['Boîtier papillon encrassé','Ralenti instable, à-coups, perte de réponse accélérateur, voyant.',['P0121','P2101','P2135'],'Nettoyage papillon, réapprentissage ralenti/position, contrôle potentiomètres.','Panne fréquente essence — base technique','Moteur']];
+const T_EV=[
+['Défaut de charge (OBC / calculateur)','Charge interrompue ou lente, voyant prise, message défaut de charge.',['P0C78','P1E00','Codes HV constructeur'],'Contrôle connecteur/câble/borne, diagnostic onduleur embarqué et logiciel BMS.','Panne fréquente VE — base technique','Électrique'],
+['Connecteur CCS : surchauffe / oxydation','Échauffement prise, coupures en charge rapide, traces de brûlure.',['Codes constructeur prise de charge'],'Contrôle/entretien connecteur CCS, thermographie en charge, remplacement prise si nécessaire.','Panne fréquente VE — base technique','Électrique'],
+['Batterie 12V auxiliaire faible','Système qui ne démarre pas, alertes multiples, écran noir, mise en veille erratique.',['B-codes constructeur','U0100'],'Contrôle/remplacement batterie 12V, vérifier convertisseur DC-DC et parasitage.','Panne fréquente VE — base technique','Électrique'],
+['Batterie HT : défaut d\u2019isolement','Alerte batterie haute tension, immobilisation possible, isolation dégradée.',['P0AA6','P0AA5','Codes HV constructeur'],'Diagnostic isolement (BMS), contrôle câbles orange et connecteurs HV, intervention agréée uniquement.','Panne fréquente VE — base technique','Électrique'],
+['Thermique batterie : pompe/circuit','Limitation charge/puissance, alerte température batterie.',['P0A78','P2632','Codes HV constructeur'],'Contrôle pompe de refroidissement batterie, niveau/qualité liquide, radiateur et ventilation.','Panne fréquente VE — base technique','Électrique'],
+['Régénération / onduleur de traction','À-coups en décélération, régénération inopérante, voyant système.',['P0562','P1E00','Codes HV constructeur'],'Mise à jour logiciel, diagnostic onduleur, contrôle capteur de pédale et BMS.','Panne fréquente VE — base technique','Électrique']];
+const T_HY=[
+['Onduleur hybride : refroidissement','Voyant hybride, mode dégradé, bruit de pompe, surchauffe onduleur.',['P0A78','P0A93','P3024'],'Contrôle pompe/liquide de refroidissement onduleur, purge, mise à jour logiciel.','Panne connue hybrides — base technique','Électrique'],
+['Convertisseur DC-DC','Batterie 12V non rechargée, alertes électriques multiples.',['P0C73','P0562','Codes constructeur'],'Contrôle tension sortie DC-DC, remplacement si hors spécifications.','Panne connue hybrides — base technique','Électrique'],
+['Batterie hybride : équilibrage cellules','Autonomie électrique réduite, à-coups, voyant hybride, SOC irrégulier.',['P0A80','P3000-series','Codes constructeur'],'Diagnostic équilibrage BMS, contrôle modules/ventilation batterie, campagne éventuelle.','Panne connue hybrides — base technique','Électrique'],
+['Transmission e-CVT / train épicycloïdal','Bruit de moulinage anormal, patinage, à-coups en accélération.',['P0700','P0715','Codes constructeur'],'Contrôle niveau/état huile transmission, diagnostic MG1/MG2, remplacement si nécessaire.','Panne connue hybrides — base technique','Transmission'],
+['Circuit de refroidissement hybride','Fuite LDR circuit onduleur/batterie, voyant hybride, surchauffe.',['P3024','Codes constructeur'],'Recherche fuite, remplacement pompe/liquide, contrôle vase d\u2019expansion dédié.','Panne connue hybrides — base technique','Électrique']];
+const T_GPL=[
+['Détendeur/vaporisateur GPL','Ralenti instable au GPL, calage à chaud, passage essence/GPL aléatoire.',['P0171','P0174','Codes GPL constructeur'],'Réfection/remplacement détendeur, contrôle membrane et réchauffage.','Panne fréquente GPL — base technique','Moteur'],
+['Injecteurs GPL : débit déviant','Fonctionnement irrégulier au GPL, consommation, codes mélange.',['P0200','P0201','P0172'],'Contrôle/étalonnage rampe injecteurs GPL, remplacement injecteurs défectueux.','Panne fréquente GPL — base technique','Moteur']];
+const T_M=[
+['Capteur de vitesse roue ABS/ESP','Voyant ABS/ESP, régulateur indisponible, freinage sans assistance ABS.',['C0035','C0040','C0045','C0050'],'Contrôle capteur + câblage + cible, remplacement capteur roue, effacement codes.','Panne fréquente toutes marques — base technique','Électronique'],
+['ADAS : calibration caméra/radar','Alertes régulateur adaptatif/freinage auto, témoins ADAS après pare-brise ou choc.',['U-codes ADAS','C1103 (selon constructeur)'],'Calibration statique/dynamique caméra & radar obligatoire après toute intervention vitrage/train avant.','Préconisation générale ADAS','Électronique'],
+['Contacteur tournant airbag (clockspring)','Voyant airbag, klaxon/commandes au volant HS, bruit de frottement.',['B1000','B1900 (selon constructeur)'],'Remplacement contacteur tournant, contrôle nappe et connecteurs sous volant.','Panne fréquente toutes marques — base technique','Électronique'],
+['Calculateur airbag : verrouillage après choc','Voyant airbag permanent, données de choc enregistrées, module verrouillé.',['B-codes crash data constructeur'],'Relecture/reprogrammation ou remplacement calculateur airbag après contrôle structure.','Préconisation sécurité — base technique','Électronique'],
+['Tablette multimédia : écran noir, redémarrages','Écran qui fige/redémarre, perte Bluetooth/navigation, bootloop.',['U0155','U10300','U1233 (selon constructeur)'],'Mise à jour firmware, reset usine, remplacement unité multimédia si nécessaire.','Panne fréquente toutes marques — base technique','Électronique'],
+['Boîtier servitude BSI/BCM : fonctions erratiques','Feux/essuie-vitres/centralisation aléatoires, voyants multiples, parasitage.',['U-codes carrosserie','B-codes constructeur'],'Contrôle connectiques/humidité du boîtier, mise à jour, remplacement BSI/BCM + télécodage.','Panne fréquente toutes marques — base technique','Électronique'],
+['Direction assistée électrique','Alerte direction, assistance variable ou absente, bruit de pompe électrique.',['C0500','C0545','U0131'],'Contrôle connectique/capteur couple, mise à jour logiciel colonne, remplacement groupe si requis.','Panne fréquente toutes marques — base technique','Électronique'],
+['Capteurs TPMS : perte de signal','Voyant pression pneus malgré pression correcte, capteurs muets.',['C0750','C0754','C0758','C0762'],'Réapprentissage capteurs, remplacement capteur HS/pile, contrôle récepteur.','Panne fréquente toutes marques — base technique','Électronique'],
+['Pulseur/résistance chauffage-clim','Perte ventilation, vitesse 4 uniquement, bruit de pulseur.',['B1421','B1431 (selon constructeur)'],'Remplacement résistance/pulseur, contrôle connecteur échauffé.','Panne fréquente toutes marques — base technique','Électronique'],
+['Lève-vitre avant : descente/remontée','Vitre qui descend seul, blocage, anti-pincement actif sans obstacle.',['B-codes vitres constructeur'],'Contrôle moteur/câbles/coulisseaux, réinitialisation anti-pincement.','Panne fréquente toutes marques — base technique','Électronique'],
+['Centralisation / télécommande','Portes qui ne se verrouillent plus, télécommande inopérante.',['B3028','B3031 (selon constructeur)'],'Contrôle piles/récepteur, serrures et faisceau de porte, réapprentissage télécommande.','Panne fréquente toutes marques — base technique','Électronique'],
+['Circuit de charge : batterie/alternateur','Voyant batterie, démarrage faible, tension instable.',['P0562','P0563','P0620'],'Contrôle tension charge/courroie, test batterie et alternateur, contrôle masse châssis.','Panne fréquente toutes marques — base technique','Électrique'],
+['Capteurs aide au stationnement','Bips continus ou inopérants, message park assist indisponible.',['Codes park assist constructeur'],'Contrôle/nettoyage capteurs, diagnostic faisceau, remplacement capteur défectueux.','Panne fréquente toutes marques — base technique','Électronique'],
+['Réseau multiplexé CAN : perte communication','Multiples défauts U, systèmes inopérants simultanément, veille perturbée.',['U0100','U0121','U0155'],'Contrôle connectiques/boîtiers sur réseau CAN, mesure résistance 60 Ω, isolation du défaut.','Panne fréquente toutes marques — base technique','Électronique'],
+['Main-libre / démarrage sans clé','Non-détection clé, démarrage refusé, poignée inactive.',['B-codes immo constructeur'],'Contrôle pile clé/antennes, réapprentissage, diagnostic calculateur immo.','Panne fréquente toutes marques — base technique','Électronique'],
+['Contacteur pédale de frein','Feux stop intermittents, démarrage refusé (BVA/VE), alerte freinage.',['P0504'],'Contrôle/réglage/remplacement contacteur pédale de frein.','Panne fréquente toutes marques — base technique','Électronique'],
+['Compresseur clim : embrayage/régulation','Clim inopérante, bruit compresseur, code capteur pression.',['P0532','P0533','P0645'],'Contrôle charge/pression, embrayage ou vanne de régulation, capteur pression.','Panne fréquente toutes marques — base technique','Électronique'],
+['Module éclairage : feux LED/feux de jour','Feux diurnes défaillants, message éclairage, LED qui clignotent.',['B1310','B1320 (selon constructeur)'],'Contrôle modules LED/faisceau, remplacement bandeau/module selon diagnostic.','Panne fréquente toutes marques — base technique','Électronique']];
+
+/* Règles familles spécifiques (corrélation stricte marque/moteur) */
+const FAM=[
+{re:/PureTech|VTi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'Courroie de distribution immergée : dégradation prématurée',s:'Voyant moteur, ralenti instable, perte de puissance, risque casse moteur (débris dans pompe à huile).',d:['P0016','P0300','P0301','P0513'],f:'Remplacement courroie + crépine + huile spécifiée, surveillance renforcée avant 6 ans/100 000 km.',src:'Campagnes Stellantis / Rappel Conso'},
+{re:/1\.5 BlueHDi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'1.5 BlueHDi (DV5) : chaîne d\u2019arbre à cames',s:'Bruit métallique à froid, voyant moteur, risque rupture chaîne 7 mm.',d:['P0016','P0008'],f:'Contrôle/chaîne renforcée — campagnes constructeur, contrôle réseau.',src:'Campagnes Stellantis / Rappel Conso'},
+{re:/dCi/i,brands:['Renault','Dacia','Nissan'],cat:'Moteur',t:'Base K9K : injecteurs, pompe HP et joints',s:'Perte de puissance, démarrage difficile, limaille, odeur gazole.',d:['P0087','P0191','P0200'],f:'Contrôle circuit HP, injecteurs et joints, filtre GO, rinçage si limaille.',src:'Cas connus K9K — base technique'},
+{re:/1\.2 TCe/i,brands:['Renault','Dacia'],cat:'Moteur',t:'1.2 TCe (H5Ft) : consommation d\u2019huile',s:'Consommation huile élevée, ratés, bougies encrassées.',d:['P0171','P0300','P0016'],f:'Suivi consommation huile constructeur, bougies/bobines, intervention réseau possible.',src:'Campagnes réseau / cas connus'},
+{re:/^TSI (90|95|110|115|130|150)$|^1\.0 TSI|^1\.2 TSI|^1\.4 TSI|^1\.5 TSI/i,brands:['Volkswagen','Škoda','SEAT','CUPRA','Audi'],cat:'Transmission',t:'Boîte DSG7 DQ200 : mécatronique/embrayages (versions DSG)',s:'À-coups, patinage, bruits, perte de propulsion.',d:['P17BF','P0841','P0715'],f:'Mise à jour logiciel, remplacement mécatronique/kit embrayages selon diagnostic.',src:'Cas connus DQ200 — base technique'},
+{re:/T-GDi/i,brands:['Hyundai','Kia'],cat:'Moteur',t:'Contrôle coussinets KSDS (familles Gamma/Theta)',s:'Bruit moteur, risque serrage ; surveillance par capteur cliquetis.',d:['P1326'],f:'Contrôle KSDS, remplacement moteur si requis selon campagne applicable.',src:'NHTSA — campagnes Hyundai/Kia'},
+{re:/EcoBoost/i,brands:['Ford'],cat:'Moteur',t:'EcoBoost : refroidissement / durites à surveiller',s:'Surchauffe, fuite LDR, voyant température.',d:['P0217','P0118','P21A7'],f:'Contrôle circuit refroidissement, durites et vase d\u2019expansion.',src:'Cas connus Ford — base technique'},
+{re:/Multijet|JTDM/i,brands:['Fiat','Alfa Romeo','Jeep'],cat:'Moteur',t:'Multijet/JTDM : EGR et injecteurs',s:'Perte de puissance, ralenti irrégulier, voyant moteur.',d:['P0401','P0201','P0204'],f:'Nettoyage/remplacement EGR, contrôle injecteurs.',src:'Pannes fréquentes Multijet — base technique'},
+{re:/e-|Electric|EV|ë-|R110|R135|Ioniq 5|EV6|EV9|MG4|Model|ID\.|e-tron|Taycan|Ariya|Leaf|Zoe|Spring|Bolt|Mach-E|Pro Performance|Pro 170|Pure 1|GTX/i,brands:[],cat:'Électrique',t:'Surveillance batterie HT : contrôle périodique santé/campagnes',s:'Vérifier état de santé batterie, historique de charge rapide, alertes éventuelles.',d:['Codes HV constructeur'],f:'Rapport SOH batterie, contrôle campagnes constructeur applicables au VIN.',src:'Préconisation VE — base technique'}];
+const FAM_MODEL=[
+{re:/^ID\.4$|^ID\.5$/,brands:['Volkswagen'],cat:'Électrique',t:'Modules batterie HT : campagnes 2023–2024 (risque thermique)',s:'Alertes batterie, limitation de charge possible sur lots concernés.',d:['Codes HV constructeur (BMS)'],f:'Diagnostic modules, mise à jour, remplacement modules ; charge ≤ 80 % en attente.',src:'NHTSA 23V-225 / campagnes UE'},
+{re:/^Zoe$/,brands:['Renault'],cat:'Électrique',t:'Charge : connecteur/trappe et calculateur de charge',s:'Charge interrompue, voyant prise, lenteur de charge.',d:['P0C78','Codes constructeur'],f:'Contrôle trappe/connecteur, câble, borne et calculateur.',src:'Cas fréquents Zoe — base technique'}];
+
+/* ================= INDEXEDDB ================= */
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const db=e.target.result;['brands','models','engines','sheets'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:'id'});});};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function dbAll(store){const db=await idb();return new Promise((res,rej)=>{const q=db.transaction(store).objectStore(store).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error);});}
+async function dbPut(store,val){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).put(val);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}
+async function dbBulk(store,vals){const db=await idb();for(let i=0;i<vals.length;i+=2000){await new Promise((res,rej)=>{const tx=db.transaction(store,'readwrite');vals.slice(i,i+2000).forEach(v=>tx.objectStore(store).put(v));tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}}
+async function dbDel(store,id){const db=await idb();return new Promise(res=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(id);tx.oncomplete=()=>res();});}
+async function dbClear(store){const db=await idb();return new Promise(res=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=()=>res();});}
+
+/* ================= GÉNÉRATION MASSIVE ================= */
+const h=s=>{let x=7;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x.toString(36);};
+function buildAllSheets(models,engines){
+ const out=[],seen=new Set();
+ const push=(b,m,e,cat,titre,sym,dtc,fix,src,off)=>{const id='g'+h([b,m,e||'',titre].join('|'));if(seen.has(id))return;seen.add(id);out.push({id,b,m,e:e||'',cat,titre,sym,dtc,fix,src,off:off?1:0});};
+ /* 1) Fiches manuelles */
+ SEED_SHEETS.forEach(s=>push(s.b,s.m,s.e||'',s.cat,s.titre,s.sym,s.dtc,s.fix,s.src,s.off));
+ /* 2) Fiches famille par motorisation */
+ engines.forEach(x=>{
+  const fam=FAM.filter(r=>(!r.brands.length||r.brands.includes(x.b))&&r.re.test(x.e));
+  fam.forEach(r=>push(x.b,x.m,x.e,r.cat,r.t,r.s,r.d,r.f,r.src));
+  const fm=FAM_MODEL.filter(r=>r.brands.includes(x.b)&&r.re.test(x.m));
+  fm.forEach(r=>push(x.b,x.m,x.e,r.cat,r.t,r.s,r.d,r.f,r.src));
+ });
+ /* 3) Fiches génériques par motorisation (selon carburant) */
+ engines.forEach(x=>{
+  const T=x.fuel==='diesel'?T_D:x.fuel==='essence'?T_E:(x.fuel==='électrique')?T_EV:(x.fuel==='GPL')?T_GPL:(x.fuel==='hydrogène')?T_EV:T_HY;
+  T.forEach(([t,s,d,f,src,cat])=>push(x.b,x.m,x.e,cat,t,s,d,f,src));
+ });
+ /* 4) Fiches génériques par modèle (électronique/électrique véhicule) */
+ models.forEach(x=>T_M.forEach(([t,s,d,f,src,cat])=>push(x.b,x.m,'',cat,t,s,d,f,src)));
+ return out;
+}
+
+/* ================= SEED ================= */
+async function seedIfEmpty(){
+ if(localStorage.getItem(SEED_FLAG))return;
+ const brands=SEED_BRANDS.map(([name,origin])=>({id:name,name,origin}));
+ const models=[];Object.keys(SEED_MODELS).forEach(b=>SEED_MODELS[b].forEach(m=>models.push({id:b+'|'+m,b,m})));
+ const engines=[];Object.keys(SEED_ENGINES).forEach(k=>{const[b,m]=k.split('|');SEED_ENGINES[k].forEach(([e,fuel])=>engines.push({id:k+'|'+e,b,m,e,fuel}));});
+ const sheets=buildAllSheets(models,engines);
+ await dbBulk('brands',brands);await dbBulk('models',models);await dbBulk('engines',engines);await dbBulk('sheets',sheets);
+ localStorage.setItem(SEED_FLAG,'1');
+ console.log('[MRT by Kevin] Base générée : '+brands.length+' marques, '+models.length+' modèles, '+engines.length+' motorisations, '+sheets.length+' fiches.');
+ setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches'),800);
+}
+
+/* ================= ÉTAT & UI ================= */
+const $=s=>document.querySelector(s);
+const state={group:'ALL',brand:null,model:null,engine:null,fuel:'Tous',cat:'Tous',q:''};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';clearTimeout(t._x);t._x=setTimeout(()=>t.style.display='none',3500);}
+function closeDrawer(id){$('#'+id).style.display='none';}
+function closeModal(id){$('#'+id).classList.remove('show');}
+function openModal(id){$('#'+id).classList.add('show');}
+
+function renderGroupChips(){
+ const c=$('#groupChips');c.innerHTML='';
+ [['ALL','🌍 Toutes'],['FR',ORIGINS.FR],['EU',ORIGINS.EU],['AS',ORIGINS.AS],['US',ORIGINS.US]].forEach(([k,l])=>{
+  const d=document.createElement('div');d.className='chip'+(state.group===k?' active':'');d.textContent=l;
+  d.onclick=()=>{state.group=k;renderGroupChips();renderBrands();};c.appendChild(d);});
+}
+async function renderBrands(){
+ let brands=await dbAll('brands');
+ if(state.group!=='ALL')brands=brands.filter(b=>b.origin===state.group);
+ if(state.q)brands=brands.filter(b=>b.name.toLowerCase().includes(state.q));
+ brands.sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+ const g=$('#brandGrid');g.innerHTML='';
+ brands.forEach(b=>{const d=document.createElement('div');d.className='brandBtn';d.innerHTML='<b>'+esc(b.name)+'</b><span>'+ORIGINS[b.origin]+'</span>';d.onclick=()=>selectBrand(b.name);g.appendChild(d);});
+}
+async function selectBrand(name){
+ state.brand=name;state.model=null;state.engine=null;
+ $('#modelsDrawer').style.display='';$('#modelsTitle').textContent='🚗 Modèles — '+name;
+ closeDrawer('enginesDrawer');closeDrawer('sheetsDrawer');
+ await renderModels();$('#modelsDrawer').scrollIntoView({behavior:'smooth'});
+}
+async function renderModels(){
+ const models=(await dbAll('models')).filter(x=>x.b===state.brand);
+ const q=($('#modelSearch').value||'').toLowerCase();
+ const list=$('#modelList');list.innerHTML='';
+ if(!models.length)list.innerHTML='<p class="muted">Aucun modèle — ajoutez-le en mode admin (🔐).</p>';
+ models.filter(x=>!q||x.m.toLowerCase().includes(q)).sort((a,b)=>a.m.localeCompare(b.m,'fr')).forEach(x=>{
+  const d=document.createElement('div');d.className='rowItem';d.innerHTML='<b>'+esc(x.m)+'</b><span>modèles ▸</span>';
+  d.onclick=()=>selectModel(x.m);list.appendChild(d);});
+}
+async function selectModel(m){
+ state.model=m;state.engine=null;
+ $('#enginesDrawer').style.display='';$('#enginesTitle').textContent='⚙️ Motorisations — '+state.brand+' '+m;
+ closeDrawer('sheetsDrawer');renderFuelChips();await renderEngines();$('#enginesDrawer').scrollIntoView({behavior:'smooth'});
+}
+function renderFuelChips(){
+ const c=$('#fuelChips');c.innerHTML='';
+ FUELS.forEach(f=>{const d=document.createElement('div');d.className='chip'+(state.fuel===f?' active':'');d.textContent=f;
+ d.onclick=()=>{state.fuel=f;renderFuelChips();renderEngines();};c.appendChild(d);});
+}
+async function renderEngines(){
+ let eng=(await dbAll('engines')).filter(x=>x.b===state.brand&&x.m===state.model);
+ const all=eng;
+ if(state.fuel!=='Tous')eng=eng.filter(x=>x.fuel===state.fuel);
+ const list=$('#engineList');list.innerHTML='';
+ const every=document.createElement('div');every.className='rowItem';every.innerHTML='<b>📂 Toutes les fiches du modèle</b><span>'+all.length+' motorisations</span>';
+ every.onclick=()=>selectEngine(null);list.appendChild(every);
+ if(!eng.length)list.insertAdjacentHTML('beforeend','<p class="muted">Aucune motorisation '+state.fuel+' connue — ajoutez-la en mode admin (🔐).</p>');
+ eng.sort((a,b)=>a.e.localeCompare(b.e)).forEach(x=>{
+  const d=document.createElement('div');d.className='rowItem';d.innerHTML='<b>'+esc(x.e)+'</b><span>'+esc(x.fuel)+'</span>';
+  d.onclick=()=>selectEngine(x.e);list.appendChild(d);});
+}
+async function selectEngine(e){
+ state.engine=e;
+ $('#sheetsDrawer').style.display='';
+ $('#sheetsTitle').textContent='📋 Fiches — '+state.brand+' '+state.model+(e?' • '+e:'');
+ renderCatChips();await renderSheets();$('#sheetsDrawer').scrollIntoView({behavior:'smooth'});
+}
+function renderCatChips(){
+ const c=$('#catChips');c.innerHTML='';
+ CATS.forEach(k=>{const d=document.createElement('div');d.className='chip'+(state.cat===k?' active':'');d.textContent=k;
+ d.onclick=()=>{state.cat=k;renderCatChips();renderSheets();};c.appendChild(d);});
+}
+async function renderSheets(){
+ let sheets=(await dbAll('sheets')).filter(s=>s.b===state.brand&&s.m===state.model);
+ if(state.engine)sheets=sheets.filter(s=>!s.e||s.e===state.engine);
+ if(state.cat!=='Tous')sheets=sheets.filter(s=>s.cat===state.cat);
+ sheets.sort((a,b)=>(b.off||0)-(a.off||0));
+ const list=$('#sheetList');list.innerHTML='';
+ if(!sheets.length)list.innerHTML='<p class="muted">Aucune fiche locale pour cette sélection. Utilisez les boutons 🛰 de synchronisation officielle ci-dessus (en ligne) ou le mode admin.</p>';
+ sheets.slice(0,300).forEach(s=>{
+  const d=document.createElement('div');d.className='sheet';
+  d.innerHTML='<div class="l1"><span class="cat c-'+esc(s.cat)+'">'+esc(s.cat)+'</span><b>'+esc(s.titre)+'</b><span class="src '+(s.off?'off':'')+'">'+esc(s.src||'')+'</span></div>'+
+  '<div class="l2">📋 '+esc(s.sym||'')+'</div>'+
+  '<div class="l3">🔧 DTC : '+(s.dtc&&s.dtc.length?s.dtc.map(esc).join(' • '):'—')+'</div>'+
+  '<div class="l4">✅ '+esc(s.fix||'')+'</div>';
+  d.onclick=()=>openSheet(s);list.appendChild(d);});
+ if(sheets.length>300)list.insertAdjacentHTML('beforeend','<p class="muted">'+(sheets.length-300)+' autres fiches — affinez avec les filtres de catégorie.</p>');
+ $('#sheetsTitle').textContent='📋 Fiches ('+sheets.length+') — '+state.brand+' '+state.model+(state.engine?' • '+state.engine:'');
+}
+let CURRENT=null;
+function openSheet(s){
+ CURRENT=s;$('#smCat').textContent=s.cat;$('#smCat').className='cat c-'+s.cat;
+ $('#smVeh').textContent=s.b+' '+s.m+(s.e?' — '+s.e:'');
+ $('#smTitle').textContent=s.titre;$('#smSym').textContent=s.sym||'—';
+ $('#smDtc').textContent=s.dtc&&s.dtc.length?s.dtc.join(' • '):'—';
+ $('#smFix').textContent=s.fix||'—';$('#smSrc').textContent=s.src||'—';
+ $('#smDel').style.display=sessionStorage.getItem('mrt_admin')==='1'?'':'none';
+ openModal('sheetModal');
+}
+function printSheet(){
+ const s=CURRENT;if(!s)return;
+ $('#printSheet').innerHTML='<h1>Mes réponses technique by Kevin</h1><p><b>'+esc(s.b)+' '+esc(s.m)+(s.e?' — '+esc(s.e):'')+'</b> • Catégorie : '+esc(s.cat)+' • Édité le '+new Date().toLocaleDateString('fr-FR')+'</p>'+
+ '<div class="box"><b>'+esc(s.titre)+'</b><br>Symptômes : '+esc(s.sym||'—')+'<br>Codes DTC : '+(s.dtc&&s.dtc.length?esc(s.dtc.join(', ')):'—')+'<br>Préconisation : '+esc(s.fix||'—')+'<br>Source : '+esc(s.src||'—')+'</div>'+
+ '<p style="font-size:11px">Document informatif généré par l\u2019application. Confirmez toute campagne de rappel auprès des sources officielles (NHTSA, Rappel Conso, EU Safety Gate) et du réseau constructeur.</p>';
+ window.print();
+}
+async function deleteCurrentSheet(){if(!CURRENT)return;if(confirm('Supprimer cette fiche ?')){await dbDel('sheets',CURRENT.id);closeModal('sheetModal');renderSheets();toast('Fiche supprimée');}}
+
+/* ================= SYNCHRONISATION OFFICIELLE ================= */
+const stripAcc=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function classifyNHTSA(comp){const c=(comp||'').toLowerCase();if(/transmission|gear|clutch|driveshaft|axle/.test(c))return'Transmission';if(/electric|battery|charg|hybrid|inverter/.test(c))return'Électrique';if(/engine|fuel|turbo|cool|exhaust|throttle|inject/.test(c))return'Moteur';return'Électronique';}
+async function syncNHTSA(){
+ if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
+ if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
+ const make=stripAcc(state.brand).toUpperCase();let n=0;
+ const years=[];const Y=new Date().getFullYear();for(let y=Y+1;y>=Y-15;y--)years.push(y);
+ toast('Interrogation NHTSA…');
+ for(const y of years){
+  try{const r=await fetch('https://api.nhtsa.gov/recalls/recallsByVehicle?make='+encodeURIComponent(make)+'&model='+encodeURIComponent(state.model)+'&modelYear='+y);
+  const j=await r.json();
+  for(const rec of(j.results||[])){const id='nhtsa-'+rec.NHTSACampaignNumber;
+   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyNHTSA(rec.Component),titre:'Rappel NHTSA '+y+' : '+rec.Component,sym:rec.Summary||'—',dtc:['Voir rapport NHTSA '+rec.NHTSACampaignNumber],fix:(rec.Remedy?'Action : '+rec.Remedy:'Contacter le réseau '+state.brand),src:'NHTSA '+rec.NHTSACampaignNumber,off:1});n++;}
+  }catch(e){}
+ }
+ toast(n+' rappel(s) NHTSA importé(s) ✓');renderSheets();
+}
+async function syncRappelConso(){
+ if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
+ if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
+ toast('Interrogation Rappel Conso…');let n=0;
+ try{
+  const q=encodeURIComponent('search(produit,"'+state.brand+' '+state.model+'")');
+  const r=await fetch('https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappels-produits/records?limit=50&where='+q);
+  const j=await r.json();
+  for(const rec of(j.results||[])){const id='rc-'+h(JSON.stringify(rec));
+   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyNHTSA((rec.motif||'')+(rec.produit||'')),titre:'Rappel Conso : '+String(rec.motif||rec.produit||'Produit rappelé').slice(0,120),sym:(rec.produit||'')+(rec.risques?' — Risques : '+rec.risques:''),dtc:['Voir fiche Rappel Conso'],fix:rec.conduites_a_suivre||rec.url||'Voir fiche officielle',src:'Rappel Conso'+(rec.date_publication?' ('+String(rec.date_publication).slice(0,10)+')':''),off:1});n++;}
+ }catch(e){toast('API Rappel Conso indisponible — réessayez');}
+ if(n){toast(n+' fiche(s) Rappel Conso importée(s) ✓');renderSheets();}else toast('0 résultat Rappel Conso pour ce modèle');
+}
+
+/* ================= ADMIN ================= */
+function tryAdmin(){
+ if($('#adminPass').value===ADMIN_PASS){sessionStorage.setItem('mrt_admin','1');showAdminPanel();toast('Mode admin activé ✓');}
+ else toast('Mot de passe incorrect');
+}
+function showAdminPanel(){$('#adminGate').style.display='none';$('#adminPanel').style.display='';refreshAdmin();}
+async function refreshAdmin(){
+ const[b,m,e,s]=await Promise.all(['brands','models','engines','sheets'].map(dbAll));
+ $('#statsBox').innerHTML='<span class="stat"><b>'+b.length+'</b>marques</span><span class="stat"><b>'+m.length+'</b>modèles</span><span class="stat"><b>'+e.length+'</b>motorisations</span><span class="stat"><b>'+s.length.toLocaleString('fr-FR')+'</b>fiches</span>';
+ fillBrandSelects(b);
+}
+function fillBrandSelects(brands){
+ ['nmBrand','neBrand','nfBrand'].forEach(id=>{const sel=$('#'+id);sel.innerHTML='';brands.sort((a,b)=>a.name.localeCompare(b.name,'fr')).forEach(x=>{const o=document.createElement('option');o.value=x.name;o.textContent=x.name;sel.appendChild(o);});});
+}
+async function fillModelSelect(bSel,mSel){
+ const models=(await dbAll('models')).filter(x=>x.b===$('#'+bSel).value);
+ const sel=$('#'+mSel);sel.innerHTML='';models.forEach(x=>{const o=document.createElement('option');o.value=x.m;o.textContent=x.m;sel.appendChild(o);});
+ if(mSel==='nfModel')fillEngineSelect();
+}
+async function fillEngineSelect(){
+ const eng=(await dbAll('engines')).filter(x=>x.b===$('#nfBrand').value&&x.m===$('#nfModel').value);
+ const sel=$('#nfEngine');sel.innerHTML='<option value="">(toutes motorisations)</option>';
+ eng.forEach(x=>{const o=document.createElement('option');o.value=x.e;o.textContent=x.e;sel.appendChild(o);});
+}
+function adminTab(btn,id){document.querySelectorAll('.adminTabs .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.adminSec').forEach(s=>s.classList.remove('show'));$('#'+id).classList.add('show');}
+async function addBrand(){const n=$('#nbName').value.trim();if(!n)return toast('Nom requis');await dbPut('brands',{id:n,name:n,origin:$('#nbOrigin').value});toast('Marque ajoutée ✓');refreshAdmin();renderBrands();}
+async function addModel(){const b=$('#nmBrand').value,n=$('#nmName').value.trim();if(!n)return toast('Nom requis');await dbPut('models',{id:b+'|'+n,b,m:n});toast('Modèle ajouté ✓');refreshAdmin();if(state.brand===b)renderModels();}
+async function addEngine(){const b=$('#neBrand').value,m=$('#neModel').value,e=$('#neLabel').value.trim(),f=$('#neFuel').value;if(!e)return toast('Libellé requis');await dbPut('engines',{id:b+'|'+m+'|'+e,b,m,e,fuel:f});toast('Motorisation ajoutée ✓');refreshAdmin();if(state.brand===b&&state.model===m)renderEngines();}
+async function addSheet(){
+ const b=$('#nfBrand').value,m=$('#nfModel').value,e=$('#nfEngine').value,titre=$('#nfTitle').value.trim();
+ if(!titre)return toast('Titre requis');
+ await dbPut('sheets',{id:'u'+h(b+m+e+titre+Date.now()),b,m,e,cat:$('#nfCat').value,titre,sym:$('#nfSym').value,dtc:$('#nfDtc').value.split(',').map(s=>s.trim()).filter(Boolean),fix:$('#nfFix').value,src:$('#nfSrc').value||'Ajout admin'});
+ toast('Fiche enregistrée ✓');$('#nfTitle').value=$('#nfSym').value=$('#nfDtc').value=$('#nfFix').value=$('#nfSrc').value='';
+}
+async function doImport(){
+ const f=$('#importFile').files[0];if(!f)return toast('Choisissez un fichier JSON');
+ try{
+  const data=JSON.parse(await f.text());let n=0;
+  const putAll=async(store,arr)=>{if(!Array.isArray(arr))return;arr.forEach(x=>{if(!x.id)x.id='i'+h(JSON.stringify(x));});await dbBulk(store,arr);n+=arr.length;};
+  await putAll('brands',data.brands);await putAll('models',data.models);await putAll('engines',data.engines);
+  await putAll('sheets',Array.isArray(data)?data:data.sheets);
+  toast(n+' entrée(s) importée(s) ✓');refreshAdmin();renderBrands();if(state.model)renderSheets();
+ }catch(e){toast('Fichier invalide : '+e.message);}
+}
+async function exportAll(){
+ const[b,m,e,s]=await Promise.all(['brands','models','engines','sheets'].map(dbAll));
+ const blob=new Blob([JSON.stringify({brands:b,models:m,engines:e,sheets:s},null,1)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mes-reponses-technique-export.json';a.click();
+}
+async function resetBase(){if(!confirm('Régénérer toute la base locale (≥ 12 000 fiches) ?'))return;for(const s of['brands','models','engines','sheets'])await dbClear(s);localStorage.removeItem(SEED_FLAG);await seedIfEmpty();refreshAdmin();renderBrands();toast('Base régénérée ✓');}
+$('#bgFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{localStorage.setItem('mrt_bg',rd.result);applyBg();toast('Fond d\u2019écran appliqué ✓');}catch(err){toast('Image trop lourde (max ~3 Mo)');}};rd.readAsDataURL(f);});
+function resetBg(){localStorage.removeItem('mrt_bg');applyBg();}
+function applyBg(){const url=localStorage.getItem('mrt_bg');const bg=$('#bg');if(url){bg.style.backgroundImage='url('+url+')';bg.querySelector('svg').style.display='none';}else{bg.style.backgroundImage='';bg.querySelector('svg').style.display='';}}
+
+/* ================= RÉSEAU / PARTAGE / INSTALL ================= */
+function netBadge(){const on=navigator.onLine;const el=$('#netBadge');let t='';try{t=navigator.connection&&navigator.connection.effectiveType||'';}catch(e){}
+ el.textContent=on?('En ligne • '+((t==='4g')?'4G/5G':t?t.toUpperCase():'WiFi')):'Hors ligne • données locales';
+ el.className='badge '+(on?'on':'off');}
+window.addEventListener('online',()=>{netBadge();toast('Connexion rétablie ✓');});
+window.addEventListener('offline',netBadge);
+$('#btnShare').onclick=async()=>{
+ const data={title:'Mes réponses technique by Kevin',text:'App de diagnostics, rappels & pannes connues — '+document.title,url:location.href};
+ try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);toast('Lien copié — collez-le dans votre SMS/mail ✓');}}catch(e){}
+};
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#btnInstall').style.display='';});
+$('#btnInstall').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt=null;$('#btnInstall').style.display='none';};
+
+/* ================= DÉMARRAGE ================= */
+$('#btnAdmin').onclick=()=>{openModal('adminModal');if(sessionStorage.getItem('mrt_admin')==='1')showAdminPanel();};
+$('#brandSearch').addEventListener('input',e=>{state.q=e.target.value.toLowerCase();renderBrands();});
+$('#modelSearch').addEventListener('input',renderModels);
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+(async function init(){
+ netBadge();applyBg();await seedIfEmpty();renderGroupChips();await renderBrands();
+ if('serviceWorker'in navigator){try{await navigator.serviceWorker.register('sw.js');}catch(e){}}
+})();
+</script>
+</body>
+</html>
