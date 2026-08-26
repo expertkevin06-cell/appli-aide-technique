@@ -49,6 +49,9 @@ input,select,textarea{font:inherit;color:var(--txt);background:#0e1830;border:1p
 .cat{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;flex-shrink:0}
 .c-Moteur{background:#7c3aed33;color:#c4b5fd}.c-Transmission{background:#0891b233;color:#67e8f9}
 .c-Électronique{background:#d9770633;color:#fcd34d}.c-Électrique{background:#05966933;color:#6ee7b7}
+.c-Airbag{background:#dc262633;color:#fca5a5}.c-Ceinture{background:#9333ea33;color:#d8b4fe}
+.c-ABS{background:#ea580c33;color:#fdba74}.c-ADAS{background:#0284c733;color:#7dd3fc}
+.c-Caméra{background:#4f46e533;color:#a5b4fc}.c-Freinage{background:#b91c1c33;color:#fecaca}
 .src{margin-left:auto;font-size:10px;color:var(--mut);flex-shrink:0}
 .src.off{color:var(--acc2);font-weight:700}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(4,8,18,.8);display:none;align-items:flex-end;justify-content:center}
@@ -67,6 +70,8 @@ footer{margin-top:30px;text-align:center;color:var(--mut);font-size:11px;line-he
 .muted{color:var(--mut);font-size:12px}
 hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 #printSheet{display:none}
+.syncRow{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.syncRow button{flex:1;min-width:140px}
 @media print{body>*{display:none!important}#printSheet{display:block!important;color:#000;font-size:13px}#printSheet h1{font-size:18px}#printSheet .box{border:1px solid #000;padding:10px;margin:8px 0;border-radius:6px}}
 </style>
 </head>
@@ -121,17 +126,19 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  <div class="drawer" id="sheetsDrawer" style="display:none">
   <h2><button class="back" onclick="closeDrawer('sheetsDrawer')">←</button><span id="sheetsTitle"></span></h2>
   <div class="chips" id="catChips"></div>
-  <div class="actions" style="margin:0 0 10px">
-   <button onclick="syncNHTSA()">🛰 Synchroniser NHTSA (officiel)</button>
-   <button onclick="syncRappelConso()">🛰 Rappel Conso (officiel)</button>
-   <span class="muted">Import des campagnes officielles du véhicule sélectionné (connexion requise)</span>
+  <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — interroge les 3 bases publiques (NHTSA, Rappel Conso, Safety Gate UE) et importe en temps réel les campagnes du véhicule sélectionné (connexion requise). Les fiches sont ajoutées à la base locale et restent accessibles hors ligne.</div>
+  <div class="syncRow">
+   <button onclick="syncNHTSA()">🇺🇸 NHTSA (US)</button>
+   <button onclick="syncRappelConso()">🇫🇷 Rappel Conso (FR)</button>
+   <button onclick="syncSafetyGate()">🇪🇺 Safety Gate (UE)</button>
+   <button class="primary" onclick="syncAll()">⚡ Synchroniser les 3 sources</button>
   </div>
   <div id="sheetList"></div>
  </div>
 
  <footer>
-  Développé &amp; hébergé via <b>GitHub</b> • Sources officielles : NHTSA (US) · Rappel Conso (FR) · EU Safety Gate<br>
-  ⚠️ Base informative : confirmez toujours une campagne auprès du constructeur / réseau.<br>
+  Développé &amp; hébergé via <b>GitHub</b> • Sources officielles : NHTSA (US) · Rappel Conso (FR) · EU Safety Gate (UE)<br>
+  ⚠️ Base informative : confirmez toujours une campagne auprès du constructeur / réseau avec le VIN.<br>
   © Kevin — Mes réponses technique
  </footer>
 </div>
@@ -168,8 +175,8 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 
   <div class="adminSec show" id="tabStats">
    <div id="statsBox"></div><hr>
-   <p class="muted">La base est générée au premier lancement (≥ 12 000 fiches corrélées marque/modèle/motorisation). Les campagnes officielles s'ajoutent via les boutons 🛰 NHTSA / Rappel Conso et l'import JSON (Safety Gate…). Tout est stocké localement (IndexedDB) et disponible hors ligne.</p>
-   <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base locale</button></div>
+   <p class="muted">La base démarre avec ~12 000 fiches corrélées. Les campagnes officielles (NHTSA, Rappel Conso, Safety Gate) s'ajoutent en temps réel via les boutons 🛰 (connexion requise). Tout est stocké localement (IndexedDB) et consultable hors ligne.</p>
+   <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base locale</button><button onclick="clearOfficial()">🗑 Effacer uniquement les fiches officielles</button></div>
   </div>
 
   <div class="adminSec" id="tabAdd">
@@ -197,20 +204,20 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
      <select id="nfBrand" onchange="fillModelSelect('nfBrand','nfModel')" style="min-width:130px"></select>
      <select id="nfModel" onchange="fillEngineSelect()" style="min-width:130px"></select>
      <select id="nfEngine" style="min-width:170px"><option value="">(toutes motorisations)</option></select>
-     <select id="nfCat"><option>Moteur</option><option>Transmission</option><option>Électronique</option><option>Électrique</option></select>
+     <select id="nfCat"><option>Moteur</option><option>Transmission</option><option>Électronique</option><option>Électrique</option><option>Airbag</option><option>Ceinture</option><option>ABS</option><option>ADAS</option><option>Caméra</option><option>Freinage</option></select>
     </div>
     <input id="nfTitle" placeholder="Titre de la panne / campagne">
     <textarea id="nfSym" rows="2" placeholder="Symptômes"></textarea>
     <input id="nfDtc" placeholder="Codes DTC séparés par des virgules (ex : P0016, P0300)">
     <textarea id="nfFix" rows="2" placeholder="Préconisation / action"></textarea>
-    <input id="nfSrc" placeholder="Source (ex : NHTSA 24V-xxx, Rappel Conso, Safety Gate…)">
+    <input id="nfSrc" placeholder="Source (ex : NHTSA 24V-xxx, Safety Gate A12/xxxx…)">
     <button class="primary" onclick="addSheet()">Enregistrer la fiche</button>
    </div>
   </div>
 
   <div class="adminSec" id="tabImport">
    <h3>📥 Import massif JSON</h3>
-   <p class="muted">Format accepté : <code>{"sheets":[{b,m,e,cat,titre,sym,dtc:[],fix,src}]}</code> ou <code>{"brands":[],"models":[],"engines":[],"sheets":[]}</code>. Convient aussi pour convertir le CSV Safety Gate.</p>
+   <p class="muted">Format : <code>{"sheets":[{b,m,e,cat,titre,sym,dtc:[],fix,src}]}</code> ou <code>{"brands":[],"models":[],"engines":[],"sheets":[]}</code>. Idéal pour importer le CSV Safety Gate converti.</p>
    <input type="file" id="importFile" accept=".json,application/json" style="margin:8px 0">
    <button class="primary" onclick="doImport()">Importer</button>
    <hr>
@@ -234,9 +241,9 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 'use strict';
 /* ================= CONSTANTES ================= */
 const ADMIN_PASS='Kevin83600';
-const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v6';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v7';
 const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
-const CATS=['Tous','Moteur','Transmission','Électronique','Électrique'];
+const CATS=['Tous','Moteur','Transmission','Électronique','Électrique','Airbag','Ceinture','ABS','ADAS','Caméra','Freinage'];
 const FUELS=['Tous','essence','diesel','hybride','hybride rechargeable','électrique','GPL','hydrogène'];
 
 /* ================= MARQUES ================= */
@@ -489,15 +496,15 @@ const SEED_SHEETS=[
 {id:'m9',b:'Volkswagen',m:'Golf',e:'1.0 TSI 110',cat:'Transmission',titre:'DSG7 DQ200 : mécatronique / embrayages',sym:'À-coups, bruits, patinage, perte de propulsion en circulation.',dtc:['P17BF','P0841','P0715'],fix:'Mise à jour logiciel boîte, remplacement mécatronique ou kit embrayages selon diagnostic.',src:'Cas connus DQ200 — à confirmer'},
 {id:'m10',b:'BMW',m:'Série 3',e:'320d',cat:'Moteur',titre:'N47/N57 : chaîne de distribution (côté boîte)',sym:'Bruit de chaîne au ralenti/à froid, risque de rupture.',dtc:['P0016','P0008'],fix:'Contrôle bruit chaîne, remplacement kit chaîne si nécessaire.',src:'Cas connus N47 — à confirmer'},
 {id:'m11',b:'Toyota',m:'Prius',e:'Hybrid 122',cat:'Électrique',titre:'Pompe de refroidissement de l\u2019onduleur (rappel)',sym:'Surchauffe onduleur, voyant hybride, mode dégradé.',dtc:['P0A78','P3024'],fix:'Remplacement pompe de refroidissement inverter (campagne Toyota).',src:'NHTSA / campagnes Toyota hybrides'},
-{id:'m12',b:'Honda',m:'Civic',e:'',cat:'Électronique',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement gonfleur airbag passager/conducteur selon campagne — gratuit en réseau.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
-{id:'m13',b:'Toyota',m:'Yaris',e:'',cat:'Électronique',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement du gonfleur selon campagne.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
+{id:'m12',b:'Honda',m:'Civic',e:'',cat:'Airbag',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement gonfleur airbag passager/conducteur selon campagne — gratuit en réseau.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
+{id:'m13',b:'Toyota',m:'Yaris',e:'',cat:'Airbag',titre:'Airbag Takata : gonfleur défectueux (rappel mondial)',sym:'Risque de projection d\u2019éclats en cas de déploiement.',dtc:['—'],fix:'Remplacement du gonfleur selon campagne.',src:'NHTSA / Safety Gate — rappel mondial Takata'},
 {id:'m14',b:'Nissan',m:'Qashqai',e:'1.2 DIG-T 115',cat:'Moteur',titre:'1.2 DIG-T (H5Ft) : consommation d\u2019huile & chaîne',sym:'Consommation d\u2019huile, ratés, bruit de chaîne.',dtc:['P0171','P0300','P0016'],fix:'Suivi consommation huile, chaîne/tendeurs, interventions réseau possibles.',src:'Cas connus H5Ft — à confirmer'},
 {id:'m15',b:'Hyundai',m:'Tucson',e:'1.6 T-GDi 150',cat:'Moteur',titre:'Moteurs Theta/Gamma : coussinets de bielle (rappels US/KSDS)',sym:'Bruit moteur, serrage moteur possible ; détection par capteur de cliquetis.',dtc:['P1326'],fix:'Contrôle KSDS, remplacement moteur si requis (campagnes Hyundai/Kia).',src:'NHTSA — campagnes Theta II / KSDS'},
 {id:'m16',b:'Kia',m:'Sportage',e:'',cat:'Moteur',titre:'Moteurs Theta II : risque de serrage / incendie (rappels)',sym:'Bruits moteur, voyant huile, risque d\u2019incendie moteur.',dtc:['P1326'],fix:'Mise à jour KSDS + contrôle/remplacement moteur selon campagne.',src:'NHTSA'},
 {id:'m17',b:'Ford',m:'Focus',e:'1.0 EcoBoost 125',cat:'Moteur',titre:'1.0 EcoBoost : durites de refroidissement / surchauffe',sym:'Surchauffe, fuite LDR, risque d\u2019endommagement moteur.',dtc:['P0217','P0118'],fix:'Contrôle circuit refroidissement, durites, vase d\u2019expansion ; interventions réseau connues.',src:'Cas connus 1.0 EcoBoost — à confirmer'},
 {id:'m18',b:'Ford',m:'Kuga',e:'2.5 Plug-in Hybrid 225',cat:'Électrique',titre:'Kuga PHEV : risque d\u2019incendie batterie (rappels 2020–2021)',sym:'Campagnes sur packs batterie ; mode EV restreint en attente.',dtc:['Codes HV constructeur'],fix:'Contrôle/remplacement modules batterie, mise à jour BMS.',src:'NHTSA / campagnes Ford PHEV'},
-{id:'m19',b:'Tesla',m:'Model 3',e:'',cat:'Électronique',titre:'Caméra de recul : câble/affichage (rappels logiciels & faisceau)',sym:'Image de recul absente ou figée.',dtc:['—'],fix:'Mise à jour OTA ou remplacement faisceau selon campagne.',src:'NHTSA 24V-051 et campagnes associées'},
-{id:'m20',b:'Tesla',m:'Model Y',e:'',cat:'Électronique',titre:'Autopilot : campagne de rappel logiciel',sym:'Comportement du régulateur adaptatif non conforme.',dtc:['—'],fix:'Mise à jour logicielle OTA (campagne NHTSA 23V-848).',src:'NHTSA'},
+{id:'m19',b:'Tesla',m:'Model 3',e:'',cat:'Caméra',titre:'Caméra de recul : câble/affichage (rappels logiciels & faisceau)',sym:'Image de recul absente ou figée.',dtc:['—'],fix:'Mise à jour OTA ou remplacement faisceau selon campagne.',src:'NHTSA 24V-051 et campagnes associées'},
+{id:'m20',b:'Tesla',m:'Model Y',e:'',cat:'ADAS',titre:'Autopilot : campagne de rappel logiciel',sym:'Comportement du régulateur adaptatif non conforme.',dtc:['—'],fix:'Mise à jour logicielle OTA (campagne NHTSA 23V-848).',src:'NHTSA'},
 {id:'m21',b:'Chevrolet',m:'Bolt EV',e:'65 kWh 200',cat:'Électrique',titre:'Batterie HT : risque d\u2019incendie (rappel massif GM/LG)',sym:'Cellules défectueuses sur lots donnés.',dtc:['Codes HV constructeur'],fix:'Diagnostic/remplacement modules ou pack complet ; limitation de charge en attente.',src:'NHTSA 20V-552 / 21V-315'},
 {id:'m22',b:'Hyundai',m:'Kona Electric',e:'Electric 204',cat:'Électrique',titre:'Kona Electric : batterie HT défectueuse (rappel mondial)',sym:'Risque d\u2019incendie en charge.',dtc:['Codes HV constructeur'],fix:'Remplacement du pack batterie selon campagne.',src:'NHTSA / campagnes Hyundai'},
 {id:'m23',b:'Fiat',m:'Tipo',e:'1.6 Multijet 130',cat:'Moteur',titre:'1.6 Multijet : vanne EGR et injecteurs',sym:'Perte de puissance, ralenti irrégulier, voyant moteur.',dtc:['P0401','P0201','P0204'],fix:'Nettoyage/remplacement EGR, contrôle injecteurs.',src:'Pannes fréquentes Multijet'},
@@ -506,7 +513,6 @@ const SEED_SHEETS=[
 {id:'m26',b:'Peugeot',m:'3008',e:'',cat:'Électronique',titre:'Tablette tactile / i-Cockpit : redémarrages, écran noir',sym:'Écran qui fige ou redémarre, perte fonctions multimédia.',dtc:['U-codes réseau multimédia'],fix:'Mise à jour firmware, reset, remplacement unité si nécessaire.',src:'Cas connus PSA — à confirmer'},
 {id:'m27',b:'Volkswagen',m:'Golf',e:'',cat:'Électronique',titre:'Système MIB / appel d\u2019urgence SOS défaillant',sym:'Erreur eCall, écran noir, reboots.',dtc:['U0155','U10300'],fix:'Mise à jour logicielle unité centrale ; campagnes connues sur Golf 8.',src:'Cas connus VW — à confirmer'},
 {id:'m28',b:'Dacia',m:'Duster',e:'1.5 dCi 110',cat:'Moteur',titre:'1.5 dCi (K9K) : injecteurs & pompe HP',sym:'Perte de puissance, démarrage difficile, limaille.',dtc:['P0087','P0200'],fix:'Contrôle circuit HP, injecteurs, filtre GO.',src:'Cas connus K9K'},
-/* ---- NOUVEAU : fiches dédiées R5 / R4 / Symbioz / Scénic E-Tech ---- */
 {id:'m29',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link (Google intégré) : écran noir, reboots, perte navigation',sym:'Écran multimédia figé ou qui redémarre en boucle, Google Maps/Assistant indisponibles après mise à jour FOTA.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour OpenR Link, réinitialisation usine, remplacement head unit si persistance.',src:'Cas signalés R5/R4 E-Tech — à confirmer via sources officielles'},
 {id:'m30',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Charge AC/DC : coupures ou puissance limitée',sym:'Charge qui s\u2019interrompt sur borne publique, puissance plafonnée, voyant prise.',dtc:['P0C78','Codes HV constructeur'],fix:'Mise à jour BMS/chargeur, contrôle connecteur CCS et câble, test sur autre borne.',src:'Cas signalés AmpR Small — base technique'},
 {id:'m31',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V : décharge rapide en veille',sym:'Véhicule « mort » après quelques jours sans rouler, alertes multiples, démarrage système impossible.',dtc:['B-codes constructeur','U0100'],fix:'Contrôle batterie 12V + gestion de veille (mise à jour logicielle), vérifier DC-DC.',src:'Cas signalés VE Renault — base technique'},
@@ -515,7 +521,7 @@ const SEED_SHEETS=[
 {id:'m34',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électrique',titre:'Charge rapide CCS : échauffement prise / limitation',sym:'Puissance de charge réduite, prise chaude, arrêts de charge en DC.',dtc:['P0C78','Codes HV constructeur'],fix:'Contrôle thermographie prise, nettoyage connecteur, mise à jour BMS, éviter charges 100 % successives.',src:'Cas signalés AmpR Small — base technique'},
 {id:'m35',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V auxiliaire : décharge en stationnement',sym:'Impossible de réveiller le véhicule, écran noir, klaxon faible.',dtc:['B-codes constructeur'],fix:'Remplacement 12V si capacité faible + mise à jour gestion veille.',src:'Cas signalés VE Renault — base technique'},
 {id:'m36',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Transmission',titre:'Boîte multimode E-Tech : à-coups à basse vitesse (crabots)',sym:'À-coups secs en redémarrage ou en urbain, claquement à l\u2019engagement, surtout moteur froid.',dtc:['P0700','P1811 (selon constructeur)'],fix:'Mise à jour calibration boîte, réapprentissage, contrôle crabots/synchroniseurs si persistance.',src:'Cas connus boîte E-Tech — base technique'},
-{id:'m37',b:'Renault',m:'Symbioz',e:'',cat:'Électronique',titre:'OpenR Link : reboots et perte caméra 360°',sym:'Écran qui redémarre, caméra 360 indisponible, alertes ADAS intempestifs.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour système, calibration caméras, contrôle faisceau head unit.',src:'Cas signalés Symbioz — à confirmer'},
+{id:'m37',b:'Renault',m:'Symbioz',e:'',cat:'Caméra',titre:'OpenR Link : reboots et perte caméra 360°',sym:'Écran qui redémarre, caméra 360 indisponible, alertes ADAS intempestifs.',dtc:['U1233 (selon constructeur)'],fix:'Mise à jour système, calibration caméras, contrôle faisceau head unit.',src:'Cas signalés Symbioz — à confirmer'},
 {id:'m38',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Électrique',titre:'Batterie 12V hybride : décharge / alerte circuit',sym:'Message « batterie auxiliaire », arrêts/starts difficiles, veille perturbée.',dtc:['P0562','B-codes constructeur'],fix:'Contrôle 12V + DC-DC, mise à jour gestion énergétique.',src:'Cas connus E-Tech — base technique'},
 {id:'m39',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Pompe à chaleur : perte d\u2019autonomie hivernale anormale',sym:'Consommation très élevée par temps froid, chauffage faible, alerte thermique habitacle.',dtc:['Codes HV constructeur (thermique)'],fix:'Diagnostic circuit pompe à chaleur, niveau fluide, mise à jour gestion thermique.',src:'Cas signalés Scénic E-Tech — base technique'},
 {id:'m40',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Charge DC 150 kW : puissance plafonnée après mise à jour',sym:'Courbe de charge dégradée, 50-70 kW au lieu de 130-150 kW sur borne rapide.',dtc:['Codes HV constructeur'],fix:'Mise à jour BMS, contrôle température batterie, préconditionnement avant charge.',src:'Cas signalés Scénic E-Tech — à confirmer'},
@@ -545,10 +551,12 @@ const T_EV=[
 ['Batterie 12V auxiliaire faible','Système qui ne démarre pas, alertes multiples, écran noir, mise en veille erratique.',['B-codes constructeur','U0100'],'Contrôle/remplacement batterie 12V, vérifier convertisseur DC-DC et parasitage.','Panne fréquente VE — base technique','Électrique'],
 ['Batterie HT : défaut d\u2019isolement','Alerte batterie haute tension, immobilisation possible, isolation dégradée.',['P0AA6','P0AA5','Codes HV constructeur'],'Diagnostic isolement (BMS), contrôle câbles orange et connecteurs HV, intervention agréée uniquement.','Panne fréquente VE — base technique','Électrique'],
 ['Thermique batterie : pompe/circuit','Limitation charge/puissance, alerte température batterie.',['P0A78','P2632','Codes HV constructeur'],'Contrôle pompe de refroidissement batterie, niveau/qualité liquide, radiateur et ventilation.','Panne fréquente VE — base technique','Électrique'],
-['Régénération / onduleur de traction','À-coups en décélération, régénération inopérante, voyant système.',['P0562','P1E00','Codes HV constructeur'],'Mise à jour logiciel, diagnostic onduleur, contrôle capteur de pédale et BMS.','Panne fréquente VE — base technique','Électrique']];
+['Régénération / onduleur de traction','À-coups en décélération, régénération inopérante, voyant système.',['P0562','P1E00','Codes HV constructeur'],'Mise à jour logiciel, diagnostic onduleur, contrôle capteur de pédale et BMS.','Panne fréquente VE — base technique','Électrique'],
+['Convertisseur DC/DC : défaut de charge 12V','Batterie 12V non rechargée, alertes électriques, mode dégradé.',['P0C73','Codes constructeur DC-DC'],'Contrôle tension sortie DC/DC, remplacement si hors spécifications.','Panne fréquente VE — base technique','Électrique'],
+['Batterie HT : déséquilibre cellules (SOH)','Autonomie dégradée, charge rapide limitée, SOH en baisse.',['P0A80','Codes BMS constructeur'],'Rapport SOH batterie, équilibrage forcé, contrôle modules défaillants, campagne constructeur éventuelle.','Préconisation VE — base technique','Électrique']];
 const T_HY=[
 ['Onduleur hybride : refroidissement','Voyant hybride, mode dégradé, bruit de pompe, surchauffe onduleur.',['P0A78','P0A93','P3024'],'Contrôle pompe/liquide de refroidissement onduleur, purge, mise à jour logiciel.','Panne connue hybrides — base technique','Électrique'],
-['Convertisseur DC-DC','Batterie 12V non rechargée, alertes électriques multiples.',['P0C73','P0562','Codes constructeur'],'Contrôle tension sortie DC-DC, remplacement si hors spécifications.','Panne connue hybrides — base technique','Électrique'],
+['Convertisseur DC/AC (inverter)','Batterie 12V non rechargée, alertes électriques multiples.',['P0C73','P0562','Codes constructeur'],'Contrôle tension sortie DC/DC et DC/AC, remplacement si hors spécifications.','Panne connue hybrides — base technique','Électrique'],
 ['Batterie hybride : équilibrage cellules','Autonomie électrique réduite, à-coups, voyant hybride, SOC irrégulier.',['P0A80','P3000-series','Codes constructeur'],'Diagnostic équilibrage BMS, contrôle modules/ventilation batterie, campagne éventuelle.','Panne connue hybrides — base technique','Électrique'],
 ['Transmission e-CVT / train épicycloïdal','Bruit de moulinage anormal, patinage, à-coups en accélération.',['P0700','P0715','Codes constructeur'],'Contrôle niveau/état huile transmission, diagnostic MG1/MG2, remplacement si nécessaire.','Panne connue hybrides — base technique','Transmission'],
 ['Circuit de refroidissement hybride','Fuite LDR circuit onduleur/batterie, voyant hybride, surchauffe.',['P3024','Codes constructeur'],'Recherche fuite, remplacement pompe/liquide, contrôle vase d\u2019expansion dédié.','Panne connue hybrides — base technique','Électrique']];
@@ -556,10 +564,13 @@ const T_GPL=[
 ['Détendeur/vaporisateur GPL','Ralenti instable au GPL, calage à chaud, passage essence/GPL aléatoire.',['P0171','P0174','Codes GPL constructeur'],'Réfection/remplacement détendeur, contrôle membrane et réchauffage.','Panne fréquente GPL — base technique','Moteur'],
 ['Injecteurs GPL : débit déviant','Fonctionnement irrégulier au GPL, consommation, codes mélange.',['P0200','P0201','P0172'],'Contrôle/étalonnage rampe injecteurs GPL, remplacement injecteurs défectueux.','Panne fréquente GPL — base technique','Moteur']];
 const T_M=[
-['Capteur de vitesse roue ABS/ESP','Voyant ABS/ESP, régulateur indisponible, freinage sans assistance ABS.',['C0035','C0040','C0045','C0050'],'Contrôle capteur + câblage + cible, remplacement capteur roue, effacement codes.','Panne fréquente toutes marques — base technique','Électronique'],
-['ADAS : calibration caméra/radar','Alertes régulateur adaptatif/freinage auto, témoins ADAS après pare-brise ou choc.',['U-codes ADAS','C1103 (selon constructeur)'],'Calibration statique/dynamique caméra & radar obligatoire après toute intervention vitrage/train avant.','Préconisation générale ADAS','Électronique'],
-['Contacteur tournant airbag (clockspring)','Voyant airbag, klaxon/commandes au volant HS, bruit de frottement.',['B1000','B1900 (selon constructeur)'],'Remplacement contacteur tournant, contrôle nappe et connecteurs sous volant.','Panne fréquente toutes marques — base technique','Électronique'],
-['Calculateur airbag : verrouillage après choc','Voyant airbag permanent, données de choc enregistrées, module verrouillé.',['B-codes crash data constructeur'],'Relecture/reprogrammation ou remplacement calculateur airbag après contrôle structure.','Préconisation sécurité — base technique','Électronique'],
+['Capteur de vitesse roue ABS/ESP','Voyant ABS/ESP, régulateur indisponible, freinage sans assistance ABS.',['C0035','C0040','C0045','C0050'],'Contrôle capteur + câblage + cible, remplacement capteur roue, effacement codes.','Panne fréquente toutes marques — base technique','ABS'],
+['ADAS : calibration caméra/radar','Alertes régulateur adaptatif/freinage auto, témoins ADAS après pare-brise ou choc.',['U-codes ADAS','C1103 (selon constructeur)'],'Calibration statique/dynamique caméra & radar obligatoire après toute intervention vitrage/train avant.','Préconisation générale ADAS','ADAS'],
+['Contacteur tournant airbag (clockspring)','Voyant airbag, klaxon/commandes au volant HS, bruit de frottement.',['B1000','B1900 (selon constructeur)'],'Remplacement contacteur tournant, contrôle nappe et connecteurs sous volant.','Panne fréquente toutes marques — base technique','Airbag'],
+['Calculateur airbag : verrouillage après choc','Voyant airbag permanent, données de choc enregistrées, module verrouillé.',['B-codes crash data constructeur'],'Relecture/reprogrammation ou remplacement calculateur airbag après contrôle structure.','Préconisation sécurité — base technique','Airbag'],
+['Enrouleur ceinture : prétensionneur défaillant','Voyant ceinture, prétensionneur inactif après choc ou défaut de connexion.',['B-codes SRS constructeur'],'Contrôle faisceau sous siège, remplacement enrouleur/prétensionneur.','Panne sécurité — base technique','Ceinture'],
+['Frein de service : plaquettes/disques','Voyant usure, vibrations au freinage, bruit métallique, distance de freinage allongée.',['Codes ABS/ESP constructeur'],'Contrôle épaisseur plaquettes/disques, remplacement si hors tolérance, purge circuit si nécessaire.','Panne fréquente toutes marques — base technique','Freinage'],
+['Étrier de frein grippé','Frein qui tire d\u2019un côté, odeur de chaud, usure inégale, consommation en hausse.',['Codes ABS/ESP constructeur'],'Contrôle piston/étrier, purge, remplacement étrier si nécessaire.','Panne fréquente toutes marques — base technique','Freinage'],
 ['Tablette multimédia : écran noir, redémarrages','Écran qui fige/redémarre, perte Bluetooth/navigation, bootloop.',['U0155','U10300','U1233 (selon constructeur)'],'Mise à jour firmware, reset usine, remplacement unité multimédia si nécessaire.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Boîtier servitude BSI/BCM : fonctions erratiques','Feux/essuie-vitres/centralisation aléatoires, voyants multiples, parasitage.',['U-codes carrosserie','B-codes constructeur'],'Contrôle connectiques/humidité du boîtier, mise à jour, remplacement BSI/BCM + télécodage.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Direction assistée électrique','Alerte direction, assistance variable ou absente, bruit de pompe électrique.',['C0500','C0545','U0131'],'Contrôle connectique/capteur couple, mise à jour logiciel colonne, remplacement groupe si requis.','Panne fréquente toutes marques — base technique','Électronique'],
@@ -568,10 +579,11 @@ const T_M=[
 ['Lève-vitre avant : descente/remontée','Vitre qui descend seul, blocage, anti-pincement actif sans obstacle.',['B-codes vitres constructeur'],'Contrôle moteur/câbles/coulisseaux, réinitialisation anti-pincement.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Centralisation / télécommande','Portes qui ne se verrouillent plus, télécommande inopérante.',['B3028','B3031 (selon constructeur)'],'Contrôle piles/récepteur, serrures et faisceau de porte, réapprentissage télécommande.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Circuit de charge : batterie/alternateur','Voyant batterie, démarrage faible, tension instable.',['P0562','P0563','P0620'],'Contrôle tension charge/courroie, test batterie et alternateur, contrôle masse châssis.','Panne fréquente toutes marques — base technique','Électrique'],
-['Capteurs aide au stationnement','Bips continus ou inopérants, message park assist indisponible.',['Codes park assist constructeur'],'Contrôle/nettoyage capteurs, diagnostic faisceau, remplacement capteur défectueux.','Panne fréquente toutes marques — base technique','Électronique'],
+['Capteurs aide au stationnement','Bips continus ou inopérants, message park assist indisponible.',['Codes park assist constructeur'],'Contrôle/nettoyage capteurs, diagnostic faisceau, remplacement capteur défectueux.','Panne fréquente toutes marques — base technique','Caméra'],
+['Caméra de recul / 360° : défaut image','Image figée, absente, déformée, message caméra HS.',['Codes caméra constructeur'],'Contrôle faisceau, connectique, calibration, remplacement caméra/ECU si nécessaire.','Panne fréquente toutes marques — base technique','Caméra'],
 ['Réseau multiplexé CAN : perte communication','Multiples défauts U, systèmes inopérants simultanément, veille perturbée.',['U0100','U0121','U0155'],'Contrôle connectiques/boîtiers sur réseau CAN, mesure résistance 60 Ω, isolation du défaut.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Main-libre / démarrage sans clé','Non-détection clé, démarrage refusé, poignée inactive.',['B-codes immo constructeur'],'Contrôle pile clé/antennes, réapprentissage, diagnostic calculateur immo.','Panne fréquente toutes marques — base technique','Électronique'],
-['Contacteur pédale de frein','Feux stop intermittents, démarrage refusé (BVA/VE), alerte freinage.',['P0504'],'Contrôle/réglage/remplacement contacteur pédale de frein.','Panne fréquente toutes marques — base technique','Électronique'],
+['Contacteur pédale de frein','Feux stop intermittents, démarrage refusé (BVA/VE), alerte freinage.',['P0504'],'Contrôle/réglage/remplacement contacteur pédale de frein.','Panne fréquente toutes marques — base technique','Freinage'],
 ['Compresseur clim : embrayage/régulation','Clim inopérante, bruit compresseur, code capteur pression.',['P0532','P0533','P0645'],'Contrôle charge/pression, embrayage ou vanne de régulation, capteur pression.','Panne fréquente toutes marques — base technique','Électronique'],
 ['Module éclairage : feux LED/feux de jour','Feux diurnes défaillants, message éclairage, LED qui clignotent.',['B1310','B1320 (selon constructeur)'],'Contrôle modules LED/faisceau, remplacement bandeau/module selon diagnostic.','Panne fréquente toutes marques — base technique','Électronique']];
 
@@ -629,7 +641,7 @@ async function seedIfEmpty(){
  await dbBulk('brands',brands);await dbBulk('models',models);await dbBulk('engines',engines);await dbBulk('sheets',sheets);
  localStorage.setItem(SEED_FLAG,'1');
  console.log('[MRT by Kevin] Base générée : '+brands.length+' marques, '+models.length+' modèles, '+engines.length+' motorisations, '+sheets.length+' fiches.');
- setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches'),800);
+ setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches. Utilisez 🛰 pour importer les campagnes officielles.'),800);
 }
 
 /* ================= ÉTAT & UI ================= */
@@ -709,7 +721,7 @@ async function renderSheets(){
  if(state.cat!=='Tous')sheets=sheets.filter(s=>s.cat===state.cat);
  sheets.sort((a,b)=>(b.off||0)-(a.off||0));
  const list=$('#sheetList');list.innerHTML='';
- if(!sheets.length)list.innerHTML='<p class="muted">Aucune fiche locale pour cette sélection. Utilisez les boutons 🛰 de synchronisation officielle ci-dessus (en ligne) ou le mode admin.</p>';
+ if(!sheets.length)list.innerHTML='<p class="muted">Aucune fiche locale pour cette sélection. Utilisez les boutons 🛰 ci-dessus pour importer les campagnes officielles (NHTSA + Rappel Conso + Safety Gate UE).</p>';
  sheets.slice(0,300).forEach(s=>{
   const d=document.createElement('div');d.className='sheet';
   d.innerHTML='<div class="l1"><span class="cat c-'+esc(s.cat)+'">'+esc(s.cat)+'</span><b>'+esc(s.titre)+'</b><span class="src '+(s.off?'off':'')+'">'+esc(s.src||'')+'</span></div>'+
@@ -739,36 +751,122 @@ function printSheet(){
 }
 async function deleteCurrentSheet(){if(!CURRENT)return;if(confirm('Supprimer cette fiche ?')){await dbDel('sheets',CURRENT.id);closeModal('sheetModal');renderSheets();toast('Fiche supprimée');}}
 
-/* ================= SYNCHRONISATION OFFICIELLE ================= */
+/* ================= CLASSIFICATION RENFORCÉE ================= */
+/* Détecte précisément airbag, ceinture, ABS, ADAS, caméra, freinage, batterie HT, DC/AC, moteur, transmission, électronique */
+function classifyOfficial(text){
+ const c=(text||'').toLowerCase();
+ if(/airbag|srs|pretension|prétension|inflator|takata|coussin gonflable|gurtstraffer/i.test(c))return'Airbag';
+ if(/belt|seatbelt|ceinture|retractor|harness|enrouleur|pretensionneur/i.test(c))return'Ceinture';
+ if(/adas|adaptive cruise|lane keep|lane assist|park assist|blind spot|collision avoidance|freinage d.urgen|aeb|autopilot|lane departure|radar d.aide/i.test(c))return'ADAS';
+ if(/camera|caméra|rear view|backup cam|360|parking cam/i.test(c))return'Caméra';
+ if(/\babs\b|anti[- ]?lock|antiblocage|ebd|bas|brake control|ebd|ebv/i.test(c))return'ABS';
+ if(/brak|frein|caliper|étrier|pédale|pedal|rotor|disque|plaquette|pad|master cylinder|maître[- ]?cylindre/i.test(c))return'Freinage';
+ if(/battery|batter[iy]e|cell|module|hv |high[- ]?voltage|traction|li[- ]?ion|lithium|bms/i.test(c))return'Électrique';
+ if(/inverter|convertisseur|dc[\s/-]?dc|dc[\s/-]?ac|onduleur|charger|chargeur|obc/i.test(c))return'Électrique';
+ if(/transmission|gear|gearbox|boîte|boite|clutch|embrayage|driveshaft|axle|dsg|cvt|edc/i.test(c))return'Transmission';
+ if(/engine|moteur|turbo|injector|injecteur|valve|soupape|camshaft|piston|cylinder|cylindre|fuel|carburant|exhaust|échappement|throttle|papillon/i.test(c))return'Moteur';
+ return'Électronique';
+}
 const stripAcc=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-function classifyNHTSA(comp){const c=(comp||'').toLowerCase();if(/transmission|gear|clutch|driveshaft|axle/.test(c))return'Transmission';if(/electric|battery|charg|hybrid|inverter/.test(c))return'Électrique';if(/engine|fuel|turbo|cool|exhaust|throttle|inject/.test(c))return'Moteur';return'Électronique';}
+
+/* ================= SYNC NHTSA (US) ================= */
 async function syncNHTSA(){
  if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
  if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
  const make=stripAcc(state.brand).toUpperCase();let n=0;
  const years=[];const Y=new Date().getFullYear();for(let y=Y+1;y>=Y-15;y--)years.push(y);
- toast('Interrogation NHTSA…');
+ toast('Interrogation NHTSA (US)…');
  for(const y of years){
   try{const r=await fetch('https://api.nhtsa.gov/recalls/recallsByVehicle?make='+encodeURIComponent(make)+'&model='+encodeURIComponent(state.model)+'&modelYear='+y);
   const j=await r.json();
   for(const rec of(j.results||[])){const id='nhtsa-'+rec.NHTSACampaignNumber;
-   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyNHTSA(rec.Component),titre:'Rappel NHTSA '+y+' : '+rec.Component,sym:rec.Summary||'—',dtc:['Voir rapport NHTSA '+rec.NHTSACampaignNumber],fix:(rec.Remedy?'Action : '+rec.Remedy:'Contacter le réseau '+state.brand),src:'NHTSA '+rec.NHTSACampaignNumber,off:1});n++;}
+   const comp=(rec.Component||'')+' '+(rec.Summary||'');
+   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyOfficial(comp),titre:'Rappel NHTSA '+y+' : '+rec.Component,sym:rec.Summary||'—',dtc:['Voir rapport NHTSA '+rec.NHTSACampaignNumber],fix:(rec.Remedy?'Action : '+rec.Remedy:'Contacter le réseau '+state.brand),src:'NHTSA '+rec.NHTSACampaignNumber,off:1});n++;}
   }catch(e){}
  }
- toast(n+' rappel(s) NHTSA importé(s) ✓');renderSheets();
+ toast('NHTSA : '+n+' rappel(s) importé(s) ✓');renderSheets();return n;
 }
+
+/* ================= SYNC RAPPEL CONSO (FR) ================= */
 async function syncRappelConso(){
  if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
  if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
- toast('Interrogation Rappel Conso…');let n=0;
+ toast('Interrogation Rappel Conso (FR)…');let n=0;
  try{
-  const q=encodeURIComponent('search(produit,"'+state.brand+' '+state.model+'")');
-  const r=await fetch('https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappels-produits/records?limit=50&where='+q);
+  const q=encodeURIComponent('search(produit,"'+state.brand+' '+state.model+'") OR search(marque,"'+state.brand+'")');
+  const r=await fetch('https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappels-produits/records?limit=100&where='+q);
   const j=await r.json();
-  for(const rec of(j.results||[])){const id='rc-'+h(JSON.stringify(rec));
-   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyNHTSA((rec.motif||'')+(rec.produit||'')),titre:'Rappel Conso : '+String(rec.motif||rec.produit||'Produit rappelé').slice(0,120),sym:(rec.produit||'')+(rec.risques?' — Risques : '+rec.risques:''),dtc:['Voir fiche Rappel Conso'],fix:rec.conduites_a_suivre||rec.url||'Voir fiche officielle',src:'Rappel Conso'+(rec.date_publication?' ('+String(rec.date_publication).slice(0,10)+')':''),off:1});n++;}
- }catch(e){toast('API Rappel Conso indisponible — réessayez');}
- if(n){toast(n+' fiche(s) Rappel Conso importée(s) ✓');renderSheets();}else toast('0 résultat Rappel Conso pour ce modèle');
+  for(const rec of(j.results||[])){
+   const hay=(rec.motif||'')+' '+(rec.produit||'')+' '+(rec.risques||'')+' '+(rec.conduites_a_suivre||'');
+   const id='rc-'+h(JSON.stringify(rec));
+   await dbPut('sheets',{id,b:state.brand,m:state.model,e:'',cat:classifyOfficial(hay),titre:'Rappel Conso : '+String(rec.motif||rec.produit||'Produit rappelé').slice(0,120),sym:(rec.produit||'')+(rec.risques?' — Risques : '+rec.risques:''),dtc:['Voir fiche Rappel Conso'],fix:rec.conduites_a_suivre||rec.url||'Voir fiche officielle',src:'Rappel Conso'+(rec.date_publication?' ('+String(rec.date_publication).slice(0,10)+')':''),off:1});n++;
+  }
+ }catch(e){toast('API Rappel Conso indisponible');}
+ if(n){toast('Rappel Conso : '+n+' fiche(s) importée(s) ✓');renderSheets();}else toast('Rappel Conso : 0 résultat pour ce modèle');
+ return n;
+}
+
+/* ================= SYNC SAFETY GATE (UE) ================= */
+/* API publique : https://ec.europa.eu/safety-gate/api/search */
+async function syncSafetyGate(){
+ if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
+ if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
+ toast('Interrogation Safety Gate (UE)…');let n=0;
+ const query=(state.brand+' '+state.model).trim();
+ const endpoints=[
+  /* Endpoint 1 : REST publique de Safety Gate (recherche texte) */
+  {url:'https://ec.europa.eu/safety-gate/api/search?query='+encodeURIComponent(query)+'&size=200&type=product&category=motor_vehicles',parser:'sg1'},
+  /* Endpoint 2 : fallback sur le portail public JSON */
+  {url:'https://ec.europa.eu/safety-gate/api/alerts?search='+encodeURIComponent(query)+'&size=200',parser:'sg2'},
+  /* Endpoint 3 : requête par marque seule si modèle vide */
+  {url:'https://ec.europa.eu/safety-gate/api/search?query='+encodeURIComponent(state.brand)+'&size=200&type=product&category=motor_vehicles',parser:'sg1'}
+ ];
+ for(const ep of endpoints){
+  if(n>=50)break;
+  try{
+   const r=await fetch(ep.url,{headers:{'Accept':'application/json'}});
+   if(!r.ok)continue;
+   const j=await r.json();
+   const list=Array.isArray(j)?j:(j.hits||j.results||j.data||j.records||j.alerts||[]);
+   for(const rec of list){
+    if(!rec)continue;
+    /* Normalisation du format variable */
+    const titre=rec.title||rec.subject||rec.name||rec.alert_title||'Alerte Safety Gate';
+    const desc=rec.description||rec.alert_description||rec.summary||rec.text||rec.details||'';
+    const risk=rec.risk_type||rec.risk||rec.category||'';
+    const brand=rec.brand||rec.brand_name||rec.make||'';
+    const model=rec.model||rec.model_name||rec.type||'';
+    const ref=rec.alert_reference||rec.reference||rec.number||rec.id||rec.ref||h(JSON.stringify(rec));
+    const country=rec.country||rec.country_of_origin||'';
+    /* Filtre : ne garder que les alertes liées à la marque ou au modèle */
+    const hay=(titre+' '+desc+' '+risk+' '+brand+' '+model).toLowerCase();
+    const brandOk=hay.includes(state.brand.toLowerCase())||hay.includes(stripAcc(state.brand).toLowerCase());
+    const modelOk=!state.model||hay.includes(state.model.toLowerCase())||hay.includes(stripAcc(state.model).toLowerCase());
+    if(!brandOk)continue;
+    const id='sg-'+String(ref).replace(/[^a-zA-Z0-9-]/g,'-')+'-'+h(titre+desc);
+    await dbPut('sheets',{
+     id,b:state.brand,m:state.model,e:'',
+     cat:classifyOfficial(desc+' '+risk+' '+titre),
+     titre:'Safety Gate UE : '+String(titre).slice(0,120),
+     sym:(desc||'—')+(risk?' — Risque : '+risk:'')+(modelOk?'':' — Marque détectée : '+brand),
+     dtc:['Réf. Safety Gate '+ref],
+     fix:'Retirer de la circulation / contacter le réseau '+state.brand+(country?' (alerte notifiée : '+country+')':'')+'. Confirmer la campagne auprès du constructeur avec le VIN.',
+     src:'EU Safety Gate '+ref,off:1});
+    n++;
+   }
+  }catch(e){/* endpoint indisponible, on passe au suivant */}
+ }
+ if(n){toast('Safety Gate UE : '+n+' alerte(s) importée(s) ✓');renderSheets();}else toast('Safety Gate UE : 0 alerte pour '+state.brand+' '+state.model+' — essayez la marque seule ou relancez plus tard');
+ return n;
+}
+
+/* ================= SYNC TOUTES SOURCES ================= */
+async function syncAll(){
+ if(!navigator.onLine)return toast('Hors ligne — synchronisation impossible');
+ if(!state.brand||!state.model)return toast('Sélectionnez une marque et un modèle');
+ toast('Synchronisation des 3 sources officielles en cours…');
+ const a=await syncNHTSA();const b=await syncRappelConso();const c=await syncSafetyGate();
+ toast('✅ Total importé : '+(a+b+c)+' fiches officielles');
 }
 
 /* ================= ADMIN ================= */
@@ -779,7 +877,8 @@ function tryAdmin(){
 function showAdminPanel(){$('#adminGate').style.display='none';$('#adminPanel').style.display='';refreshAdmin();}
 async function refreshAdmin(){
  const[b,m,e,s]=await Promise.all(['brands','models','engines','sheets'].map(dbAll));
- $('#statsBox').innerHTML='<span class="stat"><b>'+b.length+'</b>marques</span><span class="stat"><b>'+m.length+'</b>modèles</span><span class="stat"><b>'+e.length+'</b>motorisations</span><span class="stat"><b>'+s.length.toLocaleString('fr-FR')+'</b>fiches</span>';
+ const official=s.filter(x=>x.off).length;
+ $('#statsBox').innerHTML='<span class="stat"><b>'+b.length+'</b>marques</span><span class="stat"><b>'+m.length+'</b>modèles</span><span class="stat"><b>'+e.length+'</b>motorisations</span><span class="stat"><b>'+s.length.toLocaleString('fr-FR')+'</b>fiches total</span><span class="stat"><b>'+official.toLocaleString('fr-FR')+'</b>fiches officielles (🛰)</span>';
  fillBrandSelects(b);
 }
 function fillBrandSelects(brands){
@@ -821,6 +920,12 @@ async function exportAll(){
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mes-reponses-technique-export.json';a.click();
 }
 async function resetBase(){if(!confirm('Régénérer toute la base locale (≥ 12 000 fiches) ?'))return;for(const s of['brands','models','engines','sheets'])await dbClear(s);localStorage.removeItem(SEED_FLAG);await seedIfEmpty();refreshAdmin();renderBrands();toast('Base régénérée ✓');}
+async function clearOfficial(){
+ if(!confirm('Effacer UNIQUEMENT les fiches officielles (NHTSA/Rappel Conso/Safety Gate) ? Les 12 000+ fiches de base seront conservées.'))return;
+ const s=await dbAll('sheets');const keep=s.filter(x=>!x.off);
+ await dbClear('sheets');await dbBulk('sheets',keep);
+ refreshAdmin();if(state.model)renderSheets();toast('Fiches officielles effacées ('+keep.length+' fiches de base conservées) ✓');
+}
 $('#bgFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{localStorage.setItem('mrt_bg',rd.result);applyBg();toast('Fond d\u2019écran appliqué ✓');}catch(err){toast('Image trop lourde (max ~3 Mo)');}};rd.readAsDataURL(f);});
 function resetBg(){localStorage.removeItem('mrt_bg');applyBg();}
 function applyBg(){const url=localStorage.getItem('mrt_bg');const bg=$('#bg');if(url){bg.style.backgroundImage='url('+url+')';bg.querySelector('svg').style.display='none';}else{bg.style.backgroundImage='';bg.querySelector('svg').style.display='';}}
