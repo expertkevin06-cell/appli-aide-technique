@@ -126,10 +126,10 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  <div class="drawer" id="sheetsDrawer" style="display:none">
   <h2><button class="back" onclick="closeDrawer('sheetsDrawer')">←</button><span id="sheetsTitle"></span></h2>
   <div class="chips" id="catChips"></div>
-  <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — NHTSA (US) · Rappel Conso (FR) · Safety Gate (UE) — import temps réel des campagnes officielles.</div>
+  <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — NHTSA · Rappel Conso · Safety Gate UE — import temps réel des campagnes.</div>
   <div class="syncRow">
    <button onclick="syncNHTSA()">🇺🇸 NHTSA</button>
-   <button onclick="syncRappelConso()">🇫🇷 Rappel Conso</button>
+   <button onclick="syncRappelConso()">🇫 Rappel Conso</button>
    <button onclick="syncSafetyGate()">🇪🇺 Safety Gate</button>
    <button class="primary" onclick="syncAll()">⚡ Les 3 sources</button>
   </div>
@@ -138,7 +138,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 
  <footer>
   Développé &amp; hébergé via <b>GitHub</b> • Sources : NHTSA · Rappel Conso · EU Safety Gate<br>
-  ⚠️ Base informative — confirmez toujours une campagne auprès du constructeur avec le VIN.<br>
+  ⚠️ Base informative — confirmez toute campagne auprès du constructeur avec le VIN.<br>
   © Kevin — Mes réponses technique
  </footer>
 </div>
@@ -170,61 +170,31 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
    <button class="chip" onclick="adminTab(this,'tabImport')">📥 Import/Export</button>
    <button class="chip" onclick="adminTab(this,'tabApp')">🎨 Apparence</button>
   </div>
-
   <div class="adminSec show" id="tabStats">
    <div id="statsBox"></div><hr>
-   <p class="muted">Base locale générée au premier lancement. Campagnes officielles ajoutées via les boutons 🛰.</p>
-   <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base</button><button onclick="clearOfficial()">🗑 Effacer les fiches officielles</button></div>
+   <p class="muted">Base locale générée au 1er lancement. Campagnes officielles via boutons 🛰.</p>
+   <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base</button><button onclick="clearOfficial()">🗑 Effacer fiches officielles</button></div>
   </div>
-
   <div class="adminSec" id="tabAdd">
    <h3>➕ Marque</h3>
-   <div style="display:flex;gap:8px;margin:8px 0">
-    <input id="nbName" placeholder="Nom de la marque" style="flex:2">
-    <select id="nbOrigin" style="flex:1"><option value="FR">FR</option><option value="EU">EU</option><option value="AS">AS</option><option value="US">US</option></select>
-    <button class="primary" onclick="addBrand()">OK</button>
-   </div>
+   <div style="display:flex;gap:8px;margin:8px 0"><input id="nbName" placeholder="Nom" style="flex:2"><select id="nbOrigin" style="flex:1"><option value="FR">FR</option><option value="EU">EU</option><option value="AS">AS</option><option value="US">US</option></select><button class="primary" onclick="addBrand()">OK</button></div>
    <h3>➕ Modèle</h3>
-   <div style="display:flex;gap:8px;margin:8px 0">
-    <select id="nmBrand" style="flex:1"></select><input id="nmName" placeholder="Nom du modèle" style="flex:1"><button class="primary" onclick="addModel()">OK</button>
-   </div>
+   <div style="display:flex;gap:8px;margin:8px 0"><select id="nmBrand" style="flex:1"></select><input id="nmName" placeholder="Nom modèle" style="flex:1"><button class="primary" onclick="addModel()">OK</button></div>
    <h3>➕ Motorisation</h3>
-   <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
-    <select id="neBrand" onchange="fillModelSelect('neBrand','neModel')" style="min-width:130px"></select>
-    <select id="neModel" style="min-width:130px"></select>
-    <input id="neLabel" placeholder="Ex : 1.5T 169 ch" style="min-width:170px;flex:1">
-    <select id="neFuel"><option>essence</option><option>diesel</option><option>flexfuel</option><option>hybride</option><option>hybride rechargeable</option><option>électrique</option><option>GPL</option><option>hydrogène</option></select>
-    <button class="primary" onclick="addEngine()">OK</button>
-   </div>
-   <h3>➕ Fiche technique</h3>
+   <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap"><select id="neBrand" onchange="fillModelSelect('neBrand','neModel')" style="min-width:130px"></select><select id="neModel" style="min-width:130px"></select><input id="neLabel" placeholder="Ex : EV52 150" style="min-width:170px;flex:1"><select id="neFuel"><option>essence</option><option>diesel</option><option>flexfuel</option><option>hybride</option><option>hybride rechargeable</option><option>électrique</option><option>GPL</option><option>hydrogène</option></select><button class="primary" onclick="addEngine()">OK</button></div>
+   <h3>➕ Fiche</h3>
    <div style="display:grid;gap:8px;margin:8px 0">
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-     <select id="nfBrand" onchange="fillModelSelect('nfBrand','nfModel')" style="min-width:130px"></select>
-     <select id="nfModel" onchange="fillEngineSelect()" style="min-width:130px"></select>
-     <select id="nfEngine" style="min-width:170px"><option value="">(toutes)</option></select>
-     <select id="nfCat"><option>Moteur</option><option>Transmission</option><option>Électronique</option><option>Électrique</option><option>Airbag</option><option>Ceinture</option><option>ABS</option><option>ADAS</option><option>Caméra</option><option>Freinage</option></select>
-    </div>
-    <input id="nfTitle" placeholder="Titre">
-    <textarea id="nfSym" rows="2" placeholder="Symptômes"></textarea>
-    <input id="nfDtc" placeholder="Codes DTC (virgules)">
-    <textarea id="nfFix" rows="2" placeholder="Préconisation"></textarea>
-    <input id="nfSrc" placeholder="Source">
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="nfBrand" onchange="fillModelSelect('nfBrand','nfModel')" style="min-width:130px"></select><select id="nfModel" onchange="fillEngineSelect()" style="min-width:130px"></select><select id="nfEngine" style="min-width:170px"><option value="">(toutes)</option></select><select id="nfCat"><option>Moteur</option><option>Transmission</option><option>Électronique</option><option>Électrique</option><option>Airbag</option><option>Ceinture</option><option>ABS</option><option>ADAS</option><option>Caméra</option><option>Freinage</option></select></div>
+    <input id="nfTitle" placeholder="Titre"><textarea id="nfSym" rows="2" placeholder="Symptômes"></textarea><input id="nfDtc" placeholder="DTC (virgules)"><textarea id="nfFix" rows="2" placeholder="Préconisation"></textarea><input id="nfSrc" placeholder="Source">
     <button class="primary" onclick="addSheet()">Enregistrer</button>
    </div>
   </div>
-
   <div class="adminSec" id="tabImport">
-   <h3>📥 Import massif JSON</h3>
-   <input type="file" id="importFile" accept=".json,application/json" style="margin:8px 0">
-   <button class="primary" onclick="doImport()">Importer</button>
-   <hr><h3>📤 Export</h3>
-   <div class="actions"><button onclick="exportAll()">⬇️ Exporter toute la base</button></div>
+   <h3>📥 Import JSON</h3><input type="file" id="importFile" accept=".json" style="margin:8px 0"><button class="primary" onclick="doImport()">Importer</button>
+   <hr><h3>📤 Export</h3><div class="actions"><button onclick="exportAll()">⬇️ Exporter toute la base</button></div>
   </div>
-
   <div class="adminSec" id="tabApp">
-   <h3>🖼 Fond d'écran (opacité 50 %)</h3>
-   <input type="file" id="bgFile" accept="image/*" style="margin:8px 0">
-   <div class="actions"><button onclick="resetBg()">↩️ Véhicule par défaut</button></div>
+   <h3>🖼 Fond d'écran (50 %)</h3><input type="file" id="bgFile" accept="image/*" style="margin:8px 0"><div class="actions"><button onclick="resetBg()">↩️ Défaut</button></div>
   </div>
  </div>
 </div></div>
@@ -235,25 +205,20 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 <script>
 'use strict';
 const ADMIN_PASS='Kevin83600';
-const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v9_cn_full';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v10_elroq';
 const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
 const CATS=['Tous','Moteur','Transmission','Électronique','Électrique','Airbag','Ceinture','ABS','ADAS','Caméra','Freinage'];
 const FUELS=['Tous','essence','diesel','flexfuel','hybride','hybride rechargeable','électrique','GPL','hydrogène'];
 
-/* ================= MARQUES (inclus TOUTES les chinoises, y compris nouvelles) ================= */
 const SEED_BRANDS=[
 ['Renault','FR'],['Peugeot','FR'],['Citroën','FR'],['DS Automobiles','FR'],['Alpine','FR'],['Bugatti','FR'],['Aixam','FR'],['Ligier','FR'],['Microcar','FR'],['Bolloré','FR'],
 ['Volkswagen','EU'],['Audi','EU'],['BMW','EU'],['Mercedes-Benz','EU'],['Opel','EU'],['Porsche','EU'],['SEAT','EU'],['CUPRA','EU'],['Škoda','EU'],['Fiat','EU'],['Alfa Romeo','EU'],['Lancia','EU'],['Maserati','EU'],['Ferrari','EU'],['Lamborghini','EU'],['Dacia','EU'],['Volvo','EU'],['Polestar','EU'],['Saab','EU'],['Jaguar','EU'],['Land Rover','EU'],['MINI','EU'],['Bentley','EU'],['Rolls-Royce','EU'],['Aston Martin','EU'],['McLaren','EU'],['Lotus','EU'],['Smart','EU'],['Ineos','EU'],
 ['Toyota','AS'],['Lexus','AS'],['Honda','AS'],['Nissan','AS'],['Mazda','AS'],['Subaru','AS'],['Suzuki','AS'],['Mitsubishi','AS'],['Hyundai','AS'],['Kia','AS'],['Genesis','AS'],['SsangYong','AS'],['Infiniti','AS'],['Daihatsu','AS'],['Isuzu','AS'],['BYD','AS'],['MG','AS'],['NIO','AS'],['XPeng','AS'],['Geely','AS'],['Tata','AS'],['Mahindra','AS'],['VinFast','AS'],['Acura','AS'],
-/* Chinoises — marques déjà présentes */
 ['Li Auto','AS'],['Zeekr','AS'],['Leapmotor','AS'],['Chery','AS'],['Omoda','AS'],['Jaecoo','AS'],['Exeed','AS'],['Changan','AS'],['Deepal','AS'],['Avatr','AS'],['Geely Galaxy','AS'],['Lynk & Co','AS'],['Geometry','AS'],['Radar','AS'],['Livan','AS'],['Great Wall','AS'],['Haval','AS'],['Ora','AS'],['Tank','AS'],['Wey','AS'],['Voyah','AS'],['Hongqi','AS'],['Bestune','AS'],['Maxus','AS'],['SAIC','AS'],['Roewe','AS'],['Aiways','AS'],['Enovate','AS'],['Weltmeister','AS'],['Seres','AS'],['Aion','AS'],['Forthing','AS'],['BAIC','AS'],['Beijing','AS'],['JAC','AS'],['Soueast','AS'],['Dongfeng','AS'],['DFSK','AS'],['FAW','AS'],['SWM','AS'],['Jetour','AS'],['Kaiyi','AS'],['Hozon','AS'],['Neta','AS'],['IM Motors','AS'],['Arcfox','AS'],['Luxgen','AS'],
-/* NOUVEAU : Marques chinoises récentes manquantes */
-['Xiaomi Auto','AS'],['Baidu Jiyue','AS'],['AITO','AS'],['Denza','AS'],['Yangwang','AS'],['Fangchengbao','AS'],['Skyworth','AS'],['Hengchi','AS'],['Kandi','AS'],['Zotye','AS'],['Qoros','AS'],['Haima','AS'],['Borgward','AS'],['Qiantu','AS'],['Hycan','AS'],['Singulato','AS'],['WM Motor','AS'],['Levdeo','AS'],['Evergrande Auto','AS'],['Zhiji Auto','AS'],['Rising Auto','AS'],['GAC','AS'],['Changhe','AS'],['Foton','AS'],['King Long','AS'],['Yutong','AS'],['Zongshen','AS'],['Lifan','AS'],['Cowin','AS'],['Brilliance','AS'],['Landwind','AS'],['Hafei','AS'],['Foday','AS'],['Gonow','AS'],['Huanghai','AS'],['JMC','AS'],['Tata Daewoo','AS'],['Mahindra Electric','AS'],['Proton','AS'],['Perodua','AS'],['Wuling','AS'],['Baojun','AS'],['Yudo','AS'],['Weltmeister','AS'],['Enovate','AS'],['Aiways','AS'],['Byton','AS'],['Human Horizons','AS'],['HiPhi','AS'],['Seres','AS'],['Seres Huawei','AS'],['Leapmotor','AS'],['Hozon','AS'],['Neta','AS'],['IM Motors','AS'],['Arcfox','AS'],['Luxgen','AS'],['Xpeng','AS'],['NIO','AS'],['Li Auto','AS'],['Zeekr','AS'],['Geely Galaxy','AS'],['Lynk & Co','AS'],['Geometry','AS'],['Radar','AS'],['Livan','AS'],['Great Wall','AS'],['Haval','AS'],['Ora','AS'],['Tank','AS'],['Wey','AS'],['Voyah','AS'],['Hongqi','AS'],['Bestune','AS'],['Maxus','AS'],['SAIC','AS'],['Roewe','AS'],['Forthing','AS'],['BAIC','AS'],['Beijing','AS'],['JAC','AS'],['Soueast','AS'],['Dongfeng','AS'],['DFSK','AS'],['FAW','AS'],['SWM','AS'],['Jetour','AS'],['Kaiyi','AS'],['Chery','AS'],['Omoda','AS'],['Jaecoo','AS'],['Exeed','AS'],['Changan','AS'],['Deepal','AS'],['Avatr','AS'],['BYD','AS'],['MG','AS'],['Aiways','AS'],['Aiways U5','AS'],['Aiways U6','AS']],
+['Xiaomi Auto','AS'],['Baidu Jiyue','AS'],['AITO','AS'],['Denza','AS'],['Yangwang','AS'],['Fangchengbao','AS'],['Skyworth','AS'],['Hengchi','AS'],['Kandi','AS'],['Zotye','AS'],['Qoros','AS'],['Haima','AS'],['Borgward','AS'],['Qiantu','AS'],['Hycan','AS'],['Singulato','AS'],['WM Motor','AS'],['Zhiji Auto','AS'],['Rising Auto','AS'],['GAC','AS'],['Wuling','AS'],['Baojun','AS'],['Yudo','AS'],['HiPhi','AS'],['Human Horizons','AS'],
 ['Ford','US'],['Chevrolet','US'],['GMC','US'],['Cadillac','US'],['Buick','US'],['Chrysler','US'],['Dodge','US'],['Jeep','US'],['Ram','US'],['Tesla','US'],['Lincoln','US'],['Rivian','US'],['Lucid','US'],['Fisker','US'],['Pontiac','US'],['Hummer','US']];
 
-/* ================= MODÈLES (marques chinoises nouvelles) ================= */
 const SEED_MODELS={
-/* Marques classiques - versions condensées */
 'Renault':['Twingo','Clio','Captur','Kadjar','Austral','Arkana','Symbioz','Mégane','Mégane E-Tech','Scénic','Scénic E-Tech','Espace','Talisman','Zoe','Kangoo','Trafic','Master','R5 E-Tech','R4 E-Tech'],
 'Peugeot':['208','e-208','2008','e-2008','308','408','508','3008','5008','Rifter','Expert','Traveller'],
 'Citroën':['C3','ë-C3','C3 Aircross','C4','ë-C4','C5 Aircross','C5 X','Berlingo','Jumpy','Jumper'],
@@ -266,7 +231,7 @@ const SEED_MODELS={
 'Opel':['Corsa','Corsa-e','Astra','Mokka','Mokka-e','Crossland','Grandland'],
 'Porsche':['911','Cayenne','Macan','Panamera','Taycan','718'],
 'SEAT':['Ibiza','Leon','Arona','Ateca'],'CUPRA':['Born','Formentor','Ateca','Leon'],
-'Škoda':['Fabia','Octavia','Superb','Scala','Kamiq','Karoq','Kodiaq','Enyaq'],
+'Škoda':['Fabia','Octavia','Superb','Scala','Kamiq','Karoq','Kodiaq','Enyaq','Elroq'],
 'Fiat':['500','500e','500X','Panda','Tipo','Doblo'],
 'Alfa Romeo':['Giulietta','Giulia','Stelvio','Tonale'],
 'Maserati':['Ghibli','Quattroporte','Levante','Grecale','MC20'],
@@ -286,330 +251,156 @@ const SEED_MODELS={
 'Hyundai':['i10','i20','i30','Bayon','Kona','Tucson','Santa Fe','Ioniq','Ioniq 5','Ioniq 6'],
 'Kia':['Picanto','Rio','Ceed','Stonic','Niro','Sportage','Sorento','EV6','EV9'],
 'Genesis':['G70','G80','GV60','GV70','GV80'],
-/* Chinoises - marques déjà présentes */
-'BYD':['Atto 3','Dolphin','Seal','Seal U','Tang','Han','Song Plus','Song Pro','Yuan Plus','e2','M6','Shark','Sea Lion 07','Seal 06','Denza D9','Denza N7','Denza N8','Yangwang U8','Yangwang U9','Fangchengbao Bao 5','Fangchengbao Bao 8'],
-'MG':['MG3','MG4','MG5','ZS','ZS EV','HS','EHS','Marvel R','Cyberster','One'],
+'BYD':['Atto 3','Dolphin','Seal','Seal U','Tang','Han','Song Plus','Yuan Plus','Shark','Sea Lion 07','Denza D9','Denza N7','Yangwang U8','Yangwang U9','Fangchengbao Bao 5','Fangchengbao Bao 8'],
+'MG':['MG3','MG4','MG5','ZS','ZS EV','HS','Marvel R','Cyberster'],
 'NIO':['ET5','ET5T','ET7','ET9','EL6','EL7','EL8','EC6','EC7','Firefly'],
 'XPeng':['P5','P7','P7+','G3','G6','G9','X9','MONA M03'],
-'Geely':['Atlas','Coolray','Emgrand','Binrui','Okavango','Galaxy L7','Galaxy L6','Galaxy E8'],
+'Geely':['Atlas','Coolray','Emgrand','Okavango'],
 'Li Auto':['L6','L7','L8','L9','MEGA'],
 'Zeekr':['001','007','009','X','MIX','7X','FR'],
 'Leapmotor':['C10','C11','C16','T03','B10','C01'],
 'Chery':['Tiggo 4','Tiggo 7','Tiggo 8','Tiggo 9','Arrizo 5','Arrizo 8'],
-'Omoda':['5','7','E5'],
-'Jaecoo':['7','8','J7'],
-'Exeed':['LX','TXL','VX','Sterra ET','Sterra ES'],
-'Changan':['UNI-T','UNI-V','UNI-K','CS55','CS75','CS95','Eado','Lumin'],
-'Deepal':['SL03','S7','S05','S09','L07','G318'],
-'Avatr':['11','12','07','06'],
-'Geely Galaxy':['E5','E8','L6','L7','Starship'],
-'Lynk & Co':['01','03','05','06','07','08','09','Z10','Z20'],
-'Geometry':['A','C','E','G6','M6','Panda Mini'],
-'Great Wall':['Poer','Wingle','Tank 300','Tank 400','Tank 500','Tank 700'],
-'Haval':['H6','Jolion','Dargo','H9','H5'],
-'Ora':['03','04','Ballet Cat','Lightning Cat','Good Cat'],
-'Tank':['300','400','500','700','800'],
-'Wey':['Mocha','Latte','Macchiato','Blue Mountain'],
-'Voyah':['Free','Dream','Zhuiguang','Courage'],
-'Hongqi':['E-HS9','H9','H5','HS5','HS7','E-QM5','EH7','HQ9'],
-'Maxus':['eDeliver 3','eDeliver 7','eDeliver 9','T90','D90','G90','Everyone 9'],
-'Roewe':['RX5','RX8','i5','i6','iMAX8','Ei5','Marvel R','D7'],
-'BAIC':['BJ30','BJ40','BJ60','BJ80','BJ90','EU5','EU7','X7'],
-'JAC':['J7','T6','T8','iEV7S','Sunray'],
-'Dongfeng':['Aeolus Yixuan','Aeolus AX7','eπ 007','eπ 008','Nammi 01'],
-'DFSK':['Glory 580','Glory iAuto','C37','F5','F7'],
-'Jetour':['Dashing','X70','X70 Plus','T2','Traveler','Shanhai L9'],
-'Kaiyi':['E5','X3','X7','Kunlun'],
-'Hozon':['Neta V','Neta U','Neta S','Neta X','Neta L','Neta AYA','Neta GT'],
-'Neta':['V','U','S','X','L','AYA','GT'],
-'IM Motors':['L7','LS7','LS6','L6'],
-'Arcfox':['Alpha S','Alpha T','Kaola','T5'],
-'Luxgen':['n7','U6','M7'],
-'Aion':['S','V','LX','Y Plus','Hyper GT','Hyper SSR','Hyper HT'],
-'Forthing':['T5 EVO','Friday','U-Tour','M8'],
-'Tata':['Nexon','Punch','Harrier','Safari','Tiago','Altroz','Curvv'],
-'Mahindra':['XUV700','XUV 3XO','XUV400','Thar','Scorpio-N','BE 6','XEV 9e'],
-'VinFast':['VF3','VF5','VF6','VF7','VF8','VF9'],
-/* NOUVEAU : Marques chinoises récentes manquantes */
+'Omoda':['5','7','E5'],'Jaecoo':['7','8','J7'],'Exeed':['LX','TXL','VX','Sterra ET','Sterra ES'],
+'Changan':['UNI-T','UNI-V','UNI-K','CS55','CS75','CS95','Lumin'],
+'Deepal':['SL03','S7','S05','S09','L07','G318'],'Avatr':['11','12','07','06'],
+'Geely Galaxy':['E5','E8','L6','L7'],'Lynk & Co':['01','03','05','06','07','08','09','Z10','Z20'],'Geometry':['G6','E','C','Panda Mini'],
+'Great Wall':['Poer','Wingle','Tank 300','Tank 400','Tank 500'],'Haval':['H6','Jolion','Dargo','H9'],'Ora':['03','04','Good Cat'],'Tank':['300','400','500','700'],'Wey':['Mocha','Latte','Macchiato'],
+'Voyah':['Free','Dream','Zhuiguang'],'Hongqi':['E-HS9','H9','H5','HS5','EH7'],'Maxus':['eDeliver 3','eDeliver 7','eDeliver 9','T90','G90','Everyone 9'],
+'Roewe':['RX5','RX8','i5','iMAX8','D7'],'BAIC':['BJ30','BJ40','BJ60','BJ80','EU5','X7'],'JAC':['T6','T8','iEV7S','Sunray'],
+'Dongfeng':['Aeolus Yixuan','Aeolus AX7','eπ 007','eπ 008','Nammi 01'],'DFSK':['Glory 580','F5','F7'],
+'Jetour':['Dashing','X70','T2','Traveler'],'Kaiyi':['E5','X7','Kunlun'],'Hozon':['Neta V','Neta U','Neta S','Neta X','Neta L','Neta GT'],'Neta':['V','U','S','X','L','GT'],
+'IM Motors':['L7','LS7','LS6','L6'],'Arcfox':['Alpha S','Alpha T','Kaola','T5'],'Luxgen':['n7','U6'],
+'Aion':['S','V','LX','Y Plus','Hyper GT','Hyper SSR'],'Forthing':['T5 EVO','Friday','M8'],
 'Xiaomi Auto':['SU7','SU7 Pro','SU7 Max','SU7 Ultra','YU7'],
-'Baidu Jiyue':['01','07','ROBO-01','ROBO-02'],
-'AITO':['M5','M7','M9','M8','Wenjie M5','Wenjie M7','Wenjie M9'],
-'Denza':['D9','N7','N8','Z9','Z9 GT','B5','B8'],
-'Yangwang':['U8','U9','U7'],
-'Fangchengbao':['Bao 5','Bao 8','Super 3','Bao 3'],
-'Skyworth':['EV6','HT-i','EV5','K10L'],
-'Hengchi':['5','6','1','3','9'],
-'Kandi':['K23','K27','EX3'],
-'Zotye':['T600','T700','SR9','Z500'],
-'Qoros':['3','5','7','Model Young'],
-'Haima':['S5','S7','8S','7X','6P'],
-'Borgward':['BX5','BX7','BXi7'],
-'Qiantu':['K50','K20','K25'],
-'Hycan':['007','Z03','V','A06'],
-'Singulato':['iS6','iS5'],
-'WM Motor':['EX5','EX6','E5','M7','W6'],
-'Levdeo':['M1','M2','M3'],
-'Zhiji Auto':['L7','LS7','LS6','L6'],
-'Rising Auto':['R7','F7','Marvel R'],
-'GAC':['Trumpchi GS8','Trumpchi M8','Trumpchi GS4','Trumpchi Empow','Aion S','Aion V','Aion LX','Aion Y','Hyper GT','Hyper SSR'],
-'Changhe':['Q35','Q7','Freedom'],
-'Foton':['Tunland','Sauvana','Toano','View CS2'],
-'JMC':['Vigus','Baodian','Yuhu','E200'],
-'Lifan':['820','X60','X80','330EV'],
-'Cowin':['X3','X5','E5 EV'],
-'Brilliance':['V3','V5','V6','V7'],
-'Landwind':['X7','X5','X2','Forward'],
-'Gonow':['GX','GA','Way','GA200'],
-'Wuling':['Hongguang Mini EV','Hongguang Plus','Xingwang','Bingo','Air EV','Starlight','Jiachen'],
-'Baojun':['Yep','Yun','KiWi EV','310','510','530','730'],
-'Yudo':['π1','π3','π5','T300'],
-'Human Horizons':['HiPhi X','HiPhi Z','HiPhi Y'],
-'HiPhi':['X','Z','Y'],
-'Seres Huawei':['SF5','SF7','AITO M5','AITO M7','AITO M9'],
-'Ford':['Fiesta','Focus','Mondeo','Kuga','Puma','EcoSport','Explorer','Mustang','Mustang Mach-E','Bronco','Transit','Transit Custom','Ranger','F-150','F-150 Lightning','Maverick'],
-'Chevrolet':['Spark','Cruze','Malibu','Camaro','Corvette','Trax','Captiva','Equinox','Tahoe','Silverado','Bolt EV','Blazer','Volt'],
-'GMC':['Sierra','Yukon','Terrain','Acadia','Hummer EV'],
-'Cadillac':['CT4','CT5','XT4','XT5','Escalade','Lyriq'],
+'Baidu Jiyue':['01','07'],'AITO':['M5','M7','M8','M9'],'Denza':['D9','N7','N8','Z9','Z9 GT'],'Yangwang':['U8','U9','U7'],'Fangchengbao':['Bao 5','Bao 8','Super 3'],
+'Skyworth':['EV6','HT-i'],'Hengchi':['5','6'],'Kandi':['K23','K27'],'Zotye':['T600','T700'],'Qoros':['3','5'],'Haima':['S5','8S','7X'],'Borgward':['BX5','BX7','BXi7'],'Qiantu':['K50'],'Hycan':['007','Z03','V'],'Singulato':['iS6'],'WM Motor':['EX5','EX6','W6','M7'],'Zhiji Auto':['L7','LS7','LS6','L6'],'Rising Auto':['R7','F7'],'GAC':['Trumpchi GS8','Trumpchi M8','Trumpchi Empow','Trumpchi GS4'],
+'Wuling':['Hongguang Mini EV','Bingo','Air EV','Starlight','Jiachen'],'Baojun':['Yep','Yun','KiWi EV','510','530'],'Yudo':['π1','π3'],'HiPhi':['X','Z','Y'],'Human Horizons':['HiPhi X','HiPhi Z','HiPhi Y'],
+'Tata':['Nexon','Punch','Harrier','Safari','Curvv'],'Mahindra':['XUV700','XUV400','Thar','BE 6','XEV 9e'],'VinFast':['VF3','VF5','VF6','VF7','VF8','VF9'],
+'Ford':['Fiesta','Focus','Mondeo','Kuga','Puma','EcoSport','Explorer','Mustang','Mustang Mach-E','Bronco','Transit','Transit Custom','Ranger','F-150','Maverick'],
+'Chevrolet':['Spark','Cruze','Malibu','Camaro','Corvette','Trax','Equinox','Tahoe','Silverado','Bolt EV','Volt'],
+'GMC':['Sierra','Yukon','Terrain','Hummer EV'],'Cadillac':['CT5','XT5','Escalade','Lyriq'],
 'Jeep':['Renegade','Compass','Cherokee','Grand Cherokee','Wrangler','Gladiator','Avenger'],
-'Tesla':['Model S','Model 3','Model X','Model Y','Cybertruck'],
-'Rivian':['R1T','R1S'],'Lucid':['Air'],'Fisker':['Ocean']};
+'Tesla':['Model S','Model 3','Model X','Model Y','Cybertruck'],'Rivian':['R1T','R1S'],'Lucid':['Air'],'Fisker':['Ocean']};
 
-/* ================= MOTORISATIONS (marques chinoises nouvelles + toutes puissances) ================= */
 const SEED_ENGINES={
-/* NOUVEAU : Xiaomi, Jiyue, AITO, Denza, Yangwang, etc. */
-'Xiaomi Auto|SU7':[['73.6 kWh 299 ch','électrique'],['94.3 kWh 340 ch','électrique'],['101 kWh AWD 673 ch','électrique']],
-'Xiaomi Auto|SU7 Pro':[['94.3 kWh 299 ch','électrique']],
-'Xiaomi Auto|SU7 Max':[['101 kWh AWD 673 ch','électrique'],['101 kWh AWD 673 ch (800V)','électrique']],
-'Xiaomi Auto|SU7 Ultra':[['101 kWh AWD 1548 ch','électrique']],
-'Xiaomi Auto|YU7':[['96.3 kWh 320 ch','électrique'],['96.3 kWh AWD 690 ch','électrique']],
-'Baidu Jiyue|01':[['100 kWh 272 ch','électrique'],['100 kWh AWD 544 ch','électrique']],
-'Baidu Jiyue|07':[['72 kWh 272 ch','électrique'],['100 kWh AWD 544 ch','électrique']],
-'AITO|M5':[['1.5 EREV 435 ch','hybride rechargeable'],['80 kWh 496 ch','électrique'],['80 kWh AWD 496 ch','électrique']],
-'AITO|M7':[['1.5 EREV 449 ch','hybride rechargeable'],['40 kWh AWD 449 ch','hybride rechargeable']],
-'AITO|M9':[['1.5 EREV 496 ch','hybride rechargeable'],['92 kWh AWD 530 ch','électrique'],['92 kWh 530 ch','électrique']],
-'AITO|M8':[['1.5 EREV 476 ch','hybride rechargeable'],['92 kWh AWD 530 ch','électrique']],
-'AITO|Wenjie M5':[['1.5 EREV 435 ch','hybride rechargeable'],['80 kWh 496 ch','électrique']],
-'AITO|Wenjie M7':[['1.5 EREV 449 ch','hybride rechargeable']],
-'AITO|Wenjie M9':[['1.5 EREV 496 ch','hybride rechargeable'],['92 kWh AWD 530 ch','électrique']],
-'Denza|D9':[['1.5T PHEV 290 ch','hybride rechargeable'],['1.5T PHEV AWD 380 ch','hybride rechargeable'],['103 kWh 313 ch','électrique'],['103 kWh AWD 410 ch','électrique']],
-'Denza|N7':[['91 kWh 313 ch','électrique'],['91 kWh AWD 530 ch','électrique'],['1.5T EREV 300 ch','hybride rechargeable']],
-'Denza|N8':[['1.5T PHEV 290 ch','hybride rechargeable'],['1.5T PHEV AWD 380 ch','hybride rechargeable']],
-'Denza|Z9':[['1.5T EREV AWD 1000 ch','hybride rechargeable'],['100 kWh AWD 710 ch','électrique'],['100 kWh AWD 880 ch','électrique']],
-'Denza|Z9 GT':[['1.5T EREV AWD 1000 ch','hybride rechargeable'],['100 kWh AWD 880 ch','électrique']],
-'Yangwang|U8':[['2.0 EREV 1200 ch','hybride rechargeable'],['e4 AWD 1200 ch','électrique']],
-'Yangwang|U9':[['80 kWh AWD 1300 ch','électrique']],
-'Yangwang|U7':[['135 kWh AWD 1300 ch','électrique'],['1.5T EREV AWD 1200 ch','hybride rechargeable']],
-'Fangchengbao|Bao 5':[['1.5T PHEV 687 ch','hybride rechargeable'],['1.5T PHEV AWD 687 ch','hybride rechargeable']],
-'Fangchengbao|Bao 8':[['2.0T PHEV 750 ch','hybride rechargeable'],['2.0T PHEV AWD 750 ch','hybride rechargeable']],
-'Fangchengbao|Super 3':[['1.5T PHEV 550 ch','hybride rechargeable']],
-'Skyworth|EV6':[['55 kWh 204 ch','électrique'],['72 kWh 231 ch','électrique']],
-'Skyworth|HT-i':[['1.5 EREV 204 ch','hybride rechargeable'],['1.5 EREV AWD 408 ch','hybride rechargeable']],
-'Hengchi|5':[['72 kWh 204 ch','électrique'],['72 kWh 231 ch','électrique']],
-'Hengchi|6':[['72 kWh 204 ch','électrique'],['72 kWh AWD 408 ch','électrique']],
-'Hengchi|1':[['95 kWh AWD 530 ch','électrique']],
-'Kandi|K23':[['41 kWh 95 ch','électrique']],
-'Kandi|K27':[['41 kWh 95 ch','électrique']],
-'Zotye|T600':[['1.5T 150 ch','essence'],['2.0T 177 ch','essence']],
-'Zotye|T700':[['1.8T 177 ch','essence'],['2.0T 220 ch','essence']],
-'Qoros|3':[['1.6 126 ch','essence'],['1.6T 156 ch','essence']],
-'Qoros|5':[['1.6T 170 ch','essence']],
-'Haima|S5':[['1.6 122 ch','essence'],['1.5T 163 ch','essence']],
-'Haima|8S':[['1.6T 195 ch','essence']],
-'Haima|7X':[['1.5T 165 ch','essence'],['2.0T 234 ch','essence'],['PHEV 280 ch','hybride rechargeable']],
-'Borgward|BX5':[['1.4T 150 ch','essence'],['1.8T 190 ch','essence']],
-'Borgward|BX7':[['2.0T 224 ch','essence'],['2.0T AWD 224 ch','essence']],
-'Borgward|BXi7':[['55 kWh AWD 272 ch','électrique']],
-'Qiantu|K50':[['78 kWh AWD 408 ch','électrique']],
-'Hycan|007':[['93 kWh 218 ch','électrique'],['93 kWh 340 ch','électrique']],
-'Hycan|Z03':[['58 kWh 184 ch','électrique'],['72 kWh 218 ch','électrique']],
-'Hycan|V':[['62 kWh 204 ch','électrique'],['77 kWh 231 ch','électrique']],
-'Singulato|iS6':[['83 kWh 204 ch','électrique'],['83 kWh AWD 408 ch','électrique']],
-'WM Motor|EX5':[['52 kWh 218 ch','électrique'],['69 kWh 218 ch','électrique']],
-'WM Motor|EX6':[['54 kWh 218 ch','électrique'],['69 kWh 218 ch','électrique']],
-'WM Motor|W6':[['66 kWh 218 ch','électrique'],['82 kWh 218 ch','électrique']],
-'WM Motor|M7':[['98 kWh 340 ch','électrique'],['98 kWh AWD 544 ch','électrique']],
-'Zhiji Auto|L7':[['93 kWh 340 ch','électrique'],['93 kWh AWD 578 ch','électrique'],['118 kWh 637 ch','électrique']],
-'Zhiji Auto|LS7':[['90 kWh 340 ch','électrique'],['90 kWh AWD 578 ch','électrique']],
-'Zhiji Auto|LS6':[['71 kWh 340 ch','électrique'],['90 kWh AWD 787 ch','électrique']],
-'Zhiji Auto|L6':[['75 kWh 340 ch','électrique'],['100 kWh AWD 787 ch','électrique']],
-'Rising Auto|R7':[['77 kWh 340 ch','électrique'],['90 kWh AWD 544 ch','électrique']],
-'Rising Auto|F7':[['77 kWh 340 ch','électrique'],['90 kWh AWD 544 ch','électrique']],
-'GAC|Trumpchi GS8':[['2.0T 252 ch','essence'],['2.0T AWD 252 ch','essence'],['2.0T HEV 252 ch','hybride']],
-'GAC|Trumpchi M8':[['2.0T 252 ch','essence'],['2.0T HEV 252 ch','hybride'],['2.0T PHEV 340 ch','hybride rechargeable']],
-'GAC|Trumpchi Empow':[['1.5T 170 ch','essence'],['2.0T 265 ch','essence']],
-'GAC|Trumpchi GS4':[['1.5T 169 ch','essence'],['1.5T PHEV 245 ch','hybride rechargeable']],
-'Wuling|Hongguang Mini EV':[['9 kWh 27 ch','électrique'],['13.9 kWh 40 ch','électrique'],['17 kWh 40 ch','électrique'],['26 kWh 75 ch','électrique']],
-'Wuling|Bingo':[['31.9 kWh 68 ch','électrique'],['41.9 kWh 95 ch','électrique']],
-'Wuling|Air EV':[['10 kWh 27 ch','électrique'],['26 kWh 68 ch','électrique']],
-'Wuling|Starlight':[['1.5 PHEV 200 ch','hybride rechargeable'],['60 kWh 204 ch','électrique']],
-'Wuling|Jiachen':[['1.5 99 ch','essence'],['1.5T 147 ch','essence'],['1.5 HEV 147 ch','hybride']],
-'Baojun|Yep':[['28 kWh 68 ch','électrique'],['28 kWh 102 ch','électrique']],
-'Baojun|Yun':[['50 kWh 204 ch','électrique'],['50 kWh AWD 408 ch','électrique']],
-'Baojun|KiWi EV':[['31 kWh 54 ch','électrique'],['31 kWh 68 ch','électrique']],
-'Baojun|510':[['1.5 99 ch','essence'],['1.5T 147 ch','essence']],
-'Baojun|530':[['1.5T 147 ch','essence'],['1.5T PHEV 245 ch','hybride rechargeable']],
-'Yudo|π1':[['49 kWh 122 ch','électrique'],['49 kWh 163 ch','électrique']],
-'Yudo|π3':[['40 kWh 122 ch','électrique'],['51 kWh 163 ch','électrique']],
-'HiPhi|X':[['97 kWh 272 ch','électrique'],['97 kWh AWD 598 ch','électrique']],
-'HiPhi|Z':[['120 kWh 600 ch','électrique'],['120 kWh AWD 650 ch','électrique']],
-'HiPhi|Y':[['77 kWh 336 ch','électrique'],['77 kWh AWD 600 ch','électrique']],
-'Cowin|E5 EV':[['53 kWh 163 ch','électrique']],
-'Brilliance|V7':[['1.6T 204 ch','essence'],['1.8T 231 ch','essence']],
-'Landwind|X7':[['2.0T 190 ch','essence']],
-'JMC|Vigus':[['2.0T 177 ch','diesel'],['2.0T 190 ch','essence']],
-'JMC|E200':[['20 kWh 41 ch','électrique'],['28 kWh 68 ch','électrique']],
-'Lifan|330EV':[['24 kWh 82 ch','électrique']],
-/* Marques chinoises déjà présentes - complétées */
+/* ===== NOUVEAU / COMPLÉTÉ ===== */
+'Škoda|Elroq':[['50 170','électrique'],['60 204','électrique'],['85 286','électrique'],['85x 286 AWD','électrique']],
+'Renault|R5 E-Tech':[['EV40 95','électrique'],['EV40 120','électrique'],['EV52 150','électrique']],
+'Renault|R4 E-Tech':[['EV40 120','électrique'],['EV52 150','électrique']],
+'Renault|Symbioz':[['E-Tech 145','hybride'],['1.3 TCe 140 mild hybrid','essence']],
+'Renault|Scénic E-Tech':[['EV60 170','électrique'],['EV87 220','électrique']],
+'Renault|Twingo':[['1.0 SCe 65','essence'],['1.0 SCe 75','essence'],['0.9 TCe 90','essence'],['E-Tech 82','électrique'],['E-Tech 95','électrique']],
+'Renault|Zoe':[['Q90 92','électrique'],['R90 92','électrique'],['R110','électrique'],['R135','électrique']],
+'Peugeot|e-208':[['e-208 136','électrique'],['e-208 156','électrique']],
+'Peugeot|e-2008':[['e-2008 136','électrique'],['e-2008 156','électrique']],
+'Citroën|ë-C3':[['ë-C3 113','électrique'],['ë-C3 44 kWh 113','électrique']],
+'Citroën|ë-C4':[['ë-C4 136','électrique'],['ë-C4 156','électrique']],
+'Citroën|C3':[['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 100','diesel'],['Hybrid 100','hybride'],['Hybrid 136','hybride']],
+/* ===== Chinoises ===== */
 'BYD|Atto 3':[['58.5 kWh 204 ch','électrique'],['60.5 kWh 204 ch','électrique']],
 'BYD|Dolphin':[['44.9 kWh 95 ch','électrique'],['60.5 kWh 204 ch','électrique']],
 'BYD|Seal':[['61.4 kWh 204 ch','électrique'],['82.5 kWh 313 ch','électrique'],['82.5 kWh AWD 530 ch','électrique']],
-'BYD|Seal U':[['71.8 kWh 218 ch','électrique'],['87 kWh AWD 503 ch','électrique'],['DM-i 1.5 218 ch','hybride rechargeable'],['DM-p 1.5T AWD 324 ch','hybride rechargeable']],
-'BYD|Tang':[['DM-i 1.5T 360 ch','hybride rechargeable'],['DM-p AWD 517 ch','hybride rechargeable'],['108 kWh 517 ch','électrique']],
-'BYD|Han':[['DM-i 1.5T 245 ch','hybride rechargeable'],['DM-p 1.5T AWD 490 ch','hybride rechargeable'],['85.4 kWh 245 ch','électrique'],['85.4 kWh AWD 517 ch','électrique']],
-'BYD|Song Plus':[['1.5 109 ch','essence'],['1.5T 185 ch','essence'],['DM-i 1.5 197 ch','hybride rechargeable'],['DM-p AWD 324 ch','hybride rechargeable'],['71.8 kWh 204 ch','électrique']],
+'BYD|Seal U':[['71.8 kWh 218 ch','électrique'],['DM-i 1.5 218 ch','hybride rechargeable'],['DM-p 1.5T AWD 324 ch','hybride rechargeable']],
+'BYD|Tang':[['DM-i 1.5T 360 ch','hybride rechargeable'],['DM-p AWD 517 ch','hybride rechargeable']],
+'BYD|Han':[['DM-i 1.5T 245 ch','hybride rechargeable'],['85.4 kWh 245 ch','électrique']],
+'BYD|Song Plus':[['1.5T 185 ch','essence'],['DM-i 1.5 197 ch','hybride rechargeable'],['71.8 kWh 204 ch','électrique']],
 'BYD|Yuan Plus':[['49.9 kWh 204 ch','électrique'],['60.5 kWh 204 ch','électrique']],
-'BYD|Denza D9':[['1.5T PHEV 290 ch','hybride rechargeable'],['1.5T PHEV AWD 380 ch','hybride rechargeable'],['103 kWh 313 ch','électrique']],
-'BYD|Denza N7':[['91 kWh 313 ch','électrique'],['91 kWh AWD 530 ch','électrique']],
-'BYD|Denza N8':[['1.5T PHEV AWD 380 ch','hybride rechargeable']],
-'BYD|Yangwang U8':[['e4 AWD 1200 ch','hybride rechargeable']],
-'BYD|Yangwang U9':[['80 kWh AWD 1300 ch','électrique']],
-'BYD|Fangchengbao Bao 5':[['1.5T PHEV 687 ch','hybride rechargeable']],
-'BYD|Fangchengbao Bao 8':[['2.0T PHEV 750 ch','hybride rechargeable']],
 'BYD|Shark':[['1.5T PHEV 432 ch','hybride rechargeable']],
+'BYD|Denza D9':[['1.5T PHEV 290 ch','hybride rechargeable'],['103 kWh 313 ch','électrique']],
+'BYD|Yangwang U8':[['e4 AWD 1200 ch','hybride rechargeable']],
+'BYD|Fangchengbao Bao 5':[['1.5T PHEV 687 ch','hybride rechargeable']],
+'Xiaomi Auto|SU7':[['73.6 kWh 299 ch','électrique'],['94.3 kWh 340 ch','électrique'],['101 kWh AWD 673 ch','électrique']],
+'Xiaomi Auto|SU7 Ultra':[['101 kWh AWD 1548 ch','électrique']],
+'Xiaomi Auto|YU7':[['96.3 kWh 320 ch','électrique'],['96.3 kWh AWD 690 ch','électrique']],
+'Baidu Jiyue|01':[['100 kWh 272 ch','électrique'],['100 kWh AWD 544 ch','électrique']],
+'AITO|M5':[['1.5 EREV 435 ch','hybride rechargeable'],['80 kWh 496 ch','électrique']],
+'AITO|M7':[['1.5 EREV 449 ch','hybride rechargeable']],
+'AITO|M9':[['1.5 EREV 496 ch','hybride rechargeable'],['92 kWh AWD 530 ch','électrique']],
+'Denza|N7':[['91 kWh 313 ch','électrique'],['91 kWh AWD 530 ch','électrique']],
+'Denza|Z9':[['1.5T EREV AWD 1000 ch','hybride rechargeable'],['100 kWh AWD 880 ch','électrique']],
+'Yangwang|U9':[['80 kWh AWD 1300 ch','électrique']],
+'Fangchengbao|Bao 8':[['2.0T PHEV 750 ch','hybride rechargeable']],
 'Li Auto|L6':[['1.5T PHEV 300 ch','hybride rechargeable'],['1.5T PHEV AWD 326 ch','hybride rechargeable']],
-'Li Auto|L7':[['1.5T PHEV 330 ch','hybride rechargeable'],['1.5T PHEV AWD 449 ch','hybride rechargeable']],
-'Li Auto|L8':[['1.5T PHEV 330 ch','hybride rechargeable'],['1.5T PHEV AWD 449 ch','hybride rechargeable']],
 'Li Auto|L9':[['1.5T PHEV AWD 449 ch','hybride rechargeable']],
 'Li Auto|MEGA':[['102.7 kWh 400 ch','électrique']],
 'Zeekr|001':[['86 kWh 272 ch','électrique'],['100 kWh 544 ch','électrique'],['FR 130 kWh 1249 ch','électrique']],
-'Zeekr|007':[['75 kWh 421 ch','électrique'],['100 kWh 646 ch','électrique']],
-'Zeekr|009':[['116 kWh 536 ch','électrique'],['140 kWh 536 ch','électrique']],
 'Zeekr|X':[['66 kWh 272 ch','électrique'],['66 kWh AWD 428 ch','électrique']],
-'Zeekr|7X':[['75 kWh 421 ch','électrique'],['100 kWh 646 ch','électrique']],
 'Leapmotor|C10':[['52.4 kWh 231 ch','électrique'],['1.5 EREV 231 ch','hybride rechargeable']],
-'Leapmotor|C11':[['67 kWh 231 ch','électrique'],['90 kWh 292 ch','électrique'],['1.5 EREV 272 ch','hybride rechargeable']],
-'Leapmotor|C16':[['52.4 kWh 231 ch','électrique'],['1.5 EREV 231 ch','hybride rechargeable']],
 'Leapmotor|T03':[['31.9 kWh 68 ch','électrique'],['41 kWh 109 ch','électrique']],
-'Leapmotor|C01':[['78 kWh 272 ch','électrique'],['90 kWh 544 ch','électrique'],['1.5 EREV 272 ch','hybride rechargeable']],
-'Chery|Tiggo 4':[['1.5 116 ch','essence'],['1.5T 147 ch','essence'],['1.5T 156 ch','essence'],['1.5 Flexfuel 147 ch','flexfuel']],
 'Chery|Tiggo 7':[['1.5T 147 ch','essence'],['1.6T 197 ch','essence'],['2.0T 254 ch','essence'],['1.5T PHEV 326 ch','hybride rechargeable']],
-'Chery|Tiggo 8':[['1.5T 147 ch','essence'],['1.6T 197 ch','essence'],['2.0T 254 ch','essence'],['1.5T PHEV 326 ch','hybride rechargeable'],['1.5T PHEV AWD 326 ch','hybride rechargeable']],
-'Chery|Tiggo 9':[['2.0T 254 ch','essence'],['2.0T AWD 261 ch','essence'],['1.5T PHEV 326 ch','hybride rechargeable']],
+'Chery|Tiggo 8':[['1.6T 197 ch','essence'],['2.0T 254 ch','essence'],['1.5T PHEV 326 ch','hybride rechargeable']],
 'Omoda|5':[['1.5T 147 ch','essence'],['1.6T 197 ch','essence'],['61 kWh 204 ch','électrique']],
-'Omoda|7':[['1.6T 186 ch','essence'],['1.5T PHEV 340 ch','hybride rechargeable']],
 'Omoda|E5':[['61 kWh 204 ch','électrique'],['68 kWh 224 ch','électrique']],
 'Jaecoo|7':[['1.6T 186 ch','essence'],['1.5T PHEV 340 ch','hybride rechargeable']],
-'Jaecoo|8':[['2.0T 254 ch','essence'],['2.0T AWD 254 ch','essence'],['1.5T PHEV 340 ch','hybride rechargeable']],
 'Changan|UNI-T':[['1.5T 188 ch','essence'],['2.0T 233 ch','essence']],
-'Changan|UNI-V':[['1.5T 188 ch','essence'],['2.0T 233 ch','essence']],
-'Changan|CS75':[['1.5T 188 ch','essence'],['2.0T 233 ch','essence'],['iDD PHEV 282 ch','hybride rechargeable']],
 'Deepal|SL03':[['1.5 EREV 238 ch','hybride rechargeable'],['58 kWh 258 ch','électrique'],['79 kWh 299 ch','électrique']],
-'Deepal|S7':[['1.5 EREV 238 ch','hybride rechargeable'],['66 kWh 258 ch','électrique'],['79 kWh 299 ch','électrique']],
 'Avatr|11':[['90 kWh 313 ch','électrique'],['116 kWh AWD 578 ch','électrique']],
-'Avatr|12':[['94 kWh 313 ch','électrique'],['116 kWh AWD 578 ch','électrique']],
-'Avatr|07':[['82 kWh 313 ch','électrique'],['1.5 EREV 326 ch','hybride rechargeable']],
 'Geely Galaxy|E5':[['49 kWh 184 ch','électrique'],['60 kWh 218 ch','électrique']],
-'Geely Galaxy|E8':[['62 kWh 272 ch','électrique'],['75 kWh 648 ch','électrique']],
-'Geely Galaxy|L6':[['1.5T 163 ch','essence'],['1.5T PHEV 245 ch','hybride rechargeable']],
-'Geely Galaxy|L7':[['1.5T PHEV 390 ch','hybride rechargeable']],
-'Lynk & Co|01':[['1.5T 150 ch','essence'],['2.0T 190 ch','essence'],['1.5T PHEV 265 ch','hybride rechargeable']],
 'Lynk & Co|08':[['1.5T PHEV 390 ch','hybride rechargeable']],
 'Lynk & Co|Z10':[['71 kWh 272 ch','électrique'],['95 kWh AWD 580 ch','électrique']],
-'Geometry|G6':[['53 kWh 204 ch','électrique'],['70 kWh 238 ch','électrique']],
 'Great Wall|Tank 300':[['2.0T 227 ch','essence'],['2.4T 184 ch','diesel'],['2.0T PHEV 403 ch','hybride rechargeable']],
-'Great Wall|Tank 500':[['3.0T V6 360 ch','essence'],['2.0T PHEV 408 ch','hybride rechargeable']],
 'Haval|H6':[['1.5T 150 ch','essence'],['2.0T 211 ch','essence'],['1.5T DHT 245 ch','hybride'],['1.5T PHEV 326 ch','hybride rechargeable']],
 'Haval|Jolion':[['1.5T 150 ch','essence'],['1.5T DHT 190 ch','hybride']],
 'Ora|03':[['48 kWh 143 ch','électrique'],['63 kWh 171 ch','électrique']],
-'Ora|04':[['63 kWh 171 ch','électrique'],['63 kWh AWD 408 ch','électrique']],
-'Wey|Mocha':[['2.0T 235 ch','essence'],['2.0T PHEV 476 ch','hybride rechargeable']],
-'Voyah|Free':[['1.5 EREV 510 ch','hybride rechargeable'],['88 kWh 349 ch','électrique'],['106 kWh AWD 694 ch','électrique']],
-'Voyah|Dream':[['1.5 EREV 394 ch','hybride rechargeable'],['108 kWh 435 ch','électrique']],
-'Voyah|Zhuiguang':[['82 kWh 510 ch','électrique'],['82 kWh AWD 800 ch','électrique']],
+'Voyah|Free':[['1.5 EREV 510 ch','hybride rechargeable'],['88 kWh 349 ch','électrique']],
 'Hongqi|E-HS9':[['84 kWh 218 ch','électrique'],['99 kWh 435 ch','électrique'],['120 kWh AWD 551 ch','électrique']],
-'Hongqi|H9':[['2.0T 252 ch','essence'],['3.0 V6 SC 283 ch','essence'],['4.0T V8 490 ch','essence']],
 'Hongqi|H5':[['1.5T 169 ch','essence'],['2.0T 224 ch','essence'],['1.5T HEV 190 ch','hybride']],
 'Maxus|eDeliver 9':[['72 kWh 204 ch','électrique'],['88 kWh 204 ch','électrique']],
-'Maxus|T90':[['2.0T 218 ch','essence'],['2.0T 218 ch','diesel'],['2.0T PHEV 326 ch','hybride rechargeable']],
 'Aion|S':[['58 kWh 204 ch','électrique'],['69 kWh 224 ch','électrique']],
-'Aion|Hyper GT':[['80 kWh 340 ch','électrique'],['80 kWh AWD 598 ch','électrique']],
-'Aion|Hyper SSR':[['73 kWh AWD 1225 ch','électrique']],
-'BAIC|BJ40':[['2.0T 224 ch','essence'],['2.3T 245 ch','essence'],['2.0T 163 ch','diesel']],
-'BAIC|EU5':[['51 kWh 163 ch','électrique'],['60 kWh 218 ch','électrique']],
-'JAC|T8':[['2.0T 177 ch','essence'],['2.0T 177 ch','diesel']],
-'Dongfeng|eπ 007':[['73 kWh 272 ch','électrique'],['1.5 EREV 272 ch','hybride rechargeable']],
-'Dongfeng|Nammi 01':[['31 kWh 95 ch','électrique'],['42 kWh 136 ch','électrique']],
-'Jetour|Dashing':[['1.5T 156 ch','essence'],['1.6T 197 ch','essence']],
-'Jetour|T2':[['1.5T 181 ch','essence'],['2.0T 254 ch','essence'],['1.5T PHEV 326 ch','hybride rechargeable']],
-'Hozon|Neta U':[['68 kWh 204 ch','électrique'],['81 kWh 231 ch','électrique']],
-'Hozon|Neta S':[['62 kWh 231 ch','électrique'],['91 kWh 462 ch','électrique'],['1.5 EREV 231 ch','hybride rechargeable']],
-'IM Motors|L7':[['93 kWh 340 ch','électrique'],['93 kWh AWD 578 ch','électrique'],['118 kWh 637 ch','électrique']],
-'Arcfox|Alpha S':[['65 kWh 218 ch','électrique'],['94 kWh 435 ch','électrique'],['1.5T EREV 435 ch','hybride rechargeable']],
-'Arcfox|T5':[['66 kWh 272 ch','électrique'],['79 kWh 340 ch','électrique']],
-'Luxgen|n7':[['73 kWh 231 ch','électrique'],['91 kWh 305 ch','électrique']],
-'NIO|ET5':[['75 kWh 490 ch','électrique'],['100 kWh 490 ch','électrique'],['150 kWh 490 ch','électrique']],
-'NIO|ET7':[['75 kWh 653 ch','électrique'],['100 kWh 653 ch','électrique'],['150 kWh 653 ch','électrique']],
-'NIO|EL8':[['75 kWh 653 ch','électrique'],['100 kWh 653 ch','électrique'],['150 kWh 653 ch','électrique']],
-'NIO|Firefly':[['42 kWh 143 ch','électrique']],
-'XPeng|P7+':[['76 kWh 276 ch','électrique'],['88 kWh 340 ch','électrique']],
-'XPeng|G6':[['66 kWh 286 ch','électrique'],['87 kWh 487 ch','électrique']],
-'XPeng|G9':[['78 kWh 313 ch','électrique'],['98 kWh AWD 551 ch','électrique']],
-'XPeng|X9':[['84 kWh 320 ch','électrique'],['101 kWh 400 ch','électrique']],
-'XPeng|MONA M03':[['51 kWh 190 ch','électrique'],['62 kWh 218 ch','électrique']],
+'Wuling|Hongguang Mini EV':[['9 kWh 27 ch','électrique'],['13.9 kWh 40 ch','électrique'],['26 kWh 75 ch','électrique']],
+'Wuling|Bingo':[['31.9 kWh 68 ch','électrique'],['41.9 kWh 95 ch','électrique']],
+'Baojun|Yep':[['28 kWh 68 ch','électrique'],['28 kWh 102 ch','électrique']],
+'HiPhi|X':[['97 kWh 272 ch','électrique'],['97 kWh AWD 598 ch','électrique']],
+'WM Motor|EX5':[['52 kWh 218 ch','électrique'],['69 kWh 218 ch','électrique']],
+'Zhiji Auto|L7':[['93 kWh 340 ch','électrique'],['93 kWh AWD 578 ch','électrique']],
+'Rising Auto|R7':[['77 kWh 340 ch','électrique'],['90 kWh AWD 544 ch','électrique']],
+'GAC|Trumpchi GS8':[['2.0T 252 ch','essence'],['2.0T HEV 252 ch','hybride']],
 'MG|MG4':[['51 kWh 170 ch','électrique'],['64 kWh 204 ch','électrique'],['77 kWh 245 ch','électrique'],['77 kWh AWD 435 ch','électrique']],
 'MG|HS':[['1.5T 162 ch','essence'],['2.0T 231 ch','essence'],['1.5T PHEV 258 ch','hybride rechargeable']],
 'MG|Cyberster':[['64 kWh 314 ch','électrique'],['77 kWh AWD 544 ch','électrique']],
-'Tata|Nexon':[['1.2 88 ch','essence'],['1.2T 120 ch','essence'],['1.5 110 ch','diesel'],['Nexon EV 129 ch','électrique'],['Nexon EV 30 kWh 143 ch','électrique']],
-'Tata|Punch':[['1.2 88 ch','essence'],['Punch EV 120 ch','électrique']],
-'Tata|Curvv':[['1.2T 120 ch','essence'],['1.5 115 ch','diesel'],['Curvv EV 55 kWh 167 ch','électrique']],
-'Mahindra|XUV700':[['2.0T 200 ch','essence'],['2.2 185 ch','diesel']],
-'Mahindra|XUV400':[['34.5 kWh 147 ch','électrique'],['39.4 kWh 147 ch','électrique']],
+'NIO|ET5':[['75 kWh 490 ch','électrique'],['100 kWh 490 ch','électrique']],
+'NIO|ET7':[['75 kWh 653 ch','électrique'],['100 kWh 653 ch','électrique'],['150 kWh 653 ch','électrique']],
+'NIO|Firefly':[['42 kWh 143 ch','électrique']],
+'XPeng|G6':[['66 kWh 286 ch','électrique'],['87 kWh 487 ch','électrique']],
+'XPeng|G9':[['78 kWh 313 ch','électrique'],['98 kWh AWD 551 ch','électrique']],
+'XPeng|MONA M03':[['51 kWh 190 ch','électrique'],['62 kWh 218 ch','électrique']],
+'Tata|Nexon':[['1.2 88 ch','essence'],['1.2T 120 ch','essence'],['1.5 110 ch','diesel'],['Nexon EV 143 ch','électrique']],
 'Mahindra|BE 6':[['59 kWh 286 ch','électrique'],['79 kWh 394 ch','électrique']],
-'Mahindra|XEV 9e':[['59 kWh 286 ch','électrique'],['79 kWh 394 ch','électrique']],
-'VinFast|VF3':[['37 kWh 43 ch','électrique']],
-'VinFast|VF5':[['37 kWh 147 ch','électrique'],['37 kWh AWD 201 ch','électrique']],
-'VinFast|VF6':[['59 kWh 174 ch','électrique'],['59 kWh 201 ch','électrique']],
-'VinFast|VF7':[['75 kWh 348 ch','électrique'],['75 kWh AWD 402 ch','électrique']],
 'VinFast|VF8':[['82 kWh 348 ch','électrique'],['82 kWh AWD 402 ch','électrique']],
-'VinFast|VF9':[['123 kWh 402 ch','électrique'],['123 kWh AWD 402 ch','électrique']],
-/* Marques classiques */
-'Renault|R5 E-Tech':[['EV40 120','électrique'],['EV52 150','électrique']],
-'Renault|R4 E-Tech':[['EV40 120','électrique'],['EV52 150','électrique']],
-'Renault|Symbioz':[['E-Tech 145','hybride']],
-'Renault|Scénic E-Tech':[['EV60 170','électrique'],['EV87 220','électrique']],
-'Peugeot|3008':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['2.0 BlueHDi 180','diesel'],['Hybrid 225','hybride rechargeable'],['e-3008 210','électrique'],['e-3008 320','électrique']],
-'Peugeot|208':[['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 100','diesel'],['e-208 136','électrique']],
-'Peugeot|2008':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 110','diesel'],['e-2008 136','électrique']],
+/* ===== Classiques ===== */
+'Renault|Clio':[['1.0 SCe 65','essence'],['1.0 TCe 90','essence'],['1.3 TCe 140','essence'],['1.5 Blue dCi 100','diesel'],['E-Tech 145','hybride']],
+'Renault|Captur':[['1.0 TCe 90','essence'],['1.3 TCe 140','essence'],['1.5 Blue dCi 115','diesel'],['E-Tech 145','hybride'],['E-Tech 160','hybride rechargeable']],
+'Renault|Mégane E-Tech':[['EV40 130','électrique'],['EV60 220','électrique']],
+'Renault|Austral':[['1.3 TCe 160 mild hybrid','essence'],['E-Tech 200','hybride']],
+'Renault|Arkana':[['1.3 TCe 140','essence'],['E-Tech 145','hybride']],
+'Renault|Kangoo':[['1.3 TCe 130','essence'],['1.5 Blue dCi 95','diesel'],['E-Tech électrique','électrique']],
+'Dacia|Duster':[['1.0 TCe 90','essence'],['1.3 TCe 150','essence'],['1.5 Blue dCi 115','diesel'],['Hybrid 140','hybride']],
+'Dacia|Spring':[['Electric 45','électrique'],['Electric 65','électrique']],
+'Peugeot|208':[['1.2 PureTech 100','essence'],['1.2 PureTech 130','essence'],['1.5 BlueHDi 100','diesel']],
+'Peugeot|2008':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 110','diesel']],
 'Peugeot|308':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel'],['Hybrid 225','hybride rechargeable'],['e-308 156','électrique']],
+'Peugeot|3008':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['2.0 BlueHDi 180','diesel'],['Hybrid 225','hybride rechargeable'],['e-3008 210','électrique'],['e-3008 320','électrique']],
 'Peugeot|508':[['1.6 PureTech 225','essence'],['1.5 BlueHDi 130','diesel'],['Hybrid 225','hybride rechargeable'],['PSE 360','hybride rechargeable']],
-'Citroën|C3':[['1.2 PureTech 110','essence'],['1.5 BlueHDi 100','diesel'],['ë-C3 113','électrique']],
-'Citroën|C4':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel'],['ë-C4 136','électrique']],
+'Citroën|C4':[['1.2 PureTech 130','essence'],['1.5 BlueHDi 130','diesel']],
 'Citroën|C5 Aircross':[['1.2 PureTech 130','essence'],['1.6 PureTech 180','essence'],['1.5 BlueHDi 130','diesel'],['Hybrid 225','hybride rechargeable']],
 'DS Automobiles|DS7':[['1.6 PureTech 225','essence'],['1.5 BlueHDi 130','diesel'],['E-Tense 225','hybride rechargeable'],['E-Tense 360','hybride rechargeable']],
 'Opel|Corsa':[['1.2 Turbo 100','essence'],['1.2 Turbo 130','essence'],['1.5 Diesel 100','diesel'],['Corsa-e 136','électrique']],
 'Opel|Astra':[['1.2 Turbo 130','essence'],['1.5 Diesel 130','diesel'],['Hybrid 225','hybride rechargeable']],
-'Renault|Clio':[['1.0 TCe 90','essence'],['1.3 TCe 140','essence'],['1.5 Blue dCi 100','diesel'],['E-Tech 145','hybride']],
-'Renault|Mégane E-Tech':[['EV40 130','électrique'],['EV60 220','électrique']],
-'Renault|Captur':[['1.0 TCe 90','essence'],['1.3 TCe 140','essence'],['1.5 Blue dCi 115','diesel'],['E-Tech 145','hybride']],
-'Renault|Austral':[['1.3 TCe 160 mild hybrid','essence'],['E-Tech 200','hybride']],
-'Renault|Zoe':[['R110','électrique'],['R135','électrique']],
-'Renault|Kangoo':[['1.3 TCe 130','essence'],['1.5 Blue dCi 95','diesel'],['E-Tech électrique','électrique']],
-'Dacia|Duster':[['1.0 TCe 90','essence'],['1.3 TCe 150','essence'],['1.5 Blue dCi 115','diesel'],['Hybrid 140','hybride']],
-'Dacia|Spring':[['Electric 45','électrique'],['Electric 65','électrique']],
 'Volkswagen|Golf':[['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 TDI 150','diesel'],['eTSI 110','essence']],
-'Volkswagen|ID.4':[['Pure 148','électrique'],['Pro 204','électrique'],['Pro 4Motion 265','électrique'],['GTX 299','électrique']],
 'Volkswagen|ID.3':[['Pure 150','électrique'],['Pro 204','électrique'],['GTX 326','électrique']],
+'Volkswagen|ID.4':[['Pure 148','électrique'],['Pro 204','électrique'],['Pro 4Motion 265','électrique'],['GTX 299','électrique']],
 'Volkswagen|Tiguan':[['1.5 TSI 150','essence'],['2.0 TDI 150','diesel'],['eHybrid 245','hybride rechargeable']],
-'Audi|A3':[['35 TFSI 150','essence'],['40 TFSI e','hybride rechargeable'],['35 TDI 150','diesel']],
+'Audi|A3':[['35 TFSI 150','essence'],['35 TDI 150','diesel'],['40 TFSI e','hybride rechargeable']],
 'Audi|Q4 e-tron':[['35 e-tron 170','électrique'],['40 e-tron 204','électrique'],['45 e-tron quattro 265','électrique']],
 'BMW|Série 3':[['320i','essence'],['330i','essence'],['320d','diesel'],['330e','hybride rechargeable']],
-'BMW|X3':[['xDrive20i','essence'],['xDrive30i','essence'],['xDrive30d','diesel'],['xDrive30e','hybride rechargeable']],
+'BMW|X3':[['xDrive20i','essence'],['xDrive30d','diesel'],['xDrive30e','hybride rechargeable']],
 'BMW|iX':[['xDrive40','électrique'],['xDrive50','électrique'],['M60','électrique']],
 'Mercedes-Benz|Classe C':[['C 200','essence'],['C 220 d','diesel'],['C 300 e','hybride rechargeable']],
 'Fiat|500':[['1.2 69','essence'],['1.0 Hybrid 70','hybride'],['500e 118','électrique']],
-'Alfa Romeo|Giulia':[['2.0 Turbo 200','essence'],['2.0 Turbo 280','essence'],['2.2 Diesel 160','diesel']],
+'Alfa Romeo|Giulia':[['2.0 Turbo 200','essence'],['2.2 Diesel 160','diesel']],
 'Alfa Romeo|Tonale':[['1.5 Hybrid 160','hybride'],['Plug-in Hybrid Q4 275','hybride rechargeable']],
 'Škoda|Enyaq':[['iV 60 180','électrique'],['iV 80 204','électrique'],['iV vRS 299','électrique']],
+'Škoda|Octavia':[['1.0 TSI 110','essence'],['1.5 TSI 150','essence'],['2.0 TDI 150','diesel'],['iV 204','hybride rechargeable']],
 'Toyota|Yaris':[['1.0 VVT-i 72','essence'],['1.5 Hybrid 130','hybride']],
 'Toyota|Corolla':[['1.2 Turbo 116','essence'],['1.8 Hybrid 140','hybride'],['2.0 Hybrid 196','hybride']],
 'Toyota|RAV4':[['2.5 Hybrid 218','hybride'],['2.5 PHEV 306','hybride rechargeable']],
@@ -618,8 +409,6 @@ const SEED_ENGINES={
 'Nissan|Qashqai':[['1.3 DIG-T 158','essence'],['e-POWER 190','hybride']],
 'Nissan|Ariya':[['63 kWh 218','électrique'],['87 kWh 242','électrique'],['e-4ORCE 87 kWh 306','électrique']],
 'Mazda|3':[['2.0 Skyactiv-G 122','essence'],['2.0 e-Skyactiv-X 186','essence']],
-'Mazda|CX-60':[['2.5 PHEV 327','hybride rechargeable'],['3.3 I6 284','essence']],
-'Suzuki|Vitara':[['1.4 Boosterjet 129','essence'],['1.4 Hybrid 129','hybride'],['Strong Hybrid 115','hybride']],
 'Hyundai|Kona':[['1.0 T-GDi 120','essence'],['Hybrid 141','hybride'],['Electric 204','électrique']],
 'Hyundai|Tucson':[['1.6 T-GDi 150','essence'],['Hybrid 230','hybride'],['Plug-in Hybrid 265','hybride rechargeable']],
 'Hyundai|Ioniq 5':[['58 kWh 170','électrique'],['77 kWh 325 AWD','électrique'],['N 650','électrique']],
@@ -631,195 +420,156 @@ const SEED_ENGINES={
 'Jeep|Wrangler':[['2.0 Turbo 272','essence'],['4xe 380','hybride rechargeable']],
 'Tesla|Model 3':[['Propulsion','électrique'],['Grande Autonomie','électrique'],['Performance','électrique']],
 'Tesla|Model Y':[['Propulsion','électrique'],['Grande Autonomie','électrique'],['Performance','électrique']],
-'Tesla|Cybertruck':[['Rear-Wheel Drive','électrique'],['Long Range AWD','électrique'],['Cyberbeast','électrique']],
-'Porsche|Taycan':[['4 408','électrique'],['4S 530','électrique'],['Turbo 680','électrique'],['Turbo S 761','électrique']],
-'Porsche|Macan':[['2.0 TFSI 265','essence'],['Macan 4 408','électrique'],['Macan Turbo 639','électrique']],
+'Porsche|Taycan':[['4 408','électrique'],['4S 530','électrique'],['Turbo 680','électrique']],
 'Volvo|XC60':[['B4 197','essence'],['T8 Recharge 455','hybride rechargeable']],
 'Volvo|EX30':[['Single Motor 272','électrique'],['Twin Motor 428','électrique']],
-'Volvo|EX90':[['Twin Motor 408','électrique'],['Twin Motor Performance 517','électrique']],
-'Polestar|2':[['Long Range 299','électrique'],['Long Range Dual Motor 421','électrique']],
-'Polestar|4':[['Single Motor 272','électrique'],['Dual Motor 544','électrique']]};
+'Polestar|2':[['Long Range 299','électrique'],['Long Range Dual Motor 421','électrique']]};
 
-/* ================= FICHES MANUELLES (complétées avec nouvelles marques chinoises) ================= */
+/* ================= FICHES MANUELLES ================= */
 const SEED_SHEETS=[
-{id:'m1',b:'Renault',m:'Mégane',e:'1.2 TCe 120',cat:'Moteur',titre:'1.2 TCe (H5Ft) : consommation d\u2019huile excessive',sym:'Consommation d\u2019huile élevée, bougies encrassées, ratés d\u2019allumage.',dtc:['P0171','P0300'],fix:'Contrôle consommation huile constructeur, bougies + bobines.',src:'Campagnes réseau'},
-{id:'m2',b:'Renault',m:'Clio',e:'1.5 Blue dCi 100',cat:'Moteur',titre:'1.5 dCi (K9K) : limaille dans le circuit HP',sym:'Démarrage difficile, perte de puissance, voyant injection.',dtc:['P0087','P0191'],fix:'Rinçage circuit GO, remplacement pompe HP + injecteurs si contamination.',src:'Cas connus K9K'},
-{id:'m3',b:'Peugeot',m:'3008',e:'1.2 PureTech 130',cat:'Moteur',titre:'1.2 PureTech : courroie de distribution immergée',sym:'Voyant moteur, ralenti instable, casse moteur possible.',dtc:['P0016','P0300'],fix:'Remplacement courroie + crépine + huile spécifiée.',src:'Campagnes Stellantis'},
-{id:'m4',b:'Peugeot',m:'3008',e:'1.5 BlueHDi 130',cat:'Moteur',titre:'1.5 BlueHDi (DV5) : chaîne d\u2019arbre à cames',sym:'Bruit métallique, voyant moteur, casse moteur.',dtc:['P0016','P0008'],fix:'Contrôle/chaîne renforcée.',src:'Campagnes Stellantis'},
-{id:'m5',b:'Volkswagen',m:'ID.4',e:'Pro Performance 204',cat:'Électrique',titre:'Modules batterie HT : risque d\u2019échauffement',sym:'Alertes batterie, limitation de charge.',dtc:['Codes BMS'],fix:'Diagnostic modules, MAJ, remplacement.',src:'NHTSA 23V-225'},
-{id:'m6',b:'Volkswagen',m:'Golf',e:'1.0 TSI 110',cat:'Transmission',titre:'DSG7 DQ200 : mécatronique/embrayages',sym:'À-coups, bruits, patinage.',dtc:['P17BF','P0841'],fix:'MAJ logiciel, remplacement mécatronique/kit embrayages.',src:'Cas DQ200'},
-{id:'m7',b:'BMW',m:'Série 3',e:'320d',cat:'Moteur',titre:'N47/N57 : chaîne de distribution',sym:'Bruit chaîne au ralenti/à froid.',dtc:['P0016'],fix:'Contrôle/remplacement kit chaîne.',src:'Cas N47'},
-{id:'m8',b:'Toyota',m:'Prius',e:'Hybrid 122',cat:'Électrique',titre:'Pompe refroidissement onduleur',sym:'Surchauffe onduleur, mode dégradé.',dtc:['P0A78','P3024'],fix:'Remplacement pompe inverter.',src:'Campagnes Toyota'},
-{id:'m9',b:'Honda',m:'Civic',e:'',cat:'Airbag',titre:'Airbag Takata : gonfleur défectueux',sym:'Risque projection éclats.',dtc:['—'],fix:'Remplacement gonfleur.',src:'NHTSA/Safety Gate Takata'},
-{id:'m10',b:'Hyundai',m:'Tucson',e:'1.6 T-GDi 150',cat:'Moteur',titre:'Theta/Gamma : coussinets de bielle (KSDS)',sym:'Bruit moteur, serrage possible.',dtc:['P1326'],fix:'Contrôle KSDS, remplacement moteur.',src:'NHTSA Theta II'},
-{id:'m11',b:'Kia',m:'Sportage',e:'',cat:'Moteur',titre:'Theta II : risque serrage/incendie',sym:'Bruits moteur, voyant huile.',dtc:['P1326'],fix:'MAJ KSDS + contrôle moteur.',src:'NHTSA'},
-{id:'m12',b:'Ford',m:'Focus',e:'1.0 EcoBoost 125',cat:'Moteur',titre:'1.0 EcoBoost : durites/surchauffe',sym:'Surchauffe, fuite LDR.',dtc:['P0217'],fix:'Contrôle circuit refroidissement.',src:'Cas 1.0 EcoBoost'},
-{id:'m13',b:'Tesla',m:'Model Y',e:'',cat:'ADAS',titre:'Autopilot : rappel logiciel',sym:'Régulateur adaptatif non conforme.',dtc:['—'],fix:'MAJ OTA (NHTSA 23V-848).',src:'NHTSA'},
-{id:'m14',b:'Chevrolet',m:'Bolt EV',e:'65 kWh 200',cat:'Électrique',titre:'Batterie HT : risque incendie (GM/LG)',sym:'Cellules défectueuses.',dtc:['Codes HV'],fix:'Diagnostic/remplacement modules.',src:'NHTSA 20V-552'},
-{id:'m15',b:'Renault',m:'Zoe',e:'R110',cat:'Électrique',titre:'Défaut charge/connecteur',sym:'Charge interrompue, voyant prise.',dtc:['P0C78'],fix:'Contrôle trappe/connecteur, borne.',src:'Cas Zoe'},
-{id:'m16',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link : écran noir/reboots',sym:'Écran figé, Google Maps indisponible.',dtc:['U1233'],fix:'MAJ OpenR Link, reset, remplacement.',src:'Cas R5 E-Tech'},
-{id:'m17',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Charge AC/DC : coupures',sym:'Charge interrompue, puissance plafonnée.',dtc:['P0C78'],fix:'MAJ BMS/chargeur, contrôle CCS.',src:'Cas AmpR Small'},
-{id:'m18',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Transmission',titre:'Boîte multimode E-Tech : à-coups',sym:'À-coups secs en redémarrage/urbain.',dtc:['P0700'],fix:'MAJ calibration boîte, contrôle crabots.',src:'Cas E-Tech'},
-{id:'m19',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Pompe à chaleur : perte autonomie hiver',sym:'Consommation élevée temps froid.',dtc:['Codes thermique'],fix:'Diagnostic circuit pompe à chaleur, MAJ.',src:'Cas Scénic E-Tech'},
-/* NOUVEAU : Fiches marques chinoises récentes (suite) */
-{id:'m20',b:'BYD',m:'Atto 3',e:'',cat:'Électrique',titre:'Blade Battery LFP : équilibrage cellules/SOH',sym:'Autonomie en baisse, SOC irrégulier.',dtc:['P0A80'],fix:'Équilibrage forcé BMS, rapport SOH OBD, MAJ.',src:'Cas BYD Blade LFP'},
-{id:'m21',b:'BYD',m:'Seal',e:'',cat:'Électrique',titre:'Charge rapide DC : limitation puissance',sym:'Puissance plafonnée 100-120 kW au lieu de 150 kW.',dtc:['Codes HV'],fix:'MAJ BMS, préconditionnement, contrôle thermique.',src:'Cas e-Platform 3.0'},
-{id:'m22',b:'BYD',m:'Dolphin',e:'',cat:'Électronique',titre:'Écran DiLink : lenteurs/reboots',sym:'Lenteurs multimédia, perte CarPlay.',dtc:['U-codes'],fix:'MAJ OTA DiLink, reset, remplacement.',src:'Cas DiLink'},
-{id:'m23',b:'BYD',m:'Yangwang U8',e:'',cat:'Électrique',titre:'Système e4 : gestion 4 moteurs indépendants',sym:'Alerte système e4, distribution couple erratique.',dtc:['Codes e4 BYD'],fix:'Diagnostic 4 moteurs, MAJ contrôleur, contrôle capteurs couple.',src:'Cas Yangwang e4'},
-{id:'m24',b:'BYD',m:'Denza D9',e:'',cat:'Électronique',titre:'Écran central 15.6" : latence',sym:'Lenteurs extrêmes, perte navigation.',dtc:['U-codes Denza'],fix:'MAJ firmware, reset, remplacement head unit.',src:'Cas Denza D9'},
-{id:'m25',b:'Xiaomi Auto',m:'SU7',e:'',cat:'Électrique',titre:'Batterie 800V SiC : limitation puissance thermique',sym:'Puissance plafonnée après charges successives.',dtc:['Codes HV Xiaomi'],fix:'Préconditionnement, contrôle refroidissement pack, MAJ BMS.',src:'Cas Xiaomi SU7 800V'},
-{id:'m26',b:'Xiaomi Auto',m:'SU7',e:'',cat:'ADAS',titre:'Xiaomi Pilot : capteurs LiDAR/calibration',sym:'Alertes ADAS intempestives, navigation pilote désactivée.',dtc:['C-codes Xiaomi Pilot'],fix:'Calibration LiDAR + 11 caméras, MAJ logiciel.',src:'Cas Xiaomi Pilot Max'},
-{id:'m27',b:'Xiaomi Auto',m:'SU7',e:'',cat:'Électronique',titre:'HyperOS : reboot écran central',sym:'Écran figé/redémarre, perte CarPlay.',dtc:['U-codes HyperOS'],fix:'MAJ HyperOS, reset usine.',src:'Cas Xiaomi HyperOS'},
-{id:'m28',b:'Xiaomi Auto',m:'YU7',e:'',cat:'Électrique',titre:'Batterie LFP/YU7 : calibration SOC',sym:'SOC incohérent après charges rapides.',dtc:['Codes BMS'],fix:'Recalibration SOC charge 100%, MAJ BMS.',src:'Cas Xiaomi YU7'},
-{id:'m29',b:'Baidu Jiyue',m:'01',e:'',cat:'ADAS',titre:'Apollo Go : conduite autonome niveau 4',sym:'Désactivation navigation autonome, alertes LiDAR.',dtc:['C-codes Apollo'],fix:'Calibration LiDAR + 7 caméras, MAJ Apollo, diagnostic.',src:'Cas Baidu Apollo'},
-{id:'m30',b:'Baidu Jiyue',m:'01',e:'',cat:'Électronique',titre:'SIMO (assistant vocal) : latence',sym:'Assistant vocal lent, incompréhension.',dtc:['U-codes SIMO'],fix:'MAJ SIMO, reset, contrôle micro.',src:'Cas Jiyue SIMO'},
-{id:'m31',b:'Baidu Jiyue',m:'07',e:'',cat:'Électrique',titre:'800V SiC : charge ultra-rapide',sym:'Puissance limitée sur bornes 800V.',dtc:['Codes HV'],fix:'Contrôle thermique pack, préconditionnement, MAJ.',src:'Cas Jiyue 800V'},
-{id:'m32',b:'AITO',m:'M5',e:'',cat:'Électrique',titre:'HarmonyOS Smart Cockpit : reboots',sym:'Écran central qui redémarre, perte CarPlay/HUAWEI.',dtc:['U-codes HarmonyOS'],fix:'MAJ HarmonyOS, reset, remplacement head unit.',src:'Cas AITO Huawei'},
-{id:'m33',b:'AITO',m:'M9',e:'',cat:'ADAS',titre:'Huawei ADS 2.0 : capteurs LiDAR',sym:'Alertes ADAS, navigation pilote désactivée.',dtc:['C-codes ADS 2.0'],fix:'Calibration LiDAR + 11 caméras + 3 mmWave, MAJ.',src:'Cas Huawei ADS 2.0'},
-{id:'m34',b:'AITO',m:'M7',e:'',cat:'Électrique',titre:'EREV : démarrage intempestif moteur thermique',sym:'Moteur thermique démarre en mode EV pur.',dtc:['Codes EREV AITO'],fix:'Contrôle gestion énergie, MAJ logiciel, batterie 12V.',src:'Cas AITO EREV'},
-{id:'m35',b:'Denza',m:'N7',e:'',cat:'Électrique',titre:'Batterie Blade LFP : déséquilibre cellules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage forcé, diagnostic BMS, campagne.',src:'Cas Denza BYD'},
-{id:'m36',b:'Denza',m:'Z9 GT',e:'',cat:'Électrique',titre:'Système e4 / 3 moteurs : répartition couple',sym:'Alerte système e4, perte traction.',dtc:['Codes e4'],fix:'Diagnostic 3 moteurs, MAJ contrôleur, capteurs.',src:'Cas Denza Z9'},
-{id:'m37',b:'Yangwang',m:'U8',e:'',cat:'Électrique',titre:'Tank 360 / rotation 180° : calibration moteurs',sym:'Mode Tank non opérationnel, désynchronisation moteurs.',dtc:['Codes e4'],fix:'Calibration 4 moteurs indépendants, MAJ.',src:'Cas Yangwang U8 e4'},
-{id:'m38',b:'Yangwang',m:'U9',e:'',cat:'Électrique',titre:'Suspension active hydraulique : fuite',sym:'Alerte suspension, hauteur caisse variable.',dtc:['Codes suspension'],fix:'Contrôle circuit hydraulique, joints, pompe.',src:'Cas Yangwang DiAct'},
-{id:'m39',b:'Fangchengbao',m:'Bao 5',e:'',cat:'Électrique',titre:'DMO (Dual Mode Off-road) : gestion 2 moteurs',sym:'Alerte DMO, mode 4x4 désactivé.',dtc:['Codes DMO BYD'],fix:'Diagnostic DMO, MAJ, contrôle capteurs.',src:'Cas BYD DMO'},
-{id:'m40',b:'Skyworth',m:'EV6',e:'',cat:'Électrique',titre:'Batterie NMC : SOH en baisse',sym:'Autonomie réelle < théorique, SOH prématuré.',dtc:['P0A80'],fix:'Équilibrage modules, rapport SOH, campagne.',src:'Cas Skyworth'},
-{id:'m41',b:'Hengchi',m:'5',e:'',cat:'Électrique',titre:'Batterie : déséquilibre cellules',sym:'SOH irrégulier, codes BMS.',dtc:['P0A80'],fix:'Équilibrage forcé, diagnostic modules.',src:'Cas Hengchi Evergrande'},
-{id:'m42',b:'NIO',m:'ET7',e:'',cat:'Électrique',titre:'Battery Swap : erreurs communication station',sym:'Refus de swap, erreur BMS/station.',dtc:['Codes swap NIO'],fix:'Contrôle BMS, reset communication, réseau NIO.',src:'Cas NIO Power Swap'},
-{id:'m43',b:'NIO',m:'EL8',e:'',cat:'ADAS',titre:'NIO Pilot / NOP : LiDAR décalibré',sym:'Navigation sur pilote désactivée.',dtc:['C-codes NIO'],fix:'Calibration LiDAR + caméras, MAJ.',src:'Cas NIO Adam'},
-{id:'m44',b:'XPeng',m:'P7+',e:'',cat:'Électrique',titre:'Autonomie : déséquilibre cellules',sym:'Autonomie réelle < théorique.',dtc:['P0A80'],fix:'Équilibrage forcé, contrôle modules.',src:'Cas XPeng P7+'},
-{id:'m45',b:'XPeng',m:'G9',e:'',cat:'Électrique',titre:'Charge 800V SiC : limitation thermique',sym:'Puissance plafonnée après charges rapides.',dtc:['Codes HV'],fix:'Contrôle thermique pack, MAJ.',src:'Cas XPeng 800V'},
-{id:'m46',b:'XPeng',m:'MONA M03',e:'',cat:'ADAS',titre:'XPIlot : capteurs caméras/calibration',sym:'Alertes ADAS, navigation pilote désactivée.',dtc:['C-codes XPIlot'],fix:'Calibration caméras, MAJ.',src:'Cas XPeng XPIlot'},
-{id:'m47',b:'Zeekr',m:'001',e:'',cat:'Électrique',titre:'Charge 800V : limitation puissance',sym:'Puissance DC plafonnée.',dtc:['Codes HV'],fix:'Préconditionnement, contrôle thermique.',src:'Cas Zeekr 800V'},
-{id:'m48',b:'Zeekr',m:'X',e:'',cat:'Électronique',titre:'Écran central : lenteurs, reboots',sym:'Lenteurs, perte Bluetooth.',dtc:['U-codes'],fix:'MAJ firmware, reset.',src:'Cas Zeekr X'},
-{id:'m49',b:'Li Auto',m:'L9',e:'',cat:'Électrique',titre:'EREV 1.5T : pompe/refroidissement',sym:'Alerte thermique, puissance moteur thermique limitée.',dtc:['P0217'],fix:'Contrôle pompe à huile, circuit refroidissement.',src:'Cas Li Auto EREV'},
-{id:'m50',b:'Li Auto',m:'L7',e:'',cat:'ADAS',titre:'Li AD Max : LiDAR/calibration',sym:'Navigation sur pilote indisponible.',dtc:['C-codes Li AD'],fix:'Calibration LiDAR + caméras, MAJ.',src:'Cas Li Auto AD Max'},
-{id:'m51',b:'Leapmotor',m:'C11',e:'',cat:'Électrique',titre:'Batterie LFP : déséquilibre modules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic BMS.',src:'Cas Leapmotor C11'},
-{id:'m52',b:'Chery',m:'Tiggo 8',e:'',cat:'Moteur',titre:'1.6 TGDI : injecteurs HP',sym:'Ralenti irrégulier, codes injection.',dtc:['P0201','P0087'],fix:'Contrôle injecteurs, pompe HP, filtre.',src:'Cas Chery 1.6 TGDI'},
-{id:'m53',b:'Chery',m:'Tiggo 7',e:'',cat:'Transmission',titre:'Boîte CVT 25 / DCT 7 : à-coups',sym:'À-coups accélération, message boîte.',dtc:['P0700','P0776'],fix:'Vidange huile CVT/DCT, MAJ calculateur.',src:'Cas Chery'},
-{id:'m54',b:'Omoda',m:'E5',e:'',cat:'Électrique',titre:'Batterie LFP : calibration SOC',sym:'SOC incohérent, autonomie erratique.',dtc:['Codes BMS'],fix:'Recalibration SOC, MAJ BMS.',src:'Cas Omoda E5'},
-{id:'m55',b:'Jaecoo',m:'7',e:'',cat:'Électronique',titre:'ADAS : alertes intempestives',sym:'Alerte freinage urgence sans raison.',dtc:['C-codes ADAS'],fix:'Calibration caméra pare-brise, MAJ.',src:'Cas Jaecoo 7'},
-{id:'m56',b:'Haval',m:'H6',e:'',cat:'Moteur',titre:'1.5T GDI : injecteurs HP',sym:'Ralenti irrégulier, voyant moteur.',dtc:['P0201'],fix:'Contrôle injecteurs, rampe HP.',src:'Cas Haval 1.5T'},
-{id:'m57',b:'Haval',m:'Jolion',e:'',cat:'Transmission',titre:'DCT 7 : à-coups basse vitesse',sym:'À-coups ville, message boîte.',dtc:['P0700','P0776'],fix:'Vidange DCT, MAJ calculateur.',src:'Cas Great Wall DCT'},
-{id:'m58',b:'Great Wall',m:'Tank 300',e:'',cat:'Transmission',titre:'Boîte ZF 8 : surchauffe off-road',sym:'Message surchauffe boîte.',dtc:['P0711'],fix:'Contrôle refroidissement, huile, radiateur.',src:'Cas Tank 300 ZF'},
-{id:'m59',b:'Voyah',m:'Free',e:'',cat:'Électrique',titre:'EREV 1.5T : bruit/vibration',sym:'Bruit moteur thermique, vibrations.',dtc:['Codes EREV'],fix:'Contrôle supports moteur, ligne échappement.',src:'Cas Voyah Free EREV'},
-{id:'m60',b:'Hongqi',m:'E-HS9',e:'',cat:'Électrique',titre:'Batterie 120 kWh : équilibrage cellules',sym:'Autonomie en baisse, codes BMS.',dtc:['P0A80'],fix:'Équilibrage forcé, contrôle modules.',src:'Cas Hongqi'},
-{id:'m61',b:'Wuling',m:'Hongguang Mini EV',e:'',cat:'Électrique',titre:'Batterie 13 kWh : autonomie réelle < 80 km',sym:'Autonomie en baisse prématurée.',dtc:['Codes BMS'],fix:'Équilibrage cellules, rapport SOH, campagne.',src:'Cas Wuling Mini EV'},
-{id:'m62',b:'Wuling',m:'Bingo',e:'',cat:'Électrique',titre:'Charge AC limitée à 6.6 kW',sym:'Charge lente sur bornes 11 kW.',dtc:['Codes OBC'],fix:'Contrôle OBC, câblage, remplacement.',src:'Cas Wuling Bingo'},
-{id:'m63',b:'Baojun',m:'Yep',e:'',cat:'Électrique',titre:'Batterie 28 kWh : SOH en baisse',sym:'Autonomie réelle < 200 km.',dtc:['P0A80'],fix:'Équilibrage modules, rapport SOH.',src:'Cas Baojun Yep'},
-{id:'m64',b:'Baojun',m:'KiWi EV',e:'',cat:'Électronique',titre:'Écran central : reboots intempestifs',sym:'Écran qui redémarre, perte multimédia.',dtc:['U-codes'],fix:'MAJ firmware, reset.',src:'Cas Baojun KiWi'},
-{id:'m65',b:'HiPhi',m:'X',e:'',cat:'Électrique',titre:'Batterie 97 kWh : déséquilibre cellules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic BMS.',src:'Cas HiPhi X'},
-{id:'m66',b:'HiPhi',m:'Z',e:'',cat:'ADAS',titre:'HiPhi Pilot : LiDAR/calibration',sym:'Navigation pilote désactivée.',dtc:['C-codes HiPhi'],fix:'Calibration LiDAR + caméras, MAJ.',src:'Cas HiPhi Z'},
-{id:'m67',b:'Human Horizons',m:'HiPhi Y',e:'',cat:'Électronique',titre:'Écran central : reboot loop',sym:'Bootloop, écran figé.',dtc:['U-codes'],fix:'Reset usine, MAJ firmware, remplacement.',src:'Cas HiPhi Y'},
-{id:'m68',b:'WM Motor',m:'EX5',e:'',cat:'Électrique',titre:'Batterie : déséquilibre modules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic.',src:'Cas WM Motor'},
-{id:'m69',b:'Hycan',m:'007',e:'',cat:'Électrique',titre:'Batterie 93 kWh : calibration SOC',sym:'SOC incohérent après charges rapides.',dtc:['Codes BMS'],fix:'Recalibration SOC, MAJ BMS.',src:'Cas Hycan'},
-{id:'m70',b:'Singulato',m:'iS6',e:'',cat:'Électrique',titre:'Autonomie : déséquilibre cellules',sym:'Autonomie < théorique.',dtc:['P0A80'],fix:'Équilibrage forcé, contrôle modules.',src:'Cas Singulato'},
-{id:'m71',b:'Zhiji Auto',m:'L7',e:'',cat:'ADAS',titre:'IM AD : LiDAR/calibration',sym:'Navigation pilote indisponible.',dtc:['C-codes IM AD'],fix:'Calibration LiDAR, MAJ.',src:'Cas IM Motors'},
-{id:'m72',b:'Rising Auto',m:'R7',e:'',cat:'Électrique',titre:'Batterie 77 kWh : déséquilibre',sym:'SOH irrégulier.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic.',src:'Cas Rising Auto SAIC'},
-{id:'m73',b:'GAC',m:'Trumpchi GS8',e:'',cat:'Moteur',titre:'2.0T : turbo/wastegate',sym:'Perte puissance intermittente.',dtc:['P0299'],fix:'Contrôle turbo, wastegate, capteurs.',src:'Cas GAC 2.0T'},
-{id:'m74',b:'Arcfox',m:'Alpha S',e:'',cat:'Électrique',titre:'Batterie 94 kWh : déséquilibre modules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic BMS.',src:'Cas Arcfox BAIC'},
-{id:'m75',b:'Luxgen',m:'n7',e:'',cat:'Électrique',titre:'Charge rapide : puissance plafonnée',sym:'Puissance DC limitée.',dtc:['Codes HV'],fix:'Contrôle thermique pack, MAJ.',src:'Cas Luxgen Foxtron'},
-{id:'m76',b:'MG',m:'MG4',e:'',cat:'Électrique',titre:'Battery 12V : décharge prématurée',sym:'Véhicule non réveillable.',dtc:['B-codes'],fix:'Contrôle 12V + DC-DC, MAJ gestion veille.',src:'Cas MG4'},
-{id:'m77',b:'MG',m:'Cyberster',e:'',cat:'Électronique',titre:'Toit électrique : synchronisation',sym:'Toit refuse de se fermer/ouvrir.',dtc:['B-codes carrosserie'],fix:'Réinitialisation capteurs, calibration.',src:'Cas Cyberster'},
-{id:'m78',b:'BYD',m:'Fangchengbao Bao 8',e:'',cat:'Électrique',titre:'DMO : gestion 2 moteurs électriques',sym:'Alerte DMO, mode 4x4 désactivé.',dtc:['Codes DMO'],fix:'Diagnostic DMO, MAJ, contrôle capteurs.',src:'Cas BYD DMO'},
-{id:'m79',b:'Denza',m:'Z9',e:'',cat:'Électrique',titre:'Système e4 : 3 moteurs / 1000 ch',sym:'Alerte système e4, désynchronisation.',dtc:['Codes e4'],fix:'Diagnostic 3 moteurs, MAJ contrôleur.',src:'Cas Denza Z9'},
-{id:'m80',b:'Yangwang',m:'U7',e:'',cat:'Électrique',titre:'Système e4 / 4 moteurs : calibration',sym:'Répartition couple erratique, alerte.',dtc:['Codes e4'],fix:'Calibration 4 moteurs, MAJ.',src:'Cas Yangwang U7'}];
+{id:'m1',b:'Renault',m:'Mégane',e:'1.2 TCe 120',cat:'Moteur',titre:'1.2 TCe (H5Ft) : consommation d\u2019huile excessive',sym:'Consommation huile élevée, bougies encrassées, ratés.',dtc:['P0171','P0300'],fix:'Contrôle consommation huile constructeur, bougies + bobines.',src:'Campagnes réseau'},
+{id:'m2',b:'Renault',m:'Clio',e:'1.5 Blue dCi 100',cat:'Moteur',titre:'1.5 dCi (K9K) : limaille circuit HP',sym:'Démarrage difficile, perte puissance.',dtc:['P0087','P0191'],fix:'Rinçage circuit, pompe HP + injecteurs si contamination.',src:'Cas K9K'},
+{id:'m3',b:'Peugeot',m:'3008',e:'1.2 PureTech 130',cat:'Moteur',titre:'1.2 PureTech : courroie immergée dégradée',sym:'Voyant moteur, ralenti instable, casse possible.',dtc:['P0016','P0300'],fix:'Remplacement courroie + crépine + huile spécifiée.',src:'Campagnes Stellantis'},
+{id:'m4',b:'Peugeot',m:'3008',e:'1.5 BlueHDi 130',cat:'Moteur',titre:'1.5 BlueHDi (DV5) : chaîne arbre à cames',sym:'Bruit métallique, casse moteur.',dtc:['P0016','P0008'],fix:'Contrôle/chaîne renforcée.',src:'Campagnes Stellantis'},
+{id:'m5',b:'Volkswagen',m:'ID.4',e:'Pro 204',cat:'Électrique',titre:'Modules batterie HT : risque échauffement',sym:'Alertes batterie, limitation charge.',dtc:['Codes BMS'],fix:'Diagnostic modules, MAJ, remplacement.',src:'NHTSA 23V-225'},
+{id:'m6',b:'Volkswagen',m:'Golf',e:'1.0 TSI 110',cat:'Transmission',titre:'DSG7 DQ200 : mécatronique',sym:'À-coups, patinage.',dtc:['P17BF','P0841'],fix:'MAJ logiciel, remplacement mécatronique.',src:'Cas DQ200'},
+{id:'m7',b:'Toyota',m:'Prius',e:'Hybrid 122',cat:'Électrique',titre:'Pompe refroidissement onduleur',sym:'Surchauffe onduleur, mode dégradé.',dtc:['P0A78','P3024'],fix:'Remplacement pompe inverter.',src:'Campagnes Toyota'},
+{id:'m8',b:'Honda',m:'Civic',e:'',cat:'Airbag',titre:'Airbag Takata : gonfleur défectueux',sym:'Risque projection éclats.',dtc:['—'],fix:'Remplacement gonfleur.',src:'NHTSA/Safety Gate Takata'},
+{id:'m9',b:'Hyundai',m:'Tucson',e:'1.6 T-GDi 150',cat:'Moteur',titre:'Theta/Gamma : coussinets bielle (KSDS)',sym:'Bruit moteur, serrage possible.',dtc:['P1326'],fix:'Contrôle KSDS, remplacement moteur.',src:'NHTSA Theta II'},
+{id:'m10',b:'Tesla',m:'Model Y',e:'',cat:'ADAS',titre:'Autopilot : rappel logiciel',sym:'Régulateur adaptatif non conforme.',dtc:['—'],fix:'MAJ OTA (NHTSA 23V-848).',src:'NHTSA'},
+{id:'m11',b:'Chevrolet',m:'Bolt EV',e:'65 kWh 200',cat:'Électrique',titre:'Batterie HT : risque incendie (GM/LG)',sym:'Cellules défectueuses.',dtc:['Codes HV'],fix:'Diagnostic/remplacement modules.',src:'NHTSA 20V-552'},
+{id:'m12',b:'Renault',m:'Zoe',e:'R110',cat:'Électrique',titre:'Défaut charge/connecteur',sym:'Charge interrompue, voyant prise.',dtc:['P0C78'],fix:'Contrôle trappe/connecteur, borne.',src:'Cas Zoe'},
+{id:'m13',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link : écran noir/reboots',sym:'Écran figé, Google Maps indisponible.',dtc:['U1233'],fix:'MAJ OpenR Link, reset, remplacement.',src:'Cas R5 E-Tech'},
+{id:'m14',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Charge AC/DC : coupures',sym:'Charge interrompue, puissance plafonnée.',dtc:['P0C78'],fix:'MAJ BMS/chargeur, contrôle CCS.',src:'Cas AmpR Small'},
+{id:'m15',b:'Renault',m:'R5 E-Tech',e:'',cat:'Électrique',titre:'Batterie 12V : décharge rapide en veille',sym:'Véhicule mort après quelques jours.',dtc:['B-codes'],fix:'Contrôle 12V + gestion veille, DC-DC.',src:'Cas VE Renault'},
+{id:'m16',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électronique',titre:'OpenR Link : lenteurs, tactile muet',sym:'Tactile ne répond plus, perte BT.',dtc:['U1233'],fix:'Redémarrage, MAJ FOTA, remplacement.',src:'Cas R4 E-Tech'},
+{id:'m17',b:'Renault',m:'R4 E-Tech',e:'',cat:'Électrique',titre:'Charge rapide CCS : échauffement prise',sym:'Puissance réduite, prise chaude.',dtc:['P0C78'],fix:'Thermographie prise, nettoyage, MAJ BMS.',src:'Cas AmpR Small'},
+{id:'m18',b:'Renault',m:'Symbioz',e:'E-Tech 145',cat:'Transmission',titre:'Boîte multimode E-Tech : à-coups (crabots)',sym:'À-coups secs redémarrage/urbain, claquement.',dtc:['P0700','P1811'],fix:'MAJ calibration boîte, réapprentissage, contrôle crabots.',src:'Cas E-Tech'},
+{id:'m19',b:'Renault',m:'Symbioz',e:'',cat:'Caméra',titre:'OpenR : reboots et perte caméra 360°',sym:'Écran redémarre, caméra 360 indisponible.',dtc:['U1233'],fix:'MAJ système, calibration caméras.',src:'Cas Symbioz'},
+{id:'m20',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Pompe à chaleur : perte autonomie hiver',sym:'Consommation élevée temps froid.',dtc:['Codes thermique'],fix:'Diagnostic pompe à chaleur, niveau fluide, MAJ.',src:'Cas Scénic E-Tech'},
+{id:'m21',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électrique',titre:'Charge DC 150 kW : puissance plafonnée',sym:'50-70 kW au lieu de 130-150 kW.',dtc:['Codes HV'],fix:'MAJ BMS, contrôle température, préconditionnement.',src:'Cas Scénic E-Tech'},
+{id:'m22',b:'Renault',m:'Scénic E-Tech',e:'',cat:'Électronique',titre:'Écran panoramique openR : scintillements',sym:'Dalle scintille/noire, perte instrumentation.',dtc:['U1233'],fix:'MAJ, contrôle connectique, remplacement dalle.',src:'Cas Scénic E-Tech'},
+{id:'m23',b:'Renault',m:'Twingo',e:'E-Tech 82',cat:'Électrique',titre:'Batterie 22 kWh : autonomie réelle < 100 km',sym:'Autonomie en baisse prématurée.',dtc:['Codes BMS'],fix:'Équilibrage cellules, rapport SOH.',src:'Cas Twingo E-Tech'},
+{id:'m24',b:'Renault',m:'Zoe',e:'R135',cat:'Électrique',titre:'Charge rapide DC 50 kW : limitation',sym:'Puissance plafonnée en DC.',dtc:['Codes HV'],fix:'Contrôle thermique pack, MAJ BMS.',src:'Cas Zoe R135'},
+{id:'m25',b:'Peugeot',m:'e-208',e:'e-208 136',cat:'Électrique',titre:'Batterie 50 kWh : déséquilibre cellules',sym:'Autonomie en baisse, SOH irrégulier.',dtc:['P0A80'],fix:'Équilibrage modules, rapport SOH.',src:'Cas e-208'},
+{id:'m26',b:'Peugeot',m:'e-2008',e:'e-2008 136',cat:'Électrique',titre:'Charge AC 11 kW : limitation 7 kW',sym:'Charge lente sur borne 11 kW.',dtc:['Codes OBC'],fix:'Contrôle OBC, câblage, MAJ.',src:'Cas e-2008'},
+{id:'m27',b:'Citroën',m:'ë-C3',e:'ë-C3 113',cat:'Électrique',titre:'Batterie 44 kWh : calibration SOC',sym:'SOC incohérent après charges rapides.',dtc:['Codes BMS'],fix:'Recalibration SOC charge 100%, MAJ BMS.',src:'Cas ë-C3'},
+{id:'m28',b:'Citroën',m:'ë-C4',e:'ë-C4 136',cat:'Électrique',titre:'Batterie 50 kWh : déséquilibre cellules',sym:'Autonomie en baisse, SOH irrégulier.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic BMS.',src:'Cas ë-C4'},
+{id:'m29',b:'Škoda',m:'Elroq',e:'85 286',cat:'Électrique',titre:'Batterie 82 kWh : limitation thermique charge',sym:'Puissance plafonnée après charges successives.',dtc:['Codes HV'],fix:'Préconditionnement, contrôle thermique pack, MAJ.',src:'Cas Elroq MEB'},
+{id:'m30',b:'Škoda',m:'Elroq',e:'',cat:'Électronique',titre:'Infotainment 13" : reboots',sym:'Écran figé/redémarre, perte CarPlay.',dtc:['U0155'],fix:'MAJ firmware, reset usine.',src:'Cas Elroq'},
+{id:'m31',b:'BYD',m:'Atto 3',e:'',cat:'Électrique',titre:'Blade Battery LFP : équilibrage cellules',sym:'Autonomie en baisse, SOC irrégulier.',dtc:['P0A80'],fix:'Équilibrage forcé BMS, rapport SOH.',src:'Cas BYD Blade'},
+{id:'m32',b:'BYD',m:'Seal',e:'',cat:'Électrique',titre:'Charge rapide DC : limitation puissance',sym:'100-120 kW au lieu de 150 kW.',dtc:['Codes HV'],fix:'MAJ BMS, préconditionnement.',src:'Cas e-Platform 3.0'},
+{id:'m33',b:'Xiaomi Auto',m:'SU7',e:'',cat:'Électrique',titre:'Batterie 800V SiC : limitation thermique',sym:'Puissance plafonnée après charges.',dtc:['Codes HV'],fix:'Préconditionnement, contrôle thermique.',src:'Cas Xiaomi 800V'},
+{id:'m34',b:'Xiaomi Auto',m:'SU7',e:'',cat:'ADAS',titre:'Xiaomi Pilot : LiDAR/calibration',sym:'Alertes ADAS, navigation pilote désactivée.',dtc:['C-codes'],fix:'Calibration LiDAR + caméras, MAJ.',src:'Cas Xiaomi Pilot'},
+{id:'m35',b:'AITO',m:'M9',e:'',cat:'ADAS',titre:'Huawei ADS 2.0 : capteurs LiDAR',sym:'Alertes ADAS, navigation désactivée.',dtc:['C-codes ADS'],fix:'Calibration LiDAR + caméras, MAJ.',src:'Cas Huawei ADS'},
+{id:'m36',b:'Denza',m:'Z9',e:'',cat:'Électrique',titre:'Système e4 : 3 moteurs désynchronisés',sym:'Alerte e4, répartition couple erratique.',dtc:['Codes e4'],fix:'Diagnostic 3 moteurs, MAJ contrôleur.',src:'Cas Denza e4'},
+{id:'m37',b:'Yangwang',m:'U8',e:'',cat:'Électrique',titre:'e4 / Tank 360 : calibration 4 moteurs',sym:'Mode Tank non opérationnel.',dtc:['Codes e4'],fix:'Calibration 4 moteurs, MAJ.',src:'Cas Yangwang e4'},
+{id:'m38',b:'NIO',m:'ET7',e:'',cat:'Électrique',titre:'Battery Swap : erreurs communication',sym:'Refus swap, erreur BMS/station.',dtc:['Codes swap'],fix:'Contrôle BMS, reset communication.',src:'Cas NIO Power Swap'},
+{id:'m39',b:'XPeng',m:'G9',e:'',cat:'Électrique',titre:'Charge 800V : limitation thermique',sym:'Puissance plafonnée.',dtc:['Codes HV'],fix:'Contrôle thermique pack, MAJ.',src:'Cas XPeng 800V'},
+{id:'m40',b:'Zeekr',m:'001',e:'',cat:'Électrique',titre:'Charge 800V : limitation puissance',sym:'Puissance DC plafonnée.',dtc:['Codes HV'],fix:'Préconditionnement, contrôle thermique.',src:'Cas Zeekr 800V'},
+{id:'m41',b:'Li Auto',m:'L9',e:'',cat:'Électrique',titre:'EREV 1.5T : pompe/refroidissement',sym:'Alerte thermique, puissance limitée.',dtc:['P0217'],fix:'Contrôle pompe, circuit refroidissement.',src:'Cas Li Auto EREV'},
+{id:'m42',b:'Leapmotor',m:'C11',e:'',cat:'Électrique',titre:'Batterie LFP : déséquilibre modules',sym:'SOH irrégulier, autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage modules, diagnostic BMS.',src:'Cas Leapmotor'},
+{id:'m43',b:'Chery',m:'Tiggo 8',e:'',cat:'Moteur',titre:'1.6 TGDI : injecteurs HP',sym:'Ralenti irrégulier, codes injection.',dtc:['P0201','P0087'],fix:'Contrôle injecteurs, pompe HP.',src:'Cas Chery 1.6T'},
+{id:'m44',b:'Omoda',m:'E5',e:'',cat:'Électrique',titre:'Batterie LFP : calibration SOC',sym:'SOC incohérent.',dtc:['Codes BMS'],fix:'Recalibration SOC, MAJ BMS.',src:'Cas Omoda E5'},
+{id:'m45',b:'Haval',m:'H6',e:'',cat:'Moteur',titre:'1.5T GDI : injecteurs HP',sym:'Ralenti irrégulier, voyant moteur.',dtc:['P0201'],fix:'Contrôle injecteurs, rampe HP.',src:'Cas Haval 1.5T'},
+{id:'m46',b:'Great Wall',m:'Tank 300',e:'',cat:'Transmission',titre:'Boîte ZF 8 : surchauffe off-road',sym:'Message surchauffe boîte.',dtc:['P0711'],fix:'Contrôle refroidissement, huile.',src:'Cas Tank 300'},
+{id:'m47',b:'Voyah',m:'Free',e:'',cat:'Électrique',titre:'EREV 1.5T : bruit/vibration',sym:'Bruit moteur thermique.',dtc:['Codes EREV'],fix:'Contrôle supports moteur, échappement.',src:'Cas Voyah EREV'},
+{id:'m48',b:'Hongqi',m:'E-HS9',e:'',cat:'Électrique',titre:'Batterie 120 kWh : équilibrage cellules',sym:'Autonomie en baisse.',dtc:['P0A80'],fix:'Équilibrage forcé, contrôle modules.',src:'Cas Hongqi'},
+{id:'m49',b:'Wuling',m:'Hongguang Mini EV',e:'',cat:'Électrique',titre:'Batterie 13 kWh : autonomie < 80 km',sym:'Autonomie en baisse prématurée.',dtc:['Codes BMS'],fix:'Équilibrage cellules, rapport SOH.',src:'Cas Wuling'},
+{id:'m50',b:'MG',m:'MG4',e:'',cat:'Électrique',titre:'Batterie 12V : décharge prématurée',sym:'Véhicule non réveillable.',dtc:['B-codes'],fix:'Contrôle 12V + DC-DC, MAJ veille.',src:'Cas MG4'}];
 
-/* ================= MODÈLES DE FICHES (génération ≥15 000) ================= */
+/* ================= MODÈLES DE FICHES ================= */
 const T_D=[
-['Vanne EGR encrassée / grippée','Perte puissance, ralenti instable, voyant moteur.',['P0401','P0402'],'Nettoyage ou remplacement vanne, refroidisseur EGR.','Panne diesel — base','Moteur'],
-['FAP colmaté / régénérations','Voyant FAP, mode dégradé.',['P2002','P242F'],'Régénération forcée, contrôle pression différentielle.','Panne diesel — base','Moteur'],
-['Injecteurs diesel fuite retour','Claquements, fumée noire, démarrage difficile.',['P0201','P0202'],'Test retour injecteurs, remplacement défectueux.','Panne diesel — base','Moteur'],
-['Pompe HP / régulation rail','Démarrage difficile, calage.',['P0087','P0088'],'Contrôle pression rail, pompe HP, régulateur.','Panne diesel — base','Moteur'],
-['Turbo GV grippée / jeu','Manque puissance, sifflement.',['P0299','P00AF'],'Contrôle wastegate/GV, durites, turbo.','Panne diesel — base','Moteur'],
-['Bougies préchauffage','Démarrage froid difficile.',['P0380','P0670'],'Test bougies, remplacement défectueuses.','Panne diesel — base','Moteur'],
-['Volant moteur bi-masse usé','Claquements arrêt moteur, vibrations.',['—'],'Remplacement volant + embrayage.','Panne diesel — base','Transmission']];
+['Vanne EGR encrassée','Perte puissance, ralenti instable.',['P0401','P0402'],'Nettoyage/remplacement vanne EGR.','Panne diesel — base','Moteur'],
+['FAP colmaté','Voyant FAP, mode dégradé.',['P2002','P242F'],'Régénération forcée, contrôle pression.','Panne diesel — base','Moteur'],
+['Injecteurs diesel fuite retour','Claquements, fumée noire.',['P0201','P0202'],'Test retour injecteurs, remplacement.','Panne diesel — base','Moteur'],
+['Pompe HP / régulation rail','Démarrage difficile, calage.',['P0087','P0088'],'Contrôle pression rail, pompe HP.','Panne diesel — base','Moteur'],
+['Turbo GV grippée','Manque puissance, sifflement.',['P0299','P00AF'],'Contrôle wastegate/GV, turbo.','Panne diesel — base','Moteur'],
+['Bougies préchauffage','Démarrage froid difficile.',['P0380','P0670'],'Test bougies, remplacement.','Panne diesel — base','Moteur'],
+['Volant moteur bi-masse usé','Claquements arrêt moteur.',['—'],'Remplacement volant + embrayage.','Panne diesel — base','Transmission']];
 const T_E=[
-['Bobines allumage / ratés','Ratés, voyant moteur clignotant.',['P0300','P0301'],'Remplacement bobines/bougies.','Panne essence — base','Moteur'],
-['Bougies usées','Démarrage difficile, ralenti irrégulier.',['P0300','P0301'],'Remplacement bougies.','Panne essence — base','Moteur'],
-['Injecteurs essence encrassés','Ralenti irrégulier, trous accélération.',['P0171','P0200'],'Nettoyage injecteurs.','Panne essence — base','Moteur'],
-['Électrovanne purge canister','Odeur carburant, ralenti instable.',['P0441','P0455'],'Remplacement électrovanne purge.','Panne essence — base','Moteur'],
-['Débitmètre air MAF encrassé','Perte puissance, fumée noire.',['P0100','P0101'],'Nettoyage ou remplacement MAF.','Panne essence — base','Moteur'],
-['Boîtier papillon encrassé','Ralenti instable, à-coups.',['P0121','P2101'],'Nettoyage papillon, réapprentissage.','Panne essence — base','Moteur']];
+['Bobines allumage / ratés','Ratés, voyant clignotant.',['P0300','P0301'],'Remplacement bobines/bougies.','Panne essence — base','Moteur'],
+['Bougies usées','Démarrage difficile.',['P0300'],'Remplacement bougies.','Panne essence — base','Moteur'],
+['Injecteurs essence encrassés','Ralenti irrégulier.',['P0171','P0200'],'Nettoyage injecteurs.','Panne essence — base','Moteur'],
+['Électrovanne purge canister','Odeur carburant.',['P0441','P0455'],'Remplacement électrovanne.','Panne essence — base','Moteur'],
+['Débitmètre MAF encrassé','Perte puissance.',['P0100','P0101'],'Nettoyage/remplacement MAF.','Panne essence — base','Moteur'],
+['Boîtier papillon encrassé','Ralenti instable.',['P0121'],'Nettoyage papillon.','Panne essence — base','Moteur']];
 const T_F=[
-['Flexfuel E85 : capteur éthanol défaillant','Démarrage difficile après plein E85.',['P0178','P0179'],'Remplacement capteur éthanol.','Panne flexfuel — base','Moteur'],
-['Flexfuel E85 : injecteurs sous-dimensionnés','Ratés à fort % E85.',['P0171','P0300'],'Contrôle injecteurs, adaptation logiciel flexfuel.','Panne flexfuel — base','Moteur'],
-['Flexfuel E85 : corrosion circuit carburant','Fuite, démarrage difficile.',['P0171'],'Remplacement canalisations, contrôle réservoir.','Panne flexfuel — base','Moteur']];
+['Flexfuel E85 : capteur éthanol HS','Démarrage difficile après E85.',['P0178'],'Remplacement capteur éthanol.','Panne flexfuel — base','Moteur'],
+['Flexfuel E85 : injecteurs sous-dimensionnés','Ratés à fort % E85.',['P0171','P0300'],'Contrôle injecteurs, adaptation logiciel.','Panne flexfuel — base','Moteur'],
+['Flexfuel E85 : corrosion circuit','Fuite, démarrage difficile.',['P0171'],'Remplacement canalisations.','Panne flexfuel — base','Moteur']];
 const T_EV=[
-['Défaut charge (OBC/calculateur)','Charge interrompue/lente, voyant prise.',['P0C78','P1E00'],'Contrôle connecteur/câble/borne, OBC, BMS.','Panne VE — base','Électrique'],
-['Connecteur CCS surchauffe/oxydation','Échauffement prise, coupures charge rapide.',['Codes prise'],'Contrôle/entretien CCS, thermographie.','Panne VE — base','Électrique'],
-['Batterie 12V auxiliaire faible','Système ne démarre pas, alertes.',['B-codes','U0100'],'Contrôle/remplacement 12V, DC-DC.','Panne VE — base','Électrique'],
-['Batterie HT : défaut isolement','Alerte HT, immobilisation.',['P0AA6','P0AA5'],'Diagnostic isolement, contrôle câbles HV.','Panne VE — base','Électrique'],
-['Thermique batterie : pompe/circuit','Limitation charge/puissance.',['P0A78','P2632'],'Contrôle pompe refroidissement, liquide.','Panne VE — base','Électrique'],
-['Régénération / onduleur traction','À-coups décélération.',['P0562','P1E00'],'MAJ, diagnostic onduleur, BMS.','Panne VE — base','Électrique'],
-['Convertisseur DC/DC : défaut charge 12V','Batterie 12V non rechargée.',['P0C73'],'Contrôle sortie DC/DC, remplacement.','Panne VE — base','Électrique'],
-['Batterie HT : déséquilibre cellules (SOH)','Autonomie dégradée, charge rapide limitée.',['P0A80'],'Rapport SOH, équilibrage forcé, contrôle modules.','Préconisation VE — base','Électrique'],
-['Batterie LFP : calibration SOC','SOC qui saute, autonomie incohérente.',['Codes BMS'],'Recalibration SOC charge 100%, MAJ BMS.','Panne VE LFP — base','Électrique'],
-['Charge ultra-rapide 800V : limitation thermique','Puissance plafonnée après charges.',['Codes HV'],'Contrôle thermique pack, préconditionnement.','Panne VE 800V — base','Électrique'],
-['Batterie 800V SiC (Xiaomi, Jiyue, XPeng G9, IM L6…) : gestion thermique','Température élevée, puissance limitée.',['Codes 800V'],'Diagnostic gestion thermique, MAJ BMS.','Panne VE 800V — base','Électrique']];
+['Défaut charge (OBC)','Charge interrompue/lente.',['P0C78','P1E00'],'Contrôle connecteur/câble/borne, OBC, BMS.','Panne VE — base','Électrique'],
+['Connecteur CCS surchauffe','Échauffement prise, coupures.',['Codes prise'],'Contrôle/entretien CCS.','Panne VE — base','Électrique'],
+['Batterie 12V auxiliaire faible','Système ne démarre pas.',['B-codes','U0100'],'Contrôle/remplacement 12V, DC-DC.','Panne VE — base','Électrique'],
+['Batterie HT : défaut isolement','Alerte HT, immobilisation.',['P0AA6'],'Diagnostic isolement, câbles HV.','Panne VE — base','Électrique'],
+['Thermique batterie : pompe','Limitation charge/puissance.',['P0A78'],'Contrôle pompe, liquide.','Panne VE — base','Électrique'],
+['Régénération / onduleur','À-coups décélération.',['P0562'],'MAJ, diagnostic onduleur.','Panne VE — base','Électrique'],
+['Convertisseur DC/DC défaut','12V non rechargée.',['P0C73'],'Contrôle sortie DC/DC.','Panne VE — base','Électrique'],
+['Batterie HT : déséquilibre (SOH)','Autonomie dégradée.',['P0A80'],'Rapport SOH, équilibrage forcé.','Préconisation VE — base','Électrique'],
+['Batterie LFP : calibration SOC','SOC qui saute.',['Codes BMS'],'Recalibration charge 100%, MAJ BMS.','Panne VE LFP — base','Électrique'],
+['Charge 800V : limitation thermique','Puissance plafonnée.',['Codes HV'],'Préconditionnement, contrôle thermique.','Panne VE 800V — base','Électrique']];
 const T_HY=[
-['Onduleur hybride : refroidissement','Voyant hybride, mode dégradé.',['P0A78','P0A93'],'Contrôle pompe/liquide refroidissement onduleur.','Panne hybride — base','Électrique'],
-['Convertisseur DC/AC (inverter)','Batterie 12V non rechargée.',['P0C73'],'Contrôle sortie DC/AC, remplacement.','Panne hybride — base','Électrique'],
-['Batterie hybride : équilibrage cellules','Autonomie électrique réduite.',['P0A80'],'Diagnostic équilibrage BMS, contrôle modules.','Panne hybride — base','Électrique'],
-['Transmission e-CVT','Bruit moulinage, patinage.',['P0700','P0715'],'Contrôle huile transmission, MG1/MG2.','Panne hybride — base','Transmission'],
-['Circuit refroidissement hybride','Fuite LDR, voyant hybride.',['P3024'],'Recherche fuite, remplacement pompe.','Panne hybride — base','Électrique']];
+['Onduleur hybride : refroidissement','Voyant hybride, mode dégradé.',['P0A78','P0A93'],'Contrôle pompe/liquide onduleur.','Panne hybride — base','Électrique'],
+['Convertisseur DC/AC','12V non rechargée.',['P0C73'],'Contrôle sortie DC/AC.','Panne hybride — base','Électrique'],
+['Batterie hybride : équilibrage','Autonomie électrique réduite.',['P0A80'],'Diagnostic équilibrage BMS.','Panne hybride — base','Électrique'],
+['Transmission e-CVT','Bruit moulinage, patinage.',['P0700'],'Contrôle huile, MG1/MG2.','Panne hybride — base','Transmission'],
+['Circuit refroidissement hybride','Fuite LDR.',['P3024'],'Recherche fuite, pompe.','Panne hybride — base','Électrique']];
 const T_HYR=[
-['PHEV : défaut autonomie électrique','Mode EV refusé.',['P0A80'],'Contrôle modules batterie, BMS.','Panne PHEV — base','Électrique'],
-['PHEV : moteur thermique intempestif','Moteur démarre en mode EV.',['Codes PHEV'],'Contrôle gestion énergie, logiciel, 12V.','Panne PHEV — base','Électrique'],
-['PHEV : refroidissement batterie HT','Température élevée, puissance limitée.',['P0A78'],'Contrôle pompe, liquide, radiateur batterie.','Panne PHEV — base','Électrique'],
-['EREV (Li Auto, AITO, Deepal, Voyah, Leapmotor) : surconsommation moteur thermique','Consommation élevée, bruit prolongateur.',['Codes EREV'],'Contrôle moteur thermique, injection, supports.','Panne EREV — base','Moteur']];
+['PHEV : défaut autonomie électrique','Mode EV refusé.',['P0A80'],'Contrôle modules, BMS.','Panne PHEV — base','Électrique'],
+['PHEV : moteur thermique intempestif','Démarre en mode EV.',['Codes PHEV'],'Contrôle gestion énergie, 12V.','Panne PHEV — base','Électrique'],
+['PHEV : refroidissement batterie HT','Température élevée.',['P0A78'],'Contrôle pompe, radiateur.','Panne PHEV — base','Électrique'],
+['EREV : surconsommation thermique','Consommation élevée.',['Codes EREV'],'Contrôle moteur thermique, injection.','Panne EREV — base','Moteur']];
 const T_GPL=[
-['Détendeur/vaporisateur GPL','Ralenti instable GPL, calage chaud.',['P0171','P0174'],'Remplacement détendeur, membrane.','Panne GPL — base','Moteur'],
-['Injecteurs GPL débit déviant','Fonctionnement irrégulier GPL.',['P0200','P0201'],'Contrôle/étalonnage rampe, injecteurs.','Panne GPL — base','Moteur']];
+['Détendeur/vaporisateur GPL','Ralenti instable GPL.',['P0171'],'Remplacement détendeur.','Panne GPL — base','Moteur'],
+['Injecteurs GPL débit déviant','Fonctionnement irrégulier.',['P0200'],'Contrôle/étalonnage rampe.','Panne GPL — base','Moteur']];
 const T_M=[
-['Capteur vitesse roue ABS/ESP','Voyant ABS/ESP, régulateur indisponible.',['C0035','C0040'],'Contrôle capteur + câblage + cible.','Panne ABS — base','ABS'],
-['ADAS : calibration caméra/radar','Alertes ADAS après pare-brise/choc.',['U-codes ADAS','C1103'],'Calibration statique/dynamique caméra/radar.','Préconisation ADAS','ADAS'],
-['Contacteur tournant airbag','Voyant airbag, klaxon volant HS.',['B1000','B1900'],'Remplacement contacteur tournant.','Panne airbag — base','Airbag'],
-['Calculateur airbag : verrouillage après choc','Voyant airbag permanent.',['B-codes crash'],'Relecture/remplacement calculateur airbag.','Sécurité — base','Airbag'],
-['Enrouleur ceinture : prétensionneur défaillant','Voyant ceinture, prétensionneur inactif.',['B-codes SRS'],'Contrôle faisceau sous siège, remplacement.','Sécurité — base','Ceinture'],
-['Frein de service : plaquettes/disques','Voyant usure, vibrations freinage.',['Codes ABS/ESP'],'Contrôle épaisseur, remplacement, purge.','Panne freinage — base','Freinage'],
-['Étrier de frein grippé','Frein qui tire, odeur chaud.',['Codes ABS/ESP'],'Contrôle piston/étrier, purge, remplacement.','Panne freinage — base','Freinage'],
-['Tablette multimédia : écran noir, reboots','Écran figé/redémarre, perte BT/nav.',['U0155','U10300'],'MAJ firmware, reset, remplacement unité.','Panne électronique — base','Électronique'],
-['BSI/BCM : fonctions erratiques','Feux/essuie-vitres/centralisation aléatoires.',['U-codes carrosserie'],'Contrôle connectiques/humidité, MAJ, remplacement.','Panne électronique — base','Électronique'],
-['Direction assistée électrique','Alerte direction, assistance variable.',['C0500','C0545'],'Contrôle connectique/capteur couple, MAJ.','Panne direction — base','Électronique'],
-['Capteurs TPMS perte signal','Voyant pression pneus.',['C0750','C0754'],'Réapprentissage capteurs, remplacement capteur HS.','Panne TPMS — base','Électronique'],
-['Pulseur/résistance chauffage-clim','Perte ventilation, vitesse 4 uniquement.',['B1421','B1431'],'Remplacement résistance/pulseur.','Panne clim — base','Électronique'],
-['Lève-vitre : descente/remontée','Vitre descend seul, blocage.',['B-codes vitres'],'Contrôle moteur/câbles, réinitialisation.','Panne électronique — base','Électronique'],
-['Centralisation / télécommande','Portes non verrouillées, télécommande HS.',['B3028','B3031'],'Contrôle piles/récepteur, réapprentissage.','Panne électronique — base','Électronique'],
-['Circuit charge : batterie/alternateur','Voyant batterie, démarrage faible.',['P0562','P0563'],'Contrôle tension, test batterie et alternateur.','Panne électrique — base','Électrique'],
-['Capteurs aide au stationnement','Bips continus ou inopérants.',['Codes park assist'],'Contrôle/nettoyage capteurs, diagnostic faisceau.','Panne caméra/park — base','Caméra'],
-['Caméra de recul/360° : défaut image','Image figée, absente, déformée.',['Codes caméra'],'Contrôle faisceau, connectique, calibration.','Panne caméra — base','Caméra'],
-['Réseau CAN : perte communication','Multiples défauts U, systèmes inopérants.',['U0100','U0121'],'Contrôle connectiques/boîtiers CAN, 60 Ω.','Panne électronique — base','Électronique'],
-['Main-libre / démarrage sans clé','Non-détection clé, démarrage refusé.',['B-codes immo'],'Contrôle pile clé/antennes, réapprentissage.','Panne électronique — base','Électronique'],
-['Contacteur pédale de frein','Feux stop intermittents.',['P0504'],'Contrôle/remplacement contacteur pédale.','Panne freinage — base','Freinage'],
-['Compresseur clim : embrayage/régulation','Clim inopérante, bruit.',['P0532','P0533'],'Contrôle charge/pression, embrayage/vanne.','Panne clim — base','Électronique'],
-['Module éclairage LED/jour','Feux diurnes défaillants.',['B1310','B1320'],'Contrôle modules LED, remplacement.','Panne éclairage — base','Électronique'],
-['Écran central chinois (DiLink, HarmonyOS, HyperOS, XPIlot, Li AD, IM AD, Apollo, NIO Adam, Huawei ADS) : reboots','Écran figé/redémarre, perte CarPlay/Android Auto.',['U-codes multimédia'],'MAJ OTA firmware, reset usine, remplacement unité.','Panne électronique — base','Électronique'],
-['ADAS chinois (XPilot, NIO Pilot, Li AD Max, IM AD, Huawei ADS, Xiaomi Pilot, Apollo Go, HiPhi Pilot) : capteurs LiDAR/caméra décalibrés','Alertes intempestives, navigation pilote désactivée.',['C-codes ADAS'],'Calibration LiDAR + caméras, MAJ logicielle.','Panne ADAS — base','ADAS'],
-['Système e4 BYD (Yangwang U8/U9/U7, Denza Z9) : désynchronisation 3-4 moteurs indépendants','Alerte e4, répartition couple erratique.',['Codes e4 BYD'],'Diagnostic moteurs indépendants, MAJ contrôleur, calibration.','Panne électrique — base','Électrique'],
-['DMO BYD (Fangchengbao Bao 5/8) : gestion 2 moteurs','Alerte DMO, mode 4x4 désactivé.',['Codes DMO'],'Diagnostic DMO, MAJ, contrôle capteurs.','Panne électrique — base','Électrique'],
-['Battery Swap NIO : erreurs communication station','Refus swap, erreur BMS/station.',['Codes swap NIO'],'Contrôle BMS, reset communication.','Panne électrique — base','Électrique'],
-['Suspension active hydraulique (Yangwang DiAct) : fuite','Alerte suspension, hauteur variable.',['Codes suspension'],'Contrôle circuit hydraulique, joints, pompe.','Panne suspension — base','Électronique']];
+['Capteur vitesse roue ABS/ESP','Voyant ABS/ESP.',['C0035','C0040'],'Contrôle capteur + câblage.','Panne ABS — base','ABS'],
+['ADAS : calibration caméra/radar','Alertes ADAS après pare-brise.',['U-codes ADAS'],'Calibration statique/dynamique.','Préconisation ADAS','ADAS'],
+['Contacteur tournant airbag','Voyant airbag, klaxon HS.',['B1000'],'Remplacement contacteur.','Panne airbag — base','Airbag'],
+['Calculateur airbag verrouillé','Voyant airbag permanent.',['B-codes'],'Relecture/remplacement calculateur.','Sécurité — base','Airbag'],
+['Enrouleur ceinture prétensionneur','Voyant ceinture.',['B-codes SRS'],'Contrôle faisceau, remplacement.','Sécurité — base','Ceinture'],
+['Plaquettes/disques usés','Voyant usure, vibrations.',['Codes ABS/ESP'],'Contrôle épaisseur, remplacement.','Panne freinage — base','Freinage'],
+['Étrier grippé','Frein tire d\u2019un côté.',['Codes ABS/ESP'],'Contrôle piston/étrier.','Panne freinage — base','Freinage'],
+['Tablette multimédia reboots','Écran figé/redémarre.',['U0155'],'MAJ firmware, reset, remplacement.','Panne électronique — base','Électronique'],
+['BSI/BCM erratique','Feux/centralisation aléatoires.',['U-codes'],'Contrôle connectiques, MAJ.','Panne électronique — base','Électronique'],
+['Direction assistée électrique','Alerte direction.',['C0500'],'Contrôle capteur couple, MAJ.','Panne direction — base','Électronique'],
+['TPMS perte signal','Voyant pression pneus.',['C0750'],'Réapprentissage, remplacement capteur.','Panne TPMS — base','Électronique'],
+['Pulseur/résistance clim','Perte ventilation.',['B1421'],'Remplacement résistance.','Panne clim — base','Électronique'],
+['Lève-vitre descente','Vitre descend seul.',['B-codes'],'Contrôle moteur/câbles.','Panne électronique — base','Électronique'],
+['Centralisation/télécommande','Portes non verrouillées.',['B3028'],'Contrôle piles/récepteur.','Panne électronique — base','Électronique'],
+['Circuit charge batterie/alternateur','Voyant batterie.',['P0562'],'Test batterie et alternateur.','Panne électrique — base','Électrique'],
+['Capteurs stationnement','Bips continus/inopérants.',['Codes park'],'Contrôle/nettoyage capteurs.','Panne caméra/park — base','Caméra'],
+['Caméra recul/360° défaut','Image figée/absente.',['Codes caméra'],'Contrôle faisceau, calibration.','Panne caméra — base','Caméra'],
+['Réseau CAN perte communication','Multiples défauts U.',['U0100','U0121'],'Contrôle connectiques CAN.','Panne électronique — base','Électronique'],
+['Main-libre/démarrage sans clé','Non-détection clé.',['B-codes immo'],'Contrôle pile clé/antennes.','Panne électronique — base','Électronique'],
+['Contacteur pédale frein','Feux stop intermittents.',['P0504'],'Remplacement contacteur.','Panne freinage — base','Freinage'],
+['Compresseur clim embrayage','Clim inopérante.',['P0532'],'Contrôle charge/pression.','Panne clim — base','Électronique'],
+['Module éclairage LED','Feux diurnes défaillants.',['B1310'],'Contrôle modules LED.','Panne éclairage — base','Électronique'],
+['Écran chinois (DiLink, HarmonyOS, HyperOS, XPIlot, Li AD, IM AD, Huawei ADS, Apollo) reboots','Écran figé/redémarre.',['U-codes'],'MAJ OTA, reset, remplacement.','Panne électronique — base','Électronique'],
+['ADAS chinois (XPilot, NIO Pilot, Li AD, IM AD, Huawei ADS, Xiaomi Pilot, Apollo) LiDAR décalibré','Alertes intempestives.',['C-codes ADAS'],'Calibration LiDAR + caméras.','Panne ADAS — base','ADAS'],
+['Système e4/DMO/DiAct BYD désynchronisé','Alerte e4, répartition couple erratique.',['Codes e4'],'Diagnostic moteurs, MAJ contrôleur.','Panne électrique — base','Électrique'],
+['Battery Swap NIO erreurs','Refus swap.',['Codes swap'],'Contrôle BMS, reset.','Panne électrique — base','Électrique'],
+['Suspension active hydraulique fuite','Alerte suspension.',['Codes suspension'],'Contrôle circuit hydraulique.','Panne suspension — base','Électronique']];
 
-/* Règles familles spécifiques */
 const FAM=[
-{re:/PureTech|VTi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'Courroie de distribution immergée : dégradation prématurée',s:'Voyant moteur, ralenti instable, risque casse moteur.',d:['P0016','P0300','P0513'],f:'Remplacement courroie + crépine + huile spécifiée, surveillance renforcée avant 6 ans/100 000 km.',src:'Campagnes Stellantis'},
-{re:/1\.5 BlueHDi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'1.5 BlueHDi (DV5) : chaîne d\u2019arbre à cames',s:'Bruit métallique à froid, risque rupture.',d:['P0016','P0008'],f:'Contrôle/chaîne renforcée.',src:'Campagnes Stellantis'},
-{re:/dCi/i,brands:['Renault','Dacia','Nissan'],cat:'Moteur',t:'Base K9K : injecteurs, pompe HP et joints',s:'Perte puissance, limaille, odeur gazole.',d:['P0087','P0191','P0200'],f:'Contrôle circuit HP, injecteurs, joints, rinçage si limaille.',src:'Cas K9K'},
-{re:/1\.2 TCe/i,brands:['Renault','Dacia'],cat:'Moteur',t:'1.2 TCe (H5Ft) : consommation d\u2019huile',s:'Consommation huile élevée, ratés.',d:['P0171','P0300'],f:'Suivi consommation huile constructeur, bougies/bobines.',src:'Campagnes réseau'},
-{re:/TSI/i,brands:['Volkswagen','Škoda','SEAT','CUPRA','Audi'],cat:'Transmission',t:'Boîte DSG7 DQ200 : mécatronique/embrayages',s:'À-coups, patinage.',d:['P17BF','P0841'],f:'MAJ logiciel, remplacement mécatronique/kit embrayages.',src:'Cas DQ200'},
-{re:/T-GDi/i,brands:['Hyundai','Kia'],cat:'Moteur',t:'Contrôle coussinets KSDS (Theta/Gamma)',s:'Bruit moteur, risque serrage.',d:['P1326'],f:'Contrôle KSDS, remplacement moteur si requis.',src:'NHTSA Theta II'},
-{re:/EcoBoost/i,brands:['Ford'],cat:'Moteur',t:'EcoBoost : refroidissement/durites',s:'Surchauffe, fuite LDR.',d:['P0217','P0118'],f:'Contrôle circuit refroidissement, durites.',src:'Cas Ford'},
-{re:/Multijet|JTDM/i,brands:['Fiat','Alfa Romeo','Jeep'],cat:'Moteur',t:'Multijet/JTDM : EGR et injecteurs',s:'Perte puissance, ralenti irrégulier.',d:['P0401','P0201'],f:'Nettoyage/remplacement EGR, contrôle injecteurs.',src:'Pannes Multijet'},
-{re:/E-Tech/i,brands:['Renault','Dacia'],cat:'Transmission',t:'Boîte multimode E-Tech : à-coups basse vitesse',s:'À-coups secs, claquement crabotage.',d:['P0700','P1811'],f:'MAJ calibration boîte, réapprentissage, contrôle crabots.',src:'Cas E-Tech'},
-{re:/Blade Battery|LFP/i,brands:['BYD','Omoda','Leapmotor','Ora','Neta','MG','Denza','Yangwang','Fangchengbao'],cat:'Électrique',t:'Batterie LFP (Blade) : calibration SOC',s:'SOC incohérent, autonomie affichée erratique.',d:['Codes BMS'],f:'Recalibration charge 100%, MAJ BMS, équilibrage forcé.',src:'Cas VE LFP chinois'},
-{re:/EREV|prolongateur/i,brands:['Li Auto','Voyah','Deepal','Leapmotor','NIO','AITO','Avatr','Hycan','Hengchi'],cat:'Moteur',t:'EREV / prolongateur : moteur thermique',s:'Bruit, vibrations, consommation élevée moteur thermique.',d:['Codes EREV'],f:'Contrôle supports moteur, injection, refroidissement, MAJ.',src:'Cas EREV chinois'},
-{re:/e4|DMO|DiAct/i,brands:['BYD','Yangwang','Denza','Fangchengbao'],cat:'Électrique',t:'Systèmes BYD e4/DMO/DiAct : calibration 3-4 moteurs',s:'Alerte système, désynchronisation moteurs, répartition couple erratique.',d:['Codes e4/DMO'],f:'Diagnostic moteurs indépendants, MAJ contrôleur, calibration.',src:'Cas BYD e4/DMO'},
-{re:/800V|SiC/i,brands:['XPeng','Xiaomi Auto','Zeekr','IM Motors','Zhiji Auto','Li Auto','Avatr','Baidu Jiyue','Luxgen'],cat:'Électrique',t:'Architecture 800V SiC : limitation thermique',s:'Puissance plafonnée après charges rapides successives.',d:['Codes 800V'],f:'Préconditionnement, contrôle thermique pack, MAJ BMS.',src:'Cas VE 800V chinois'},
-{re:/HarmonyOS|HyperOS|Huawei ADS|DiLink|Xiaomi Pilot|XPIlot|NIO Pilot|Li AD|IM AD|Apollo|HiPhi Pilot|SIMO/i,brands:['AITO','Xiaomi Auto','XPeng','NIO','Li Auto','IM Motors','Zhiji Auto','Baidu Jiyue','HiPhi','Human Horizons','BYD'],cat:'Électronique',t:'Systèmes chinois (HarmonyOS, HyperOS, DiLink, XPIlot, Li AD, IM AD, Huawei ADS, Apollo, SIMO) : reboots/latence',s:'Écran figé/redémarre, perte CarPlay/Android Auto, assistant vocal lent.',d:['U-codes multimédia'],f:'MAJ OTA firmware, reset usine, remplacement head unit si persistance.',src:'Cas systèmes chinois'},
-{re:/e-|Electric|EV|ë-|Ioniq|EV6|EV9|MG4|Model|ID\.|e-tron|Taycan|Ariya|Leaf|Zoe|Spring|Bolt|Mach-E|Atto 3|Dolphin|Seal|Song|Han|Tang|Yuan|Shark|kWh|ch.*électrique|NIO ET|NIO EL|XPeng|Zeekr|Leapmotor|Li Auto|Hongqi E|Aion|Neta|IM Motors|Arcfox|Luxgen n7|SU7|Jiyue|AITO|Denza|Yangwang|Fangchengbao|Skyworth|Hengchi|HiPhi|WM Motor|Hycan|Singulato|Baojun|Wuling/i,brands:[],cat:'Électrique',t:'Surveillance batterie HT : contrôle périodique SOH/campagnes',s:'Vérifier état de santé batterie, historique charge rapide, alertes.',d:['Codes HV constructeur'],f:'Rapport SOH batterie, contrôle campagnes constructeur applicables au VIN.',src:'Préconisation VE'}];
+{re:/PureTech|VTi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'Courroie immergée : dégradation prématurée',s:'Voyant moteur, casse possible.',d:['P0016','P0300'],f:'Remplacement courroie + crépine + huile.',src:'Campagnes Stellantis'},
+{re:/1\.5 BlueHDi/i,brands:['Peugeot','Citroën','DS Automobiles','Opel'],cat:'Moteur',t:'1.5 BlueHDi (DV5) : chaîne arbre à cames',s:'Bruit métallique, casse.',d:['P0016'],f:'Contrôle/chaîne renforcée.',src:'Campagnes Stellantis'},
+{re:/dCi/i,brands:['Renault','Dacia','Nissan'],cat:'Moteur',t:'K9K : injecteurs, pompe HP, joints',s:'Perte puissance, limaille.',d:['P0087','P0200'],f:'Contrôle circuit HP, rinçage.',src:'Cas K9K'},
+{re:/1\.2 TCe/i,brands:['Renault','Dacia'],cat:'Moteur',t:'1.2 TCe : consommation huile',s:'Consommation huile, ratés.',d:['P0171','P0300'],f:'Suivi consommation, bougies/bobines.',src:'Campagnes réseau'},
+{re:/TSI/i,brands:['Volkswagen','Škoda','SEAT','CUPRA','Audi'],cat:'Transmission',t:'DSG7 DQ200 : mécatronique',s:'À-coups, patinage.',d:['P17BF','P0841'],f:'MAJ logiciel, remplacement mécatronique.',src:'Cas DQ200'},
+{re:/T-GDi/i,brands:['Hyundai','Kia'],cat:'Moteur',t:'KSDS coussinets (Theta/Gamma)',s:'Bruit moteur, serrage.',d:['P1326'],f:'Contrôle KSDS, remplacement moteur.',src:'NHTSA Theta II'},
+{re:/EcoBoost/i,brands:['Ford'],cat:'Moteur',t:'EcoBoost : refroidissement/durites',s:'Surchauffe, fuite LDR.',d:['P0217'],f:'Contrôle circuit refroidissement.',src:'Cas Ford'},
+{re:/Multijet|JTDM/i,brands:['Fiat','Alfa Romeo','Jeep'],cat:'Moteur',t:'Multijet : EGR et injecteurs',s:'Perte puissance.',d:['P0401','P0201'],f:'Nettoyage EGR, injecteurs.',src:'Pannes Multijet'},
+{re:/E-Tech/i,brands:['Renault','Dacia'],cat:'Transmission',t:'Boîte multimode E-Tech : à-coups',s:'À-coups secs, crabotage.',d:['P0700','P1811'],f:'MAJ calibration, contrôle crabots.',src:'Cas E-Tech'},
+{re:/Blade Battery|LFP/i,brands:['BYD','Omoda','Leapmotor','Ora','Neta','MG','Denza','Yangwang','Fangchengbao'],cat:'Électrique',t:'Batterie LFP : calibration SOC',s:'SOC incohérent.',d:['Codes BMS'],f:'Recalibration charge 100%, MAJ BMS.',src:'Cas VE LFP'},
+{re:/EREV|prolongateur/i,brands:['Li Auto','Voyah','Deepal','Leapmotor','AITO','Avatr'],cat:'Moteur',t:'EREV : moteur thermique',s:'Bruit, vibrations, surconsommation.',d:['Codes EREV'],f:'Contrôle supports, injection, MAJ.',src:'Cas EREV'},
+{re:/e4|DMO|DiAct/i,brands:['BYD','Yangwang','Denza','Fangchengbao'],cat:'Électrique',t:'e4/DMO/DiAct : calibration moteurs',s:'Alerte système, désynchronisation.',d:['Codes e4'],f:'Diagnostic moteurs, MAJ contrôleur.',src:'Cas BYD e4/DMO'},
+{re:/800V|SiC/i,brands:['XPeng','Xiaomi Auto','Zeekr','IM Motors','Zhiji Auto','Li Auto','Avatr','Baidu Jiyue'],cat:'Électrique',t:'800V SiC : limitation thermique',s:'Puissance plafonnée après charges.',d:['Codes 800V'],f:'Préconditionnement, contrôle thermique.',src:'Cas VE 800V'},
+{re:/e-|Electric|EV|ë-|Ioniq|EV6|EV9|MG4|Model|ID\.|e-tron|Taycan|Ariya|Leaf|Zoe|Spring|Bolt|Mach-E|Atto 3|Dolphin|Seal|Song|Han|Tang|Yuan|Shark|kWh|NIO|XPeng|Zeekr|Leapmotor|Li Auto|Hongqi|Aion|Neta|IM Motors|Arcfox|Luxgen|SU7|Jiyue|AITO|Denza|Yangwang|Fangchengbao|Skyworth|Hengchi|HiPhi|WM Motor|Hycan|Baojun|Wuling|Elroq|Enyaq/i,brands:[],cat:'Électrique',t:'Surveillance batterie HT : SOH/campagnes',s:'Vérifier SOH, historique charge rapide.',d:['Codes HV'],f:'Rapport SOH, contrôle campagnes VIN.',src:'Préconisation VE'}];
 const FAM_MODEL=[
-{re:/^ID\.4$|^ID\.5$/,brands:['Volkswagen'],cat:'Électrique',t:'Modules batterie HT : campagnes 2023–2024 (risque thermique)',s:'Alertes batterie, limitation charge.',d:['Codes BMS'],f:'Diagnostic modules, MAJ, remplacement.',src:'NHTSA 23V-225'},
-{re:/^Zoe$/,brands:['Renault'],cat:'Électrique',t:'Charge : connecteur/trappe et calculateur',s:'Charge interrompue, lenteur.',d:['P0C78'],f:'Contrôle trappe/connecteur, câble, calculateur.',src:'Cas Zoe'}];
+{re:/^ID\.4$|^ID\.5$/,brands:['Volkswagen'],cat:'Électrique',t:'Modules batterie HT : campagnes 2023-24',s:'Alertes batterie, limitation charge.',d:['Codes BMS'],f:'Diagnostic modules, MAJ, remplacement.',src:'NHTSA 23V-225'},
+{re:/^Zoe$/,brands:['Renault'],cat:'Électrique',t:'Charge : connecteur/trappe/calculateur',s:'Charge interrompue, lenteur.',d:['P0C78'],f:'Contrôle trappe/connecteur, calculateur.',src:'Cas Zoe'}];
 
 /* ================= INDEXEDDB ================= */
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const db=e.target.result;['brands','models','engines','sheets'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:'id'});});};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
@@ -829,7 +579,6 @@ async function dbBulk(store,vals){const db=await idb();for(let i=0;i<vals.length
 async function dbDel(store,id){const db=await idb();return new Promise(res=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(id);tx.oncomplete=()=>res();});}
 async function dbClear(store){const db=await idb();return new Promise(res=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=()=>res();});}
 
-/* ================= GÉNÉRATION MASSIVE ================= */
 const h=s=>{let x=7;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x.toString(36);};
 function buildAllSheets(models,engines){
  const out=[],seen=new Set();
@@ -849,7 +598,6 @@ function buildAllSheets(models,engines){
  return out;
 }
 
-/* ================= SEED ================= */
 async function seedIfEmpty(){
  if(localStorage.getItem(SEED_FLAG))return;
  const brands=SEED_BRANDS.map(([name,origin])=>({id:name,name,origin}));
@@ -858,11 +606,10 @@ async function seedIfEmpty(){
  const sheets=buildAllSheets(models,engines);
  await dbBulk('brands',brands);await dbBulk('models',models);await dbBulk('engines',engines);await dbBulk('sheets',sheets);
  localStorage.setItem(SEED_FLAG,'1');
- console.log('[MRT by Kevin] Base générée : '+brands.length+' marques, '+models.length+' modèles, '+engines.length+' motorisations, '+sheets.length+' fiches.');
- setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches ('+brands.length+' marques)'),800);
+ console.log('[MRT by Kevin] Base : '+brands.length+' marques, '+models.length+' modèles, '+engines.length+' motorisations, '+sheets.length+' fiches.');
+ setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches'),800);
 }
 
-/* ================= ÉTAT & UI ================= */
 const $=s=>document.querySelector(s);
 const state={group:'ALL',brand:null,model:null,engine:null,fuel:'Tous',cat:'Tous',q:''};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -895,7 +642,7 @@ async function renderModels(){
  const models=(await dbAll('models')).filter(x=>x.b===state.brand);
  const q=($('#modelSearch').value||'').toLowerCase();
  const list=$('#modelList');list.innerHTML='';
- if(!models.length)list.innerHTML='<p class="muted">Aucun modèle — ajoutez-le en mode admin (🔐).</p>';
+ if(!models.length)list.innerHTML='<p class="muted">Aucun modèle — ajoutez-le en admin (🔐).</p>';
  models.filter(x=>!q||x.m.toLowerCase().includes(q)).sort((a,b)=>a.m.localeCompare(b.m,'fr')).forEach(x=>{
   const d=document.createElement('div');d.className='rowItem';d.innerHTML='<b>'+esc(x.m)+'</b><span>modèles ▸</span>';
   d.onclick=()=>selectModel(x.m);list.appendChild(d);});
@@ -917,7 +664,7 @@ async function renderEngines(){
  const list=$('#engineList');list.innerHTML='';
  const every=document.createElement('div');every.className='rowItem';every.innerHTML='<b>📂 Toutes les fiches du modèle</b><span>'+all.length+' motorisations</span>';
  every.onclick=()=>selectEngine(null);list.appendChild(every);
- if(!eng.length)list.insertAdjacentHTML('beforeend','<p class="muted">Aucune motorisation '+state.fuel+' connue — ajoutez-la en mode admin (🔐).</p>');
+ if(!eng.length)list.insertAdjacentHTML('beforeend','<p class="muted">Aucune motorisation '+state.fuel+' — ajoutez-la en admin (🔐).</p>');
  eng.sort((a,b)=>a.e.localeCompare(b.e)).forEach(x=>{
   const d=document.createElement('div');d.className='rowItem';d.innerHTML='<b>'+esc(x.e)+'</b><span>'+esc(x.fuel)+'</span>';
   d.onclick=()=>selectEngine(x.e);list.appendChild(d);});
@@ -939,7 +686,7 @@ async function renderSheets(){
  if(state.cat!=='Tous')sheets=sheets.filter(s=>s.cat===state.cat);
  sheets.sort((a,b)=>(b.off||0)-(a.off||0));
  const list=$('#sheetList');list.innerHTML='';
- if(!sheets.length)list.innerHTML='<p class="muted">Aucune fiche locale. Utilisez les boutons 🛰 pour importer les campagnes officielles.</p>';
+ if(!sheets.length)list.innerHTML='<p class="muted">Aucune fiche. Utilisez 🛰 pour importer les campagnes officielles.</p>';
  sheets.slice(0,300).forEach(s=>{
   const d=document.createElement('div');d.className='sheet';
   d.innerHTML='<div class="l1"><span class="cat c-'+esc(s.cat)+'">'+esc(s.cat)+'</span><b>'+esc(s.titre)+'</b><span class="src '+(s.off?'off':'')+'">'+esc(s.src||'')+'</span></div>'+
@@ -947,7 +694,7 @@ async function renderSheets(){
   '<div class="l3">🔧 DTC : '+(s.dtc&&s.dtc.length?s.dtc.map(esc).join(' • '):'—')+'</div>'+
   '<div class="l4">✅ '+esc(s.fix||'')+'</div>';
   d.onclick=()=>openSheet(s);list.appendChild(d);});
- if(sheets.length>300)list.insertAdjacentHTML('beforeend','<p class="muted">'+(sheets.length-300)+' autres fiches — affinez avec les filtres de catégorie.</p>');
+ if(sheets.length>300)list.insertAdjacentHTML('beforeend','<p class="muted">'+(sheets.length-300)+' autres fiches — affinez avec les filtres.</p>');
  $('#sheetsTitle').textContent='📋 Fiches ('+sheets.length+') — '+state.brand+' '+state.model+(state.engine?' • '+state.engine:'');
 }
 let CURRENT=null;
@@ -962,19 +709,18 @@ function openSheet(s){
 }
 function printSheet(){
  const s=CURRENT;if(!s)return;
- $('#printSheet').innerHTML='<h1>Mes réponses technique by Kevin</h1><p><b>'+esc(s.b)+' '+esc(s.m)+(s.e?' — '+esc(s.e):'')+'</b> • Catégorie : '+esc(s.cat)+' • Édité le '+new Date().toLocaleDateString('fr-FR')+'</p>'+
- '<div class="box"><b>'+esc(s.titre)+'</b><br>Symptômes : '+esc(s.sym||'—')+'<br>Codes DTC : '+(s.dtc&&s.dtc.length?esc(s.dtc.join(', ')):'—')+'<br>Préconisation : '+esc(s.fix||'—')+'<br>Source : '+esc(s.src||'—')+'</div>'+
- '<p style="font-size:11px">Document informatif — confirmez toute campagne de rappel auprès des sources officielles et du réseau constructeur avec le VIN.</p>';
+ $('#printSheet').innerHTML='<h1>Mes réponses technique by Kevin</h1><p><b>'+esc(s.b)+' '+esc(s.m)+(s.e?' — '+esc(s.e):'')+'</b> • Catégorie : '+esc(s.cat)+' • '+new Date().toLocaleDateString('fr-FR')+'</p>'+
+ '<div class="box"><b>'+esc(s.titre)+'</b><br>Symptômes : '+esc(s.sym||'—')+'<br>DTC : '+(s.dtc&&s.dtc.length?esc(s.dtc.join(', ')):'—')+'<br>Préconisation : '+esc(s.fix||'—')+'<br>Source : '+esc(s.src||'—')+'</div>'+
+ '<p style="font-size:11px">Document informatif — confirmez toute campagne auprès du constructeur avec le VIN.</p>';
  window.print();
 }
-async function deleteCurrentSheet(){if(!CURRENT)return;if(confirm('Supprimer cette fiche ?')){await dbDel('sheets',CURRENT.id);closeModal('sheetModal');renderSheets();toast('Fiche supprimée');}}
+async function deleteCurrentSheet(){if(!CURRENT)return;if(confirm('Supprimer ?')){await dbDel('sheets',CURRENT.id);closeModal('sheetModal');renderSheets();toast('Fiche supprimée');}}
 
-/* ================= CLASSIFICATION RENFORCÉE ================= */
 function classifyOfficial(text){
  const c=(text||'').toLowerCase();
  if(/airbag|srs|pretension|prétension|inflator|takata/i.test(c))return'Airbag';
  if(/belt|seatbelt|ceinture|retractor|harness|enrouleur/i.test(c))return'Ceinture';
- if(/adas|adaptive cruise|lane keep|park assist|blind spot|collision avoidance|freinage d.urgen|aeb|autopilot|radar/i.test(c))return'ADAS';
+ if(/adas|adaptive cruise|lane keep|park assist|blind spot|collision|aeb|autopilot|radar/i.test(c))return'ADAS';
  if(/camera|caméra|rear view|backup cam|360|parking cam/i.test(c))return'Caméra';
  if(/\babs\b|anti[- ]?lock|antiblocage|ebd|bas/i.test(c))return'ABS';
  if(/brak|frein|caliper|étrier|pédale|pedal|rotor|disque|plaquette|pad/i.test(c))return'Freinage';
@@ -986,13 +732,12 @@ function classifyOfficial(text){
 }
 const stripAcc=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
-/* ================= SYNC NHTSA (US) ================= */
 async function syncNHTSA(){
  if(!navigator.onLine)return toast('Hors ligne');
  if(!state.brand||!state.model)return toast('Sélectionnez marque et modèle');
  const make=stripAcc(state.brand).toUpperCase();let n=0;
  const years=[];const Y=new Date().getFullYear();for(let y=Y+1;y>=Y-15;y--)years.push(y);
- toast('Interrogation NHTSA (US)…');
+ toast('Interrogation NHTSA…');
  for(const y of years){
   try{const r=await fetch('https://api.nhtsa.gov/recalls/recallsByVehicle?make='+encodeURIComponent(make)+'&model='+encodeURIComponent(state.model)+'&modelYear='+y);
   const j=await r.json();
@@ -1003,12 +748,10 @@ async function syncNHTSA(){
  }
  toast('NHTSA : '+n+' rappel(s) ✓');renderSheets();return n;
 }
-
-/* ================= SYNC RAPPEL CONSO (FR) ================= */
 async function syncRappelConso(){
  if(!navigator.onLine)return toast('Hors ligne');
  if(!state.brand||!state.model)return toast('Sélectionnez marque et modèle');
- toast('Interrogation Rappel Conso (FR)…');let n=0;
+ toast('Interrogation Rappel Conso…');let n=0;
  try{
   const q=encodeURIComponent('search(produit,"'+state.brand+' '+state.model+'") OR search(marque,"'+state.brand+'")');
   const r=await fetch('https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappels-produits/records?limit=100&where='+q);
@@ -1022,12 +765,10 @@ async function syncRappelConso(){
  if(n){toast('Rappel Conso : '+n+' fiche(s) ✓');renderSheets();}else toast('Rappel Conso : 0 résultat');
  return n;
 }
-
-/* ================= SYNC SAFETY GATE (UE) ================= */
 async function syncSafetyGate(){
  if(!navigator.onLine)return toast('Hors ligne');
  if(!state.brand||!state.model)return toast('Sélectionnez marque et modèle');
- toast('Interrogation Safety Gate (UE)…');let n=0;
+ toast('Interrogation Safety Gate…');let n=0;
  const endpoints=[
   {url:'https://ec.europa.eu/safety-gate/api/search?query='+encodeURIComponent(state.brand+' '+state.model)+'&size=200&type=product&category=motor_vehicles'},
   {url:'https://ec.europa.eu/safety-gate/api/search?query='+encodeURIComponent(state.brand)+'&size=200&type=product&category=motor_vehicles'}
@@ -1056,11 +797,9 @@ async function syncSafetyGate(){
    }
   }catch(e){}
  }
- if(n){toast('Safety Gate UE : '+n+' alerte(s) ✓');renderSheets();}else toast('Safety Gate : 0 alerte');
+ if(n){toast('Safety Gate : '+n+' alerte(s) ✓');renderSheets();}else toast('Safety Gate : 0 alerte');
  return n;
 }
-
-/* ================= SYNC TOUTES SOURCES ================= */
 async function syncAll(){
  if(!navigator.onLine)return toast('Hors ligne');
  if(!state.brand||!state.model)return toast('Sélectionnez marque et modèle');
@@ -1069,7 +808,6 @@ async function syncAll(){
  toast('✅ Total importé : '+(a+b+c)+' fiches officielles');
 }
 
-/* ================= ADMIN ================= */
 function tryAdmin(){
  if($('#adminPass').value===ADMIN_PASS){sessionStorage.setItem('mrt_admin','1');showAdminPanel();toast('Mode admin activé ✓');}
  else toast('Mot de passe incorrect');
@@ -1120,18 +858,17 @@ async function exportAll(){
  const blob=new Blob([JSON.stringify({brands:b,models:m,engines:e,sheets:s},null,1)],{type:'application/json'});
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mes-reponses-technique-export.json';a.click();
 }
-async function resetBase(){if(!confirm('Régénérer toute la base locale ?'))return;for(const s of['brands','models','engines','sheets'])await dbClear(s);localStorage.removeItem(SEED_FLAG);await seedIfEmpty();refreshAdmin();renderBrands();toast('Base régénérée ✓');}
+async function resetBase(){if(!confirm('Régénérer toute la base ?'))return;for(const s of['brands','models','engines','sheets'])await dbClear(s);localStorage.removeItem(SEED_FLAG);await seedIfEmpty();refreshAdmin();renderBrands();toast('Base régénérée ✓');}
 async function clearOfficial(){
  if(!confirm('Effacer UNIQUEMENT les fiches officielles ?'))return;
  const s=await dbAll('sheets');const keep=s.filter(x=>!x.off);
  await dbClear('sheets');await dbBulk('sheets',keep);
  refreshAdmin();if(state.model)renderSheets();toast('Fiches officielles effacées ('+keep.length+' conservées) ✓');
 }
-$('#bgFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{localStorage.setItem('mrt_bg',rd.result);applyBg();toast('Fond d\u2019écran appliqué ✓');}catch(err){toast('Image trop lourde (max ~3 Mo)');}};rd.readAsDataURL(f);});
+$('#bgFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{localStorage.setItem('mrt_bg',rd.result);applyBg();toast('Fond appliqué ✓');}catch(err){toast('Image trop lourde');}};rd.readAsDataURL(f);});
 function resetBg(){localStorage.removeItem('mrt_bg');applyBg();}
 function applyBg(){const url=localStorage.getItem('mrt_bg');const bg=$('#bg');if(url){bg.style.backgroundImage='url('+url+')';bg.querySelector('svg').style.display='none';}else{bg.style.backgroundImage='';bg.querySelector('svg').style.display='';}}
 
-/* ================= RÉSEAU / PARTAGE / INSTALL ================= */
 function netBadge(){const on=navigator.onLine;const el=$('#netBadge');let t='';try{t=navigator.connection&&navigator.connection.effectiveType||'';}catch(e){}
  el.textContent=on?('En ligne • '+((t==='4g')?'4G/5G':t?t.toUpperCase():'WiFi')):'Hors ligne • données locales';
  el.className='badge '+(on?'on':'off');}
@@ -1145,7 +882,6 @@ let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#btnInstall').style.display='';});
 $('#btnInstall').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt=null;$('#btnInstall').style.display='none';};
 
-/* ================= DÉMARRAGE ================= */
 $('#btnAdmin').onclick=()=>{openModal('adminModal');if(sessionStorage.getItem('mrt_admin')==='1')showAdminPanel();};
 $('#brandSearch').addEventListener('input',e=>{state.q=e.target.value.toLowerCase();renderBrands();});
 $('#modelSearch').addEventListener('input',renderModels);
