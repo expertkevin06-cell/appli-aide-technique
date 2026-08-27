@@ -1,5 +1,4 @@
-/* firebase-messaging-sw.js — notifications push pour le téléphone admin (optionnel).
-   Collez la MÊME config que access.js (sans serverKey). */
+/* firebase-messaging-sw.js — push admin (optionnel) */
 importScripts('https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.5/firebase-messaging-compat.js');
 firebase.initializeApp({apiKey:"AIzaSyCt40beykvP6N_rSY20EjNbo-2Q7jPzMSk",authDomain:"mondiagauto-a4d7a.firebaseapp.com",projectId:"mondiagauto-a4d7a",storageBucket:"mondiagauto-a4d7a.firebasestorage.app",messagingSenderId:"79906378742",appId:"1:79906378742:web:dac91c4a647d52a56e6dd7"});
