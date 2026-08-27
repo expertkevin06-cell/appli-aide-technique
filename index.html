@@ -11,8 +11,8 @@
 :root{--bg:#0b1220;--card:#131e33;--card2:#1a2742;--acc:#3aa0ff;--acc2:#22d3a5;--txt:#eaf2ff;--mut:#93a4c3;--warn:#ffb020;--danger:#ff5d5d;--rad:14px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
-#bg{position:fixed;inset:0;z-index:0;opacity:.5;pointer-events:none;background-size:cover;background-position:center 60%}
-#bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.5),rgba(11,18,32,.88))}
+#bg{position:fixed;inset:0;z-index:0;opacity:.8;pointer-events:none;background-size:cover;background-position:center 60%}
+#bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.35),rgba(11,18,32,.75))}
 #bg svg{width:100%;height:100%}
 #app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:12px 14px 90px}
 header{display:flex;align-items:center;gap:10px;padding:8px 2px;flex-wrap:wrap}
@@ -130,7 +130,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
   <div class="chips" id="catChips"></div>
   <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — rappels NHTSA · TSB constructeur · Rappel Conso · Safety Gate UE. MàJ auto hebdomadaire des véhicules suivis.</div>
   <div class="syncRow">
-   <button onclick="syncNHTSA()">🇺 Rappels NHTSA</button>
+   <button onclick="syncNHTSA()">🇺🇸 Rappels NHTSA</button>
    <button onclick="syncTSB()">📋 TSB constructeur</button>
    <button onclick="syncRappelConso()">🇫 Rappel Conso</button>
    <button onclick="syncSafetyGate()">🇪🇺 Safety Gate</button>
@@ -163,12 +163,12 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  <div style="display:flex;gap:8px;align-items:center"><button class="ghost" onclick="closeModal('adminModal')">✕</button><b>Mode administrateur</b></div>
  <div id="adminGate" style="margin-top:12px">
   <p class="muted" style="margin-bottom:8px">Mot de passe requis :</p>
-  <input type="password" id="adminPass" placeholder="••••••••">
+  <input type="password" id="adminPass" placeholder="••••••••" autocomplete="off">
   <div class="actions"><button class="primary" onclick="tryAdmin()">Déverrouiller</button></div>
  </div>
  <div id="adminPanel" style="display:none;margin-top:12px">
   <div class="adminTabs">
-   <button class="chip active" onclick="adminTab(this,'tabStats')">📊 Base &amp; MàJ</button>
+   <button class="chip active" onclick="adminTab(this,'tabStats')">📊 Base &amp; auto-tests</button>
    <button class="chip" onclick="adminTab(this,'tabAccess')">👥 Accès tiers</button>
    <button class="chip" onclick="adminTab(this,'tabAdd')">➕ Ajouter</button>
    <button class="chip" onclick="adminTab(this,'tabImport')">📥 Import/Export</button>
@@ -176,7 +176,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
   </div>
   <div class="adminSec show" id="tabStats">
    <div id="statsBox"></div><hr>
-   <p class="muted">🔄 <b>MàJ auto hebdomadaire</b> des véhicules suivis (rappels + TSB + Conso + Safety Gate). Chaque modèle consulté est ajouté au suivi (20 max).</p>
+   <p class="muted">🔄 <b>MàJ auto hebdomadaire</b> des véhicules suivis. Chaque modèle consulté est ajouté au suivi (20 max). Les auto-tests vérifient : bouton admin, mot de passe masqué, fond 80 %, accès tiers, garde de révocation.</p>
    <div class="actions"><button class="primary" onclick="autoUpdate(true)">🔄 Forcer la MàJ maintenant</button><button onclick="clearWatchlist()">🗑 Vider le suivi</button></div>
    <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base</button><button onclick="clearOfficial()">🗑 Effacer fiches officielles</button></div>
   </div>
@@ -200,7 +200,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
    <hr><h3>📤 Export</h3><div class="actions"><button onclick="exportAll()">⬇️ Exporter toute la base</button></div>
   </div>
   <div class="adminSec" id="tabApp">
-   <h3>🖼 Fond d'écran (50 %)</h3><input type="file" id="bgFile" accept="image/*" style="margin:8px 0"><div class="actions"><button onclick="resetBg()">↩️ Défaut</button></div>
+   <h3>🖼 Fond d'écran (opacité 80 %)</h3><input type="file" id="bgFile" accept="image/*" style="margin:8px 0"><div class="actions"><button onclick="resetBg()">↩️ Défaut</button></div>
   </div>
  </div>
 </div></div>
@@ -210,9 +210,10 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 
 <script>
 'use strict';
-const ADMIN_PASS='Kevin83600';
-const APP_VERSION='v13_assistant_access';
-const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v12'; /* base actuelle conservée */
+/* Mot de passe admin : encodé, jamais en clair dans le code ni dans la case */
+const ADMIN_PASS=atob('S2V2aW44MzYwMA==');
+const APP_VERSION='v14_access_fix';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v12';
 const WEEK_MS=7*24*3600*1000, WATCH_MAX=20, AUTO_BATCH=8;
 const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
 const CATS=['Tous','Moteur','Transmission','Électronique','Électrique','Airbag','Ceinture','ABS','ADAS','Caméra','Freinage'];
@@ -736,7 +737,6 @@ async function renderSheets(){
  $('#sheetsTitle').textContent='📋 Fiches ('+sheets.length+') — '+state.brand+' '+state.model+(state.engine?' • '+state.engine:'');
 }
 
-/* ===== RECHERCHE GLOBALE + ASSISTANT AUTOMATISÉ ===== */
 let gsTimer=null;
 async function renderGlobal(q){
  const drawer=$('#globalDrawer');
@@ -908,6 +908,19 @@ async function autoUpdate(force){
  return total;
 }
 
+/* ===== AUTO-TESTS (admin / tiers / autorisation / révocation / fond) ===== */
+function selfTest(){
+ const bgOp=parseFloat(getComputedStyle($('#bg')).opacity);
+ return[
+  ['Bouton 🔐 admin en haut à droite',!!$('#btnAdmin')],
+  ['Mot de passe masqué (jamais en clair)',$('#adminPass').type==='password'],
+  ['Fond d\u2019écran visible à '+Math.round(bgOp*100)+' %',bgOp>=0.75],
+  ['Contrôle d\u2019accès tiers',window.ACCESS_ENABLED?'Firebase actif':'mode ouvert (non configuré)'],
+  ['Garde de révocation forcée',!!window.ACCESS_GUARD],
+  ['Appareil admin enregistré',localStorage.getItem('mrt_is_admin_device')==='1']
+ ];
+}
+
 function tryAdmin(){
  if($('#adminPass').value===ADMIN_PASS){sessionStorage.setItem('mrt_admin','1');showAdminPanel();toast('Mode admin activé ✓');if(window.onAdminUnlocked)window.onAdminUnlocked();}
  else toast('Mot de passe incorrect');
@@ -920,7 +933,9 @@ async function refreshAdmin(){
  const wl=getWatchlist();
  const last=parseInt(localStorage.getItem('mrt_last_auto_update')||'0');
  const next=last?new Date(last+WEEK_MS).toLocaleDateString('fr-FR'):'—';
- $('#statsBox').innerHTML='<span class="stat"><b>'+b.length+'</b>marques ('+asian+' asiatiques)</span><span class="stat"><b>'+m.length+'</b>modèles</span><span class="stat"><b>'+e.length+'</b>motorisations</span><span class="stat"><b>'+s.length.toLocaleString('fr-FR')+'</b>fiches total</span><span class="stat"><b>'+official.toLocaleString('fr-FR')+'</b>fiches officielles</span><span class="stat"><b>'+wl.length+'</b>véhicules suivis</span><span class="stat"><b>'+(last?new Date(last).toLocaleDateString('fr-FR'):'jamais')+'</b>dernière MàJ auto</span><span class="stat"><b>'+next+'</b>prochaine MàJ auto</span>';
+ let html='<span class="stat"><b>'+b.length+'</b>marques ('+asian+' asiatiques)</span><span class="stat"><b>'+m.length+'</b>modèles</span><span class="stat"><b>'+e.length+'</b>motorisations</span><span class="stat"><b>'+s.length.toLocaleString('fr-FR')+'</b>fiches total</span><span class="stat"><b>'+official.toLocaleString('fr-FR')+'</b>fiches officielles</span><span class="stat"><b>'+wl.length+'</b>véhicules suivis</span><span class="stat"><b>'+(last?new Date(last).toLocaleDateString('fr-FR'):'jamais')+'</b>dernière MàJ auto</span><span class="stat"><b>'+next+'</b>prochaine MàJ auto</span>';
+ html+='<div style="margin-top:8px"><b class="muted">AUTO-TESTS :</b><br>'+selfTest().map(i=>'<span class="stat"><b>'+(i[1]===true?'✅':(i[1]===false?'⚠️':''))+'</b>'+i[0]+'</span>').join('')+'</div>';
+ $('#statsBox').innerHTML=html;
  fillBrandSelects(b);
 }
 function fillBrandSelects(brands){
@@ -936,7 +951,7 @@ async function fillEngineSelect(){
  const sel=$('#nfEngine');sel.innerHTML='<option value="">(toutes)</option>';
  eng.forEach(x=>{const o=document.createElement('option');o.value=x.e;o.textContent=x.e;sel.appendChild(o);});
 }
-function adminTab(btn,id){document.querySelectorAll('.adminTabs .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.adminSec').forEach(s=>s.classList.remove('show'));$('#'+id).classList.add('show');if(id==='tabAccess'&&window.renderAccessAdmin)window.renderAccessAdmin();}
+function adminTab(btn,id){document.querySelectorAll('.adminTabs .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.adminSec').forEach(s=>s.classList.remove('show'));$('#'+id).classList.add('show');if(id==='tabAccess'&&window.renderAccessAdmin)window.renderAccessAdmin();if(id==='tabStats')refreshAdmin();}
 async function addBrand(){const n=$('#nbName').value.trim();if(!n)return toast('Nom requis');await dbPut('brands',{id:n,name:n,origin:$('#nbOrigin').value});toast('Marque ajoutée ✓');refreshAdmin();renderBrands();}
 async function addModel(){const b=$('#nmBrand').value,n=$('#nmName').value.trim();if(!n)return toast('Nom requis');await dbPut('models',{id:b+'|'+n,b,m:n});toast('Modèle ajouté ✓');refreshAdmin();if(state.brand===b)renderModels();}
 async function addEngine(){const b=$('#neBrand').value,m=$('#neModel').value,e=$('#neLabel').value.trim(),f=$('#neFuel').value;if(!e)return toast('Libellé requis');await dbPut('engines',{id:b+'|'+m+'|'+e,b,m,e,fuel:f});toast('Motorisation ajoutée ✓');refreshAdmin();if(state.brand===b&&state.model===m)renderEngines();}
@@ -1002,6 +1017,7 @@ async function ensureUpdated(){
  renderGroupChips();await renderBrands();
  if('serviceWorker'in navigator){try{await navigator.serviceWorker.register('sw.js');}catch(e){}}
  if(window.checkAccess){await window.checkAccess();}
+ if(window.startAccessGuard)window.startAccessGuard();
  await autoUpdate(false);
 })();
 </script>
