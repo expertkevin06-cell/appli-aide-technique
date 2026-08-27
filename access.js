@@ -4,7 +4,7 @@
 'use strict';
 /* ⬇️ COLLEZ ICI votre config Firebase Web (console.firebase.google.com → Paramètres projet → Vos applications → Web).
    Activez Firestore. Pour les notifications push admin, ajoutez vapidKey + serverKey (facultatif). */
-const FIREBASE_CONFIG={apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:"",vapidKey:"",serverKey:""};
+const FIREBASE_CONFIG={apiKey:"AIzaSyCt40beykvP6N_rSY20EjNbo-2Q7jPzMSk",authDomain:"mondiagauto-a4d7a.firebaseapp.com",projectId:"mondiagauto-a4d7a",storageBucket:"mondiagauto-a4d7a.firebasestorage.app",messagingSenderId:"79906378742",appId:"1:79906378742:web:dac91c4a647d52a56e6dd7",vapidKey:"",serverKey:""};
 const ENABLED=!!(FIREBASE_CONFIG&&FIREBASE_CONFIG.projectId);
 let fb=null,fdb=null;
 function did(){let id=localStorage.getItem('mrt_device_id');if(!id){id='dev-'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('mrt_device_id',id);}return id;}
