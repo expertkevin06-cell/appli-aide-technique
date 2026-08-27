@@ -39,7 +39,7 @@ input,select,textarea{font:inherit;color:var(--txt);background:#0e1830;border:1p
 @keyframes open{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .drawer h2{font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .drawer h2 .back{padding:4px 10px;border-radius:8px;font-size:13px}
-.rowItem{display:flex;justify-content:space-between;gap:8px;padding:11px;border-radius:10px;background:var(--card2);border:1px solid #2c3e63;margin:7px 0;cursor:pointer}
+.rowItem{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px;border-radius:10px;background:var(--card2);border:1px solid #2c3e63;margin:7px 0;cursor:pointer;flex-wrap:wrap}
 .rowItem b{font-size:14px}
 .rowItem span{font-size:12px;color:var(--mut)}
 .sheet{background:var(--card);border:1px solid #26375c;border-left:4px solid var(--acc);border-radius:10px;margin:8px 0;padding:10px 12px;cursor:pointer;display:grid;gap:3px}
@@ -108,8 +108,8 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  </header>
 
  <div class="chips" id="groupChips"></div>
- <input id="globalSearch" placeholder="🔎 Recherche globale : panne, DTC, marque, modèle, motorisation…" style="margin-bottom:8px">
- <div class="drawer" id="globalDrawer" style="display:none"><h2>🔎 Résultats globaux <span id="globalCount" class="muted"></span></h2><div id="globalList"></div></div>
+ <input id="globalSearch" placeholder="🤖 Tapez un code défaut (P0016…), un mot-clé (courroie, EGR, FAP, turbo, ABS, ceinture…) ou marque/modèle…" style="margin-bottom:8px">
+ <div class="drawer" id="globalDrawer" style="display:none"><h2>🤖 Réponse automatisée &amp; résultats <span id="globalCount" class="muted"></span></h2><div id="globalList"></div></div>
  <input id="brandSearch" placeholder="🔎 Rechercher une marque…" style="margin-bottom:8px">
  <div class="grid" id="brandGrid"></div>
 
@@ -128,9 +128,9 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  <div class="drawer" id="sheetsDrawer" style="display:none">
   <h2><button class="back" onclick="closeDrawer('sheetsDrawer')">←</button><span id="sheetsTitle"></span></h2>
   <div class="chips" id="catChips"></div>
-  <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — rappels NHTSA · fiches techniques constructeur (TSB) · Rappel Conso · Safety Gate UE. Mise à jour auto hebdomadaire des véhicules suivis.</div>
+  <div class="muted" style="margin:6px 0">🛰 <b>Synchronisation officielle</b> — rappels NHTSA · TSB constructeur · Rappel Conso · Safety Gate UE. MàJ auto hebdomadaire des véhicules suivis.</div>
   <div class="syncRow">
-   <button onclick="syncNHTSA()">🇺🇸 Rappels NHTSA</button>
+   <button onclick="syncNHTSA()">🇺 Rappels NHTSA</button>
    <button onclick="syncTSB()">📋 TSB constructeur</button>
    <button onclick="syncRappelConso()">🇫 Rappel Conso</button>
    <button onclick="syncSafetyGate()">🇪🇺 Safety Gate</button>
@@ -141,7 +141,7 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 
  <footer>
   Développé &amp; hébergé via <b>GitHub</b> • Sources : NHTSA (rappels + TSB) · Rappel Conso · EU Safety Gate<br>
-  🔄 Mise à jour automatique hebdomadaire des véhicules suivis • ⚠️ Confirmez toute campagne avec le VIN.<br>
+  🔄 MàJ auto hebdomadaire • 👥 Accès tiers contrôlé par l'admin (Firebase) • ⚠️ Confirmez toute campagne avec le VIN.<br>
   © Kevin — Mes réponses technique
  </footer>
 </div>
@@ -169,16 +169,18 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
  <div id="adminPanel" style="display:none;margin-top:12px">
   <div class="adminTabs">
    <button class="chip active" onclick="adminTab(this,'tabStats')">📊 Base &amp; MàJ</button>
+   <button class="chip" onclick="adminTab(this,'tabAccess')">👥 Accès tiers</button>
    <button class="chip" onclick="adminTab(this,'tabAdd')">➕ Ajouter</button>
    <button class="chip" onclick="adminTab(this,'tabImport')">📥 Import/Export</button>
    <button class="chip" onclick="adminTab(this,'tabApp')">🎨 Apparence</button>
   </div>
   <div class="adminSec show" id="tabStats">
    <div id="statsBox"></div><hr>
-   <p class="muted">🔄 <b>Mise à jour automatique hebdomadaire</b> : à chaque ouverture de l'app (si ≥ 7 jours et en ligne), les fiches officielles des véhicules suivis sont re-synchronisées (rappels + TSB + Rappel Conso + Safety Gate). Chaque modèle consulté est ajouté automatiquement à la liste de suivi (20 max).</p>
-   <div class="actions"><button class="primary" onclick="autoUpdate(true)">🔄 Forcer la mise à jour maintenant</button><button onclick="clearWatchlist()">🗑 Vider la liste de suivi</button></div>
+   <p class="muted">🔄 <b>MàJ auto hebdomadaire</b> des véhicules suivis (rappels + TSB + Conso + Safety Gate). Chaque modèle consulté est ajouté au suivi (20 max).</p>
+   <div class="actions"><button class="primary" onclick="autoUpdate(true)">🔄 Forcer la MàJ maintenant</button><button onclick="clearWatchlist()">🗑 Vider le suivi</button></div>
    <div class="actions"><button onclick="resetBase()">♻️ Régénérer la base</button><button onclick="clearOfficial()">🗑 Effacer fiches officielles</button></div>
   </div>
+  <div class="adminSec" id="tabAccess"><div id="accessAdminBox"><p class="muted">Chargement…</p></div></div>
   <div class="adminSec" id="tabAdd">
    <h3>➕ Marque</h3>
    <div style="display:flex;gap:8px;margin:8px 0"><input id="nbName" placeholder="Nom" style="flex:2"><select id="nbOrigin" style="flex:1"><option value="FR">FR</option><option value="EU">EU</option><option value="AS">AS</option><option value="US">US</option></select><button class="primary" onclick="addBrand()">OK</button></div>
@@ -209,10 +211,10 @@ hr{border:none;border-top:1px solid #26375c;margin:12px 0}
 <script>
 'use strict';
 const ADMIN_PASS='Kevin83600';
-const APP_VERSION='v12_weekly_sync';
-const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v12';
+const APP_VERSION='v13_assistant_access';
+const DB_NAME='mrt_db', DB_VER=1, SEED_FLAG='mrt_seeded_v12'; /* base actuelle conservée */
 const WEEK_MS=7*24*3600*1000, WATCH_MAX=20, AUTO_BATCH=8;
-const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺 Américaines'};
+const ORIGINS={FR:'🇫🇷 Françaises',EU:'🇪🇺 Européennes',AS:'🌏 Asiatiques',US:'🇺🇸 Américaines'};
 const CATS=['Tous','Moteur','Transmission','Électronique','Électrique','Airbag','Ceinture','ABS','ADAS','Caméra','Freinage'];
 const FUELS=['Tous','essence','diesel','flexfuel','hybride','hybride rechargeable','électrique','GPL','hydrogène'];
 
@@ -577,7 +579,7 @@ const T_M=[
 ['Contacteur pédale frein','Feux stop intermittents.',['P0504'],'Remplacement contacteur.','Panne freinage — base','Freinage'],
 ['Compresseur clim embrayage','Clim inopérante.',['P0532'],'Contrôle charge/pression.','Panne clim — base','Électronique'],
 ['Module éclairage LED','Feux diurnes défaillants.',['B1310'],'Contrôle modules LED.','Panne éclairage — base','Électronique'],
-['Écran chinois (DiLink, HarmonyOS, HyperOS, XPIlot, Li AD, IM AD, Huawei ADS, Apollo) reboots','Écran figé/redémarre.',['U-codes'],'MAJ OTA, reset, remplacement.','Panne électronique — base','Électronique'],
+['Écran chinois reboots (DiLink, HarmonyOS, HyperOS, XPIlot, Li AD, IM AD, Huawei ADS, Apollo)','Écran figé/redémarre.',['U-codes'],'MAJ OTA, reset, remplacement.','Panne électronique — base','Électronique'],
 ['ADAS chinois LiDAR décalibré','Alertes intempestives.',['C-codes ADAS'],'Calibration LiDAR + caméras.','Panne ADAS — base','ADAS'],
 ['Système e4/DMO/DiAct BYD désynchronisé','Alerte e4, répartition couple erratique.',['Codes e4'],'Diagnostic moteurs, MAJ contrôleur.','Panne électrique — base','Électrique'],
 ['Battery Swap NIO erreurs','Refus swap.',['Codes swap'],'Contrôle BMS, reset.','Panne électrique — base','Électrique'],
@@ -628,7 +630,6 @@ function buildAllSheets(models,engines){
  models.forEach(x=>T_M.forEach(([t,s,d,f,src,cat])=>push(x.b,x.m,'',cat,t,s,d,f,src)));
  return out;
 }
-
 async function seedIfEmpty(){
  if(localStorage.getItem(SEED_FLAG))return;
  const brands=SEED_BRANDS.map(([name,origin])=>({id:name,name,origin}));
@@ -637,16 +638,13 @@ async function seedIfEmpty(){
  const sheets=buildAllSheets(models,engines);
  await dbBulk('brands',brands);await dbBulk('models',models);await dbBulk('engines',engines);await dbBulk('sheets',sheets);
  localStorage.setItem(SEED_FLAG,'1');
- console.log('[MRT by Kevin] Base : '+sheets.length+' fiches.');
  setTimeout(()=>toast('✅ Base initialisée : '+sheets.length.toLocaleString('fr-FR')+' fiches'),800);
 }
 
-/* ================= LISTE DE SUIVI (watchlist) ================= */
 function getWatchlist(){try{return JSON.parse(localStorage.getItem('mrt_watchlist')||'[]');}catch(e){return[];}}
 function addWatch(b,m){const l=getWatchlist().filter(x=>!(x.b===b&&x.m===m));l.unshift({b,m});localStorage.setItem('mrt_watchlist',JSON.stringify(l.slice(0,WATCH_MAX)));}
 function clearWatchlist(){localStorage.setItem('mrt_watchlist','[]');toast('Liste de suivi vidée');refreshAdmin();}
 
-/* ================= UI ================= */
 const $=s=>document.querySelector(s);
 const state={group:'ALL',brand:null,model:null,engine:null,fuel:'Tous',cat:'Tous',q:''};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -738,19 +736,28 @@ async function renderSheets(){
  $('#sheetsTitle').textContent='📋 Fiches ('+sheets.length+') — '+state.brand+' '+state.model+(state.engine?' • '+state.engine:'');
 }
 
-/* ===== RECHERCHE GLOBALE RENFORCÉE ===== */
+/* ===== RECHERCHE GLOBALE + ASSISTANT AUTOMATISÉ ===== */
 let gsTimer=null;
 async function renderGlobal(q){
  const drawer=$('#globalDrawer');
- q=(q||'').trim().toLowerCase();
+ q=(q||'').trim();
  if(q.length<3){drawer.style.display='none';return;}
+ const ql=q.toLowerCase();
+ let panel='';window.__assist=null;
+ if(window.buildAssistant){const a=await window.buildAssistant(ql);panel=a.html;window.__assist=a;}
+ const A=window.__assist||{};
  const all=await dbAll('sheets');
- const words=q.split(/\s+/);
- const res=all.filter(s=>{const hay=(s.titre+' '+s.sym+' '+s.b+' '+s.m+' '+s.e+' '+s.src+' '+(s.dtc||[]).join(' ')).toLowerCase();return words.every(w=>hay.includes(w));});
+ const words=ql.split(/\s+/);
+ const res=all.filter(s=>{
+  const vehOk=(!A.b||s.b===A.b)&&(!A.m||s.m===A.m);
+  if(!vehOk)return false;
+  const hay=(s.titre+' '+s.sym+' '+s.b+' '+s.m+' '+s.e+' '+s.src+' '+(s.dtc||[]).join(' ')).toLowerCase();
+  return words.every(w=>hay.includes(w));
+ });
  drawer.style.display='';
  $('#globalCount').textContent='('+res.length+' résultat'+(res.length>1?'s':'')+')';
- const list=$('#globalList');list.innerHTML='';
- if(!res.length)list.innerHTML='<p class="muted">Aucun résultat.</p>';
+ const list=$('#globalList');list.innerHTML=panel||'';
+ if(!res.length&&!panel)list.innerHTML='<p class="muted">Aucun résultat.</p>';
  res.slice(0,100).forEach(s=>list.appendChild(sheetCard(s)));
 }
 
@@ -789,7 +796,6 @@ function classifyOfficial(text){
 }
 const stripAcc=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
-/* ================= SYNCHRONISATIONS (silent = sans toast intermédiaire) ================= */
 async function syncNHTSA(silent){
  if(!navigator.onLine){if(!silent)toast('Hors ligne');return 0;}
  if(!state.brand||!state.model){if(!silent)toast('Sélectionnez marque et modèle');return 0;}
@@ -804,7 +810,6 @@ async function syncNHTSA(silent){
  }catch(e){}
  if(!silent)toast('NHTSA : '+n+' rappel(s) ✓');renderSheets();return n;
 }
-/* Fiches techniques constructeur (TSB NHTSA) */
 async function syncTSB(silent){
  if(!navigator.onLine){if(!silent)toast('Hors ligne');return 0;}
  if(!state.brand||!state.model){if(!silent)toast('Sélectionnez marque et modèle');return 0;}
@@ -881,35 +886,33 @@ async function syncAll(){
  toast('✅ Total importé : '+(a+t+b+c)+' fiches officielles');
 }
 
-/* ================= MISE À JOUR AUTOMATIQUE HEBDOMADAIRE ================= */
 async function autoUpdate(force){
  if(!navigator.onLine){if(force)toast('Hors ligne — mise à jour impossible');return 0;}
  const last=parseInt(localStorage.getItem('mrt_last_auto_update')||'0');
  const now=Date.now();
  if(!force&&(now-last)<WEEK_MS)return 0;
  const list=getWatchlist();
- if(!list.length){if(force)toast('Aucun véhicule suivi — consultez d\u2019abord des modèles pour les ajouter au suivi');return 0;}
+ if(!list.length){if(force)toast('Aucun véhicule suivi — consultez d\u2019abord des modèles');return 0;}
  localStorage.setItem('mrt_last_auto_update',String(now));
  const pb=state.brand,pm=state.model,pe=state.engine;
  const batch=list.slice(0,AUTO_BATCH);
- toast('🔄 Mise à jour automatique : '+batch.length+' véhicule(s) suivi(s)…');
+ toast('🔄 Mise à jour automatique : '+batch.length+' véhicule(s)…');
  let total=0;
  for(const v of batch){
   state.brand=v.b;state.model=v.m;
   total+=(await syncNHTSA(true))+(await syncTSB(true))+(await syncRappelConso(true))+(await syncSafetyGate(true));
  }
  state.brand=pb;state.model=pm;state.engine=pe;
- toast('✅ Mise à jour automatique terminée : +'+total+' fiches officielles');
+ toast('✅ Mise à jour auto terminée : +'+total+' fiches officielles');
  refreshAdmin();
  return total;
 }
 
-/* ================= ADMIN ================= */
 function tryAdmin(){
- if($('#adminPass').value===ADMIN_PASS){sessionStorage.setItem('mrt_admin','1');showAdminPanel();toast('Mode admin activé ✓');}
+ if($('#adminPass').value===ADMIN_PASS){sessionStorage.setItem('mrt_admin','1');showAdminPanel();toast('Mode admin activé ✓');if(window.onAdminUnlocked)window.onAdminUnlocked();}
  else toast('Mot de passe incorrect');
 }
-function showAdminPanel(){$('#adminGate').style.display='none';$('#adminPanel').style.display='';refreshAdmin();}
+function showAdminPanel(){$('#adminGate').style.display='none';$('#adminPanel').style.display='';refreshAdmin();if(window.renderAccessAdmin)window.renderAccessAdmin();}
 async function refreshAdmin(){
  const[b,m,e,s]=await Promise.all(['brands','models','engines','sheets'].map(dbAll));
  const official=s.filter(x=>x.off).length;
@@ -933,7 +936,7 @@ async function fillEngineSelect(){
  const sel=$('#nfEngine');sel.innerHTML='<option value="">(toutes)</option>';
  eng.forEach(x=>{const o=document.createElement('option');o.value=x.e;o.textContent=x.e;sel.appendChild(o);});
 }
-function adminTab(btn,id){document.querySelectorAll('.adminTabs .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.adminSec').forEach(s=>s.classList.remove('show'));$('#'+id).classList.add('show');}
+function adminTab(btn,id){document.querySelectorAll('.adminTabs .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.adminSec').forEach(s=>s.classList.remove('show'));$('#'+id).classList.add('show');if(id==='tabAccess'&&window.renderAccessAdmin)window.renderAccessAdmin();}
 async function addBrand(){const n=$('#nbName').value.trim();if(!n)return toast('Nom requis');await dbPut('brands',{id:n,name:n,origin:$('#nbOrigin').value});toast('Marque ajoutée ✓');refreshAdmin();renderBrands();}
 async function addModel(){const b=$('#nmBrand').value,n=$('#nmName').value.trim();if(!n)return toast('Nom requis');await dbPut('models',{id:b+'|'+n,b,m:n});toast('Modèle ajouté ✓');refreshAdmin();if(state.brand===b)renderModels();}
 async function addEngine(){const b=$('#neBrand').value,m=$('#neModel').value,e=$('#neLabel').value.trim(),f=$('#neFuel').value;if(!e)return toast('Libellé requis');await dbPut('engines',{id:b+'|'+m+'|'+e,b,m,e,fuel:f});toast('Motorisation ajoutée ✓');refreshAdmin();if(state.brand===b&&state.model===m)renderEngines();}
@@ -991,15 +994,18 @@ document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if
 async function ensureUpdated(){
  if(localStorage.getItem('mrt_app_version')!==APP_VERSION){
   localStorage.setItem('mrt_app_version',APP_VERSION);
-  localStorage.removeItem(SEED_FLAG);
   if('caches'in window){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}
  }
 }
 (async function init(){
- netBadge();applyBg();await ensureUpdated();await seedIfEmpty();renderGroupChips();await renderBrands();
+ netBadge();applyBg();await ensureUpdated();await seedIfEmpty();
+ renderGroupChips();await renderBrands();
  if('serviceWorker'in navigator){try{await navigator.serviceWorker.register('sw.js');}catch(e){}}
+ if(window.checkAccess){await window.checkAccess();}
  await autoUpdate(false);
 })();
 </script>
+<script src="assistant.js"></script>
+<script src="access.js"></script>
 </body>
 </html>
